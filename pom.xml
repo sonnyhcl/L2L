@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>soaring</groupId>
+	<artifactId>l2l</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>vessel-A</module>
+		<module>manager-A</module>
+		<module>supplier-A</module>
+		<module>supplier-B</module>
+		<module>supplier-C</module>
+		<module>logistic-A</module>
+		<module>logistic-B</module>
+		<module>vmc</module>
+		<module>msc</module>
+		<module>slc</module>
+		<module>lvc</module>
+		<module>vessel-device</module>
+		<module>wagon-device</module>
+	</modules>
+</project>

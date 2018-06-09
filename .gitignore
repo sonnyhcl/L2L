@@ -43,3 +43,4 @@ src/main/resources/logs/
 *.log
 document/
 *.xls
+.mvn/*

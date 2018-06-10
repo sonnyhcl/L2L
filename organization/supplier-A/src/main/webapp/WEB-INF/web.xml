@@ -18,13 +18,13 @@
     <display-name>supplier-app</display-name>
     <filter>
         <filter-name>corsFilter</filter-name>
-        <filter-class>supplierpart.activiti.servlet.MyCorsFilter</filter-class>
+        <filter-class>supplierA.activiti.servlet.MyCorsFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>corsFilter</filter-name>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
     <listener>
-        <listener-class>supplierpart.activiti.servlet.MyWebConfigurer</listener-class>
+        <listener-class>supplierA.activiti.servlet.MyWebConfigurer</listener-class>
     </listener>
 </web-app>

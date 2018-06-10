@@ -8,7 +8,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>vessel-device</module>
-		<module>wagon-device</module>
+		<module>vessel-dev-A</module>
+		<module>wagon-dev-A</module>
 	</modules>
 </project>

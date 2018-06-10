@@ -8,8 +8,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>devices</module>
-		<module>coordinators</module>
-		<module>organizations</module>
+		<module>device</module>
+		<module>coordinator</module>
+		<module>organization</module>
 	</modules>
 </project>

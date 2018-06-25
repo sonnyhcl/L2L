@@ -20,9 +20,23 @@ public class LogisticRepository {
         logistics.add(logistic);
     }
 
+    public Logistic update(Logistic logistic){
+        Logistic logistic1 = findById(logistic.getId());
+        logistic1 = logistic;
+        return logistic1;
+    }
     public Logistic findById(String logisticId){
         for(Logistic logistic : logistics){
             if(logisticId.equals(logistic.getId())){
+                return logistic;
+            }
+        }
+        return null;
+    }
+
+    public Logistic findByLpid(String lpid){
+        for(Logistic logistic : logistics){
+            if(lpid.equals(logistic.getLpid())){
                 return logistic;
             }
         }

@@ -1,2 +1,30 @@
 server:
   port: 9061
+  context-path: /wagon-dev-A
+
+# Wagon custom properties
+wagon:
+  wid : W23423
+  topic:
+   updateShadow: $aws/things/${awsiot.thingName}/shadow/update
+   updateStatus: activiti/${awsiot.thingName}/status/change
+   activiti: activiti/wagon/#
+  zoomInVal: 1000
+#
+#MapRepository properties
+#
+map:
+  key: ec15fc50687bd2782d7e45de6d08a023
+  basePath: http://restapi.amap.com/v4/direction/truck
+
+
+
+#
+#AWS properties
+#
+awsiot:
+  clientEndpoint: a1cf6tovfozpv3.iot.cn-north-1.amazonaws.com.cn
+  clientId: VA${wagon.wid}
+  certificate: /home/bqzhu/Desktop/device/vessel.cert.pem
+  privateKey: /home/bqzhu/Desktop/device/vessel.private.key
+  thingName: wagon

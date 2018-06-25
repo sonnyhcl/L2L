@@ -1,0 +1,7 @@
+server:
+ port: 9043
+ servlet:
+   context-path: /slc
+
+slc:
+

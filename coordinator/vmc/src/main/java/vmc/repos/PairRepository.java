@@ -9,6 +9,7 @@ import vmc.domain.ManagerPart;
 import vmc.domain.ManagerProcessInstance;
 import vmc.domain.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 @Data
 @NoArgsConstructor
@@ -16,24 +17,30 @@ import java.util.List;
 public class PairRepository {
     private final Logger logger = LoggerFactory.getLogger(PairRepository.class);
 
-    private List<Pair> pairs;
+    private List<Pair> pairs = new ArrayList<Pair>();
 
     public boolean isRegistried(String orgId , String pid){
-        boolean isRegistried = false;
+        boolean isReg = false;
 
         for(Pair pair : pairs){
 
-            pair.isRegistried(orgId,pid);
+            isReg = pair.isRegistried(orgId,pid);
+            if(isReg == true){
+                return true;
+            }
 
         }
-        return isRegistried;
+        return isReg;
     }
 
     public boolean isPaired(String orgId , String pid){
         boolean isPaired = false;
 
         for(Pair pair : pairs){
-           pair.isPaired(orgId , pid);
+           isPaired = pair.isPaired(orgId , pid);
+           if(isPaired == true){
+               return true;
+           }
         }
 
         return isPaired;

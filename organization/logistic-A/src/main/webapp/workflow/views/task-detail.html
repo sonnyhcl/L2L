@@ -49,7 +49,7 @@
     </div>
     <div class="header" ng-show="model.task && !noSuchTask">
         <div class=" pull-right">
-        
+
             <button class="btn" ng-if="!model.task.formKey && !model.task.endDate && (model.task.assignee.id == account.id || (model.task.initiatorCanCompleteTask && model.task.processInstanceStartUserId == ('' + account.id)))"
                     translate="TASK.ACTION.COMPLETE"
                     ng-disabled="model.completeButtonDisabled || model.uploadInProgress"
@@ -63,11 +63,11 @@
                     ng-click="claimTask()"></button>
 
             <activiti-form form-definition="model.formData"
-                   task-id="model.task.id"
-                   ng-if="model.task.assignee && model.formData"
-                   outcomes-only="true"
-                   disable-form="(model.task.assignee.id != account.id && (!model.task.initiatorCanCompleteTask || model.task.processInstanceStartUserId != ('' + account.id)))"
-                   hide-buttons="model.task.endDate">
+                           task-id="model.task.id"
+                           ng-if="model.task.assignee && model.formData"
+                           outcomes-only="true"
+                           disable-form="(model.task.assignee.id != account.id && (!model.task.initiatorCanCompleteTask || model.task.processInstanceStartUserId != ('' + account.id)))"
+                           hide-buttons="model.task.endDate">
             </activiti-form>
 
         </div>
@@ -76,12 +76,12 @@
         <div class="detail">
             <span class="label">{{'TASK.FIELD.ASSIGNEE' | translate}}: </span>
             <a ng-if="!model.task.endDate && model.task.assignee && (model.task.assignee.id == account.id || (model.task.initiatorCanCompleteTask && model.task.processInstanceStartUserId == ('' + account.id)))" class="subtle-select"
-                    select-people-popover
-                    exclude-user-id="model.task.assignee.id"
-                    on-people-selected="setTaskAssignee(user)"
-                    on-email-selected="setTaskAssigneeByEmail(email)"
-                    close-on-select="true"
-                    placement="bottom-left">
+               select-people-popover
+               exclude-user-id="model.task.assignee.id"
+               on-people-selected="setTaskAssignee(user)"
+               on-email-selected="setTaskAssigneeByEmail(email)"
+               close-on-select="true"
+               placement="bottom-left">
                 <span ng-if="model.task.assignee" user-name="model.task.assignee"></span>
             </a>
             <span ng-if="model.task.assignee && (model.task.endDate || (model.task.assignee.id != account.id && (!model.task.initiatorCanCompleteTask || model.task.processInstanceStartUserId != ('' + account.id))))" user-name="model.task.assignee"></span>
@@ -130,7 +130,7 @@
             </div>
             <div class="clearfix" ng-click="showComments()">
                 <div class="title title-lg" ng-show="model.commentSummary.count == 1">
-                   1 {{'TASK.TITLE.COMMENT-COUNT' | translate}}
+                    1 {{'TASK.TITLE.COMMENT-COUNT' | translate}}
                 </div>
                 <div class="title title-lg" ng-show="model.commentSummary.count > 1">
                     <span>{{model.commentSummary.count}}</span> {{'TASK.TITLE.COMMENTS-COUNT' | translate}}
@@ -221,7 +221,7 @@
                     placement="bottom-left" exclude-task-id="model.task.id" title="{{'TASK.ACTION.INVOLVE' | translate}}">
 
                     {{'TASK.SECTION.PEOPLE' | translate}}
-                        <span class="action" ng-if="!model.task.endDate">
+                    <span class="action" ng-if="!model.task.endDate">
                             <a>+</a>
                         </span>
                 </h3>
@@ -233,7 +233,7 @@
                             user-name="person"></span>
 
                         <div class="actions" ng-if="!model.task.endDate"><a><i class="icon icon-remove"
-                                                   ng-click="removeInvolvedUser(person)"></i></a></div>
+                                                                               ng-click="removeInvolvedUser(person)"></i></a></div>
                     </li>
                 </ul>
 
@@ -253,7 +253,7 @@
                     </ul>
                 </div>
             </div>
-         </div>
+        </div>
 
         <div class="help-container" ng-if="isADTask == false && isVoyagingTask == false && activeTab == 'details' && model.task != null && model.task != undefined && hasDetails() == false && !model.involvementSummary.loading && !model.contentSummary.loading && !model.commentSummary.loading">
             <div>
@@ -305,7 +305,7 @@
                             <textarea class="form-control focusable" rows="2" ng-disabled="model.commentSummary.loading"
                                       ng-model="model.commentSummary.newComment" id="add-comment-popup"
                                       placeholder="{{'TASK.MESSAGE.NEW-COMMENT-PLACEHOLDER' | translate}}"
-                                    auto-focus>
+                                      auto-focus>
                             </textarea>
 
                             <div class="pull-right">
@@ -321,77 +321,54 @@
                 </div>
             </div>
         </div>
-		<div  class="generic-container container"  ng-if="model.task.name == 'Voyaging'" ng-controller="VoyaTaskController">
-			<h3>&nbsp;&nbsp;Voyaging Information</h3>
-				<br/>
-				<table  class="table voya-table" >
-					<tr>
-						<td class="td1" >Port&nbsp;Interval&nbsp;：</td>
-						<td class="td2">{{prePort}}--->{{nextPort}}</td>
-					</tr>
-					<tr>
-						<td class="td1">&emsp;&emsp;longitude &emsp;&emsp;：</td>
-						<td class="td2">{{longitude}}</td>
-					</tr>
-					<tr>
-						<td class="td1">&emsp;&emsp;latitude &emsp;&emsp;：</td>
-						<td class="td2">{{latitude}}</td>
-					</tr>
-					<tr>
-						<td class="td1" >&emsp;&emsp;velocity&emsp;&nbsp;&nbsp;&nbsp;：</td>
-						<td class="td2">{{velocity}} 海里/h</td>
-					</tr>
-					<tr>
-						<td class="td1" >&emsp;&emsp;timestamp  &emsp;&nbsp;&nbsp;&nbsp;：</td>
-						<td class="td2">{{timestamp}}</td>
-					</tr>
-				</table>
-		</div>
-		<hr/>
-		<div  class="generic-container container"  ng-if="model.task.name == 'AnchoringOrDocking'" ng-controller="ADTaskController">
-			<h3>&nbsp;&nbsp;港口 : {{curPort.pname}} / 状态 : {{status}} </h3>
-				<br/>
-				<table  class="table voya-table" ng-show = "status == 'Anchoring'">
-					<tr>
-						<td class="td1" >距离靠港剩余 &nbsp;&nbsp;:</td>
-						<td class="td2">{{arrivalElapseTime}}h</td>
-					</tr>
-					
-					<tr>
-						<td class="td1" >当前时间&nbsp;&nbsp;:</td>
-						<td class="td2">{{curTime}}</td>
-					</tr>
-					
-					<tr>
-						<td class="td1" >抛猫时间&nbsp;&nbsp;:</td>
-						<td class="td2">{{anchoringTime}}</td>
-					</tr>
-					<tr >
-					    <td class="td1" >靠港时间&nbsp;&nbsp;：</td>
-						<td class="td2">{{arrivalTime}}</td>
-					</tr>
-			</table>
-            <table  class="table voya-table" ng-show = "status == 'Docking'">
-                <tr>
-                    <td class="td1" >距离离港剩余 &nbsp;&nbsp;:</td>
-                    <td class="td2">{{departureElapseTime}}h</td>
-                </tr>
 
-                <tr>
-                    <td class="td1" >当前时间&nbsp;&nbsp;:</td>
-                    <td class="td2">{{curTime}}</td>
-                </tr>
 
-                <tr>
-                    <td class="td1" >靠港时间&nbsp;&nbsp;:</td>
-                    <td class="td2">{{arrivalTime}}</td>
-                </tr>
-                <tr >
-                    <td class="td1" >离港时间&nbsp;&nbsp;：</td>
-                    <td class="td2">{{departureTime}}</td>
-                </tr>
-            </table>
-		</div>
+        <div class="panel-group" id="accordion" ng-if="model.task.name == 'Running'" ng-controller="RunningCtr">
+            <div  class="panel panel-danger panel-container">
+                <div class="panel-heading head-container">
+                    <div class="pull-left head-title"><span class="panel-title"><h2 >Current state</h2></span>
+                    </div>
+                    <div class="pull-right head-btns">
+                        <button type="button" id='vApplyBtn' class="btn btn-default navbar-btn " ng-click="ApplyModalShow()">
+                            <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true">休息</span>
+                        </button>
+                    </div>
+                </div>
+                <div  class="panel-body" style="padding: 0px 20px 0px 20px; margin-top: 5px;">
+                    <table  class="table" >
+                        <tr>
+                            <td><span class="input-group-addon input-lg">Port&nbsp;Interval</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="interval" readonly="readonly" style = "color: #e8120f" ></td>
+                        </tr>
+                        <tr>
+                            <td><span class="input-group-addon input-lg">Longitude</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="longitude" readonly="readonly"></td>
+                        </tr>
+                        <tr>
+                            <td><span class="input-group-addon input-lg">Latitude</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="latitude" readonly="readonly"></td>
+                        </tr>
+                        <tr>
+                            <td><span class="input-group-addon input-lg">Speed</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="speed" readonly="readonly"></td>
+                        </tr>
+                        <tr>
+                            <td><span class="input-group-addon input-lg">Moved Distance</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="movedDistance" readonly="readonly"></td>
+                        </tr>
+                        <tr>
+                            <td><span class="input-group-addon input-lg">Timestamp</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="timeStamp" readonly="readonly"></td>
+                        </tr>
+                    </table>
+                    <hr style="margin-bottom:6px; margin-top: -16px;">
+                </div>
+                <div class="panel-footer">
+                    <span>Tips : display vessel state instantly.</span>
+                </div>
+            </div>
+        </div>
+
+        <hr/>
     </div>
-    
 </div>

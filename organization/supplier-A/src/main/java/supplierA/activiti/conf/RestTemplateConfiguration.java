@@ -28,8 +28,8 @@ import java.util.List;
 public class RestTemplateConfiguration {
     private ClientHttpRequestFactory createFactory() {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
-        requestFactory.setReadTimeout(10000);
-        requestFactory.setConnectTimeout(10000);
+        requestFactory.setReadTimeout(60000);
+        requestFactory.setConnectTimeout(60000);
         return requestFactory;
     }
 

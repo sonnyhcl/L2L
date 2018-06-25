@@ -17,8 +17,9 @@ public class CommonRepository {
     private final String port = "9031";
     private final String projectId = "logistic-A";
 
-    private final String slcContextPath = "http:10.131.245.91:9043/slc";
-    private final String lvcContextPath = "http:10.131.245.91:9044/lvc";
+    private final String slcContextPath = "http://10.131.245.91:9043/slc";
+    private final String lvcContextPath = "http://10.131.245.91:9044/lvc";
+
 
 
     @Autowired

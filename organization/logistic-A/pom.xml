@@ -6,11 +6,8 @@
         <artifactId>activiti-ui-root</artifactId>
         <version>6.0.0</version>
     </parent>
-
-    <!--<groupId>SOARing</groupId>-->
     <artifactId>logistic-A</artifactId>
     <packaging>war</packaging>
-    <!--<version>1.0.0</version>-->
     <properties>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <spring.version>4.3.14.RELEASE</spring.version>
@@ -166,6 +163,13 @@
             <artifactId>junit</artifactId>
             <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.javacsv/javacsv -->
+        <dependency>
+            <groupId>net.sourceforge.javacsv</groupId>
+            <artifactId>javacsv</artifactId>
+            <version>2.0</version>
+        </dependency>
+
     </dependencies>
 
     <!-- BUILD -->

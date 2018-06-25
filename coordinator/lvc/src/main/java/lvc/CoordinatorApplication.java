@@ -17,8 +17,8 @@ public class CoordinatorApplication {
 	// 使用RestTemplateBuilder来实例化RestTemplate对象，spring默认已经注入了RestTemplateBuilder实例
 	@Bean
 	public RestTemplate restTemplate() {
-		builder.setReadTimeout(3000);
-		builder.setConnectTimeout(3000);
+		builder.setReadTimeout(60000);
+		builder.setConnectTimeout(60000);
 		return builder.build();
 	}
 

@@ -2,6 +2,8 @@ package lvc.repos;
 
 import lombok.Data;
 import lvc.domain.VesselPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,11 +13,13 @@ import java.util.List;
 @Data
 @Service
 public class VesselRepository {
+    private static final Logger logger = LoggerFactory.getLogger(VesselRepository.class);
     private List<VesselPart> vesselParts = new ArrayList<VesselPart>();
 
     public VesselRepository(){
         //register vessel organization
-        vesselParts.add(new VesselPart("散货运输公司" , "VA1001" , "10.131.245.91" , "9001" , "vessel-A" , null));
+        logger.info("--VesselRepository--");
+        vesselParts.add(new VesselPart("散货运输公司" , "VA1001" , "10.131.245.91" , "9001" , "vessel-A" , "A"));
     }
 
     public VesselPart findByOrgId(String orgId){

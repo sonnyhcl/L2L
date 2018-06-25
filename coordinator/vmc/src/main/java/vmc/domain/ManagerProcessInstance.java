@@ -17,7 +17,8 @@ public class ManagerProcessInstance extends ProcessInstance{
         this.orderId = orderId;
     }
 
-    public ManagerProcessInstance(String id, String orgId) {
+    public ManagerProcessInstance(String id, String orgId , String applyId) {
         super(id, orgId);
+        this.applyId = applyId;
     }
 }

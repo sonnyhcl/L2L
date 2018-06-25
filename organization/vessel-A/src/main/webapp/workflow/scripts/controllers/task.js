@@ -758,54 +758,82 @@ angular.module('activitiApp')
 angular.module('activitiApp')
 .controller('ADTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
-	
-	$scope.curPort = null;
+    $scope.model.completeButtonDisabled = true
+	$scope.pname = null;
 	$scope.status = null;
-	$scope.vesselShadow = null;
-	$scope.adTimer = null;
-	$scope.arrivalElapseTime = null;
 	$scope.curTime = null;
+
+	$scope.adTimer = null;
+
+	$scope.arrivalElapseTime = null;
 	$scope.anchoringTime = null;
 	$scope.arrivalTime = null;
+
 	$scope.departureElapseTime = null;
 	$scope.departureTime = null;
+
 	if($scope.model.task.name == 'AnchoringOrDocking') {
 	    $scope.adTimer = $interval(function(){
             console.log("Task name ： AnchoringOrDocking");
-            $http.get(ACTIVITI.CONFIG.contextRoot+'/api/vessel/shadow/'+$scope.model.task.processInstanceId)
+            var infoUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/ADTask/info";
+            $http.get(infoUrl)
                 .success(function(data){
-                    $scope.vesselShadow = data;
-                    console.log("vessel shadow : " , $scope.vesselShadow);
-                    $scope.curPort = $scope.vesselShadow.ports[$scope.vesselShadow.nextPortIndex-1];
-                    console.log("current port : " , $scope.curPort);
-                    $scope.status = $scope.vesselShadow.status;
-                    $scope.arrivalElapseTime = null;
-                    $scope.curTime = null;
-                    $scope.anchoringTime = $scope.curPort.stAnchorTime;
-                    $scope.arrivalTime = $scope.curPort.estiReachTime;
-                    $scope.departureElapseTime = null;
-                    $scope.departureTime = $scope.curPort.estiDepartureTime;
-                    console.log("ADTaskController-->vessel device status  : " , $scope.status);
-                    if($scope.status != "Anchoring" && $scope.status != "Docking" && $scope.status != undefined){
+                    // console.log(data);
+                    $scope.pname = data.pname;
+                    $scope.status = data.status;
+                    $scope.curTime = data.curTime;
+                    // console.log("ADTaskController-->vessel device status  : " , $scope.status);
+                    if($scope.status == "Anchoring"){
+                        $scope.arrivalElapseTime = data.arrivalElapseTime+' h';
+                        $scope.anchoringTime = data.anchoringTime;
+                        $scope.arrivalTime = data.arrivalTime;
+                    }else if($scope.status == "Docking"){
+                        $scope.departureElapseTime = data.departureElapseTime+' h';
+                        $scope.arrivalTime = data.arrivalTime;
+                        $scope.departureTime = data.departureTime;
+                    }else if($scope.status == undefined){
+                        console.log("undefined");
+                    }else{
                         $interval.cancel($scope.adTimer);
                         $scope.completeTask();
                     }
                 })
         },1000)
 	}
+   $scope.DelayModalShow = function(){
+      // 定义模态框
+      var modalInstance = _internalCreateModal({
+          template :  appResourceRoot + 'views/modal/delay.html',  // 摸态框视图
+          scope: $scope,
+          show: true
+      }, $modal , $scope);
+      modalInstance.$scope.setDxy = function() {
+          // console.log("DelayController--",$scope.status);
+      };
+   }
+   $scope.ApplyModalShow = function(){
+      // 定义模态框
+      var modalInstance = _internalCreateModal({
+          template :  appResourceRoot + 'views/modal/apply.html',  // 摸态框视图
+          scope: $scope,
+          show: true
+      }, $modal , $scope);
+   }
 }]);
 angular.module('activitiApp')
 .controller('VoyaTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
+    $scope.model.completeButtonDisabled = true
     $scope.vesselShadow = null;
     $scope.prePort = null;
     $scope.nextPort = null;
     $scope.longitude = null;
     $scope.latitude = null;
     $scope.velocity = null;
-    $scope.timestamp = null;
+    $scope.timeStamp = null;
     $scope.status = null;
+    $scope.interval = null;
 
     $scope.voyageTaskTimer = $interval(function(){
     	if($scope.model.task.name != 'Voyaging'){
@@ -816,49 +844,95 @@ angular.module('activitiApp')
     	$http.get(shadowUrl)
     	.success(function(data){
     		$scope.vesselShadow = data;
-            console.log("vessel shadow : " , data);
+            // console.log("vessel shadow : " , data);
             var curPortIndex = $scope.vesselShadow.nextPortIndex-1;
             if(curPortIndex == -1){
                 $scope.prePort = "始发港"
-                $scope.nextPort = $scope.vesselShadow.ports[curPortIndex+1].pname;
-            }else if(curPortIndex == $scope.vesselShadow.ports.length-1){
-                $scope.prePort = $scope.vesselShadow.ports[curPortIndex].pname;
+                $scope.nextPort = $scope.vesselShadow.destinations[curPortIndex+1].name;
+            }else if(curPortIndex == $scope.vesselShadow.destinations.length-1){
+                $scope.prePort = $scope.vesselShadow.destinations[curPortIndex].name;
                 $scope.nextPort = "无（已到达最后一个港口)"
             }else{
-                $scope.prePort = $scope.vesselShadow.ports[curPortIndex].pname;
-                $scope.nextPort = $scope.vesselShadow.ports[curPortIndex+1].pname;
+                $scope.prePort = $scope.vesselShadow.destinations[curPortIndex].name;
+                $scope.nextPort = $scope.vesselShadow.destinations[curPortIndex+1].name;
             }
 
-            $scope.longitude = $scope.vesselShadow.vesselState.longitude;
-            $scope.latitude = $scope.vesselShadow.vesselState.latitude;
-            $scope.velocity = $scope.vesselShadow.vesselState.velocity;
-            $scope.timestamp = $scope.vesselShadow.vesselState.date;
-            $scope.status  = $scope.vesselShadow.status
-            console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
+            if($scope.prePort != null){
+                $scope.interval = $scope.prePort+"-->"+$scope.nextPort;
+            }
+            $scope.longitude = $scope.vesselShadow.longitude;
+            $scope.latitude = $scope.vesselShadow.latitude;
+            $scope.velocity = $scope.vesselShadow.velocity+" Km/h";
+            $scope.timeStamp = $scope.vesselShadow.timeStamp;
+            $scope.status  = $scope.vesselShadow.status;
+            // console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
             if($scope.status != "Voyaging" && $scope.status != undefined){
                 $scope.completeTask();
                 $interval.cancel($scope.voyageTaskTimer);
             }
     	})
     }, 1000);
+
+   $scope.DelayModalShow = function(){
+      // 定义模态框
+       var modalInstance = _internalCreateModal({
+           template :  appResourceRoot + 'views/modal/delay.html',  // 摸态框视图
+           scope: $scope,
+           show: true
+       }, $modal , $scope);
+       modalInstance.$scope.setDxy = function() {
+           // console.log("DelayController--",$scope.status);
+       };
+   }
+   $scope.ApplyModalShow = function(){
+      // 定义模态框
+      var modalInstance = _internalCreateModal({
+          template :  appResourceRoot + 'views/modal/apply.html',  // 摸态框视图
+          scope: $scope,
+          show: true
+      }, $modal , $scope);
+   }
 }]);
 
 angular.module('activitiApp')
-    .controller('ApplyController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+    .controller('ApplyCtrl', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
         function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
         $scope.spNames=["缸盖" , "钢筋","钢板"];
+        $scope.selectedName = "缸盖";
         $scope.spNumber = 1;
-        $scope.apply = function () {
+        console.log("ApplyController--",$scope.status);
+            $scope.apply = function () {
             var body = {
                 spName : $scope.spName,
                 spNumber : $scope.spNumber
             }
-            $http.post(ACTIVITI.CONFIG.contextRoot+'/api/vessel/'+$scope.model.task.processInstanceId+'/apply' , body)
+            $http.post(ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+'/apply' , body)
                 .success(function (data) {
                     console.log("Apply successfully.",data);
+                    $scope.$hide();
                 })
         };
+    }]);
+angular.module('activitiApp')
+    .controller('DelayCtrl', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+
+            $scope.dx = 0;
+            $scope.dy = 0;
+            console.log("DelayController--",$scope.status);
+            $scope.setDxy = function () {
+                var body = {
+                    dx : $scope.dx,
+                    dy : $scope.dy
+                }
+                console.log(body);
+                $http.post(ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+'/delay' , body)
+                    .success(function (data) {
+                        console.log("Delay successfully.", data);
+                        $scope.$hide();
+                    });
+            };
     }]);
 
 

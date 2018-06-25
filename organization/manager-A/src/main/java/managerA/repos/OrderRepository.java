@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Service
 public class OrderRepository {
-    private  final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private static final Logger logger = LoggerFactory.getLogger(OrderRepository.class);
 
     private List<Order> orders = new ArrayList<Order>();
 

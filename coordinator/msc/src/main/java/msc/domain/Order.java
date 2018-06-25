@@ -19,7 +19,8 @@ public class Order {
     private String sOrgId;
     private String spid;
     private String spName;
+    private double spWight;
     private int spNumber;
-    private List<String> candidatePorts;
+    private List<String> destinations;
     private String timeStamp;
 }

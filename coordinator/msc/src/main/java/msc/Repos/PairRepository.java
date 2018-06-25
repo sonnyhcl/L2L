@@ -13,7 +13,7 @@ import java.util.List;
 @Data
 @Service
 public class PairRepository {
-    private final Logger logger = LoggerFactory.getLogger(PairRepository.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private List<Pair> pairs = new ArrayList<Pair>();
 
@@ -23,7 +23,10 @@ public class PairRepository {
 
         for(Pair pair : pairs){
 
-            pair.isRegistried(orgId,pid);
+            isRegistried = pair.isRegistried(orgId,pid);
+            if(isRegistried == true){
+                return true;
+            }
 
         }
         return isRegistried;
@@ -33,7 +36,10 @@ public class PairRepository {
         boolean isPaired = false;
 
         for(Pair pair : pairs){
-           pair.isPaired(orgId , pid);
+            isPaired = pair.isPaired(orgId , pid);
+            if(isPaired == true){
+                return true;
+            }
         }
 
         return isPaired;

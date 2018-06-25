@@ -1,4 +1,4 @@
-package supplierA.activiti.servlet;
+package supplierB.activiti.servlet;
 
 
 import org.slf4j.Logger;
@@ -8,7 +8,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@SuppressWarnings("all")
 public class MyCorsFilter implements Filter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -27,7 +27,13 @@ public class MyCorsFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         String hostOrigin = request.getHeader("Origin");
         //TODO : evaulate whether the hostOrigin is valid
-//        logger.debug("Host origin : "+hostOrigin);
+        logger.debug(request.getHeader("Authorization")+"--"+request.getHeader("Host")+"--"+request.getHeader("Origin"));
+        //TODO : evaulate whether the hostOrigin is valid
+        if(hostOrigin == null){
+            hostOrigin = "http://"+request.getHeader("Host");
+            logger.debug("reset Host origin : "+hostOrigin);
+
+        }
         response.setHeader("Access-Control-Allow-Origin", hostOrigin);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods",

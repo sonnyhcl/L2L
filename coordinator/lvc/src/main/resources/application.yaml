@@ -1,0 +1,10 @@
+server:
+ port: 9044
+ servlet:
+   context-path: /lvc
+
+#
+#custom properties
+#
+storages:
+ fileName: storageRates.csv

@@ -11,14 +11,14 @@ import java.util.List;
 @Data
 @Service
 public class LogisticRepository {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(LogisticRepository.class);
 
     private List<LogisticPart> logisticParts;
 
     public LogisticRepository(){
         logisticParts = new ArrayList<LogisticPart>();
-        logisticParts.add(new LogisticPart("顺丰速运", "LA1001" , "10.131.245.91","9031" , "logistic-A" ,"fixed-rendezvous"));
-        logisticParts.add(new LogisticPart("圆通速运", "LB1003" , "10.131.245.91","9032" , "logistic-B" , "variable-rendezvous"));
+        logisticParts.add(new LogisticPart("顺丰速运", "LA1001" , "10.131.245.91","9031" , "logistic-A" ,"variable-rendezvous"));
+        logisticParts.add(new LogisticPart("圆通速运", "LB1003" , "10.131.245.91","9032" , "logistic-B" , "fixed-rendezvous"));
     }
 
     public LogisticPart findByLOrgId(String orgId){

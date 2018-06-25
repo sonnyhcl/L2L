@@ -14,7 +14,7 @@ public class ManagerRepository {
     private List<ManagerPart> managerParts = new ArrayList<ManagerPart>();
 
     private ManagerRepository(){
-        managerParts.add(new ManagerPart("船运管理公司","MA1001"  , "10.131.245.91","9021" , "manager-A" ,null));
+        managerParts.add(new ManagerPart("船运管理公司","MA1001"  , "10.131.245.91","9011" , "manager-A" ,null));
     }
 
     public ManagerPart findByOrgId(String orgId){

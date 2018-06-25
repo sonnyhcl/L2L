@@ -17,14 +17,14 @@ public class Application {
     private String mOrgId;
     private String mpid;
     private String spName;
-    private String spNumber;
-    private List<String> candidatePorts;
+    private int spNumber;
+    private List<String> destinations;
     private String timeStamp;
 
 
     public Order generateOrder(String orderId ,  String sOrgId , String spid){
         Order order = new Order(orderId, this.vOrgId, this.vpid, this.vid,  this.mOrgId,  this.mpid,
-                 sOrgId,  spid,  this.spName,  this.spNumber, this.candidatePorts,  this.timeStamp);
+                 sOrgId,  spid,  this.spName,  this.spNumber, this.destinations,  this.timeStamp);
         return order;
     }
 }

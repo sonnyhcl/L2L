@@ -6,9 +6,11 @@ import com.amazonaws.services.iot.client.AWSIotTopic;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
+@SuppressWarnings("all")
 public class ActivitiSubscriber extends AWSIotTopic {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -27,7 +29,6 @@ public class ActivitiSubscriber extends AWSIotTopic {
     @Override
     public void onMessage(AWSIotMessage message) {
         String receivedTopic = message.getTopic();
-//        logger.debug(receivedTopic);
         try {
             switch (receivedTopic) {
                 case "$aws/things/vessel/shadow/update/accepted":

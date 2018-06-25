@@ -324,153 +324,116 @@
 
 
         <div class="panel-group" id="accordion" ng-if="model.task.name == 'Voyaging'" ng-controller="VoyaTaskController">
-            <div  class="panel panel-default panel-container">
-                <div class="panel-heading">
-                 <span class="panel-title">
-                    <h2 >Current state</h2>
-                 </span>
+            <div  class="panel panel-danger panel-container">
+                <div class="panel-heading head-container">
+                    <div class="pull-left head-title"><span class="panel-title"><h2 >Current state</h2></span>
+                    </div>
+                    <div class="pull-right head-btns">
+                        <button type="button" id='vApplyBtn' class="btn btn-default navbar-btn " ng-click="ApplyModalShow()">
+                            <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true">Apply</span>
+                        </button>
+                        <button type="button" id='vDalayBtn' class="btn btn-default navbar-btn" ng-click="DelayModalShow()">
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true">Delay</span>
+                        </button>
+                    </div>
                 </div>
-
-                <div  class="panel-body">
-                    <button type="button" id='apply0' class="btn btn-default navbar-btn pull-left  " data-toggle="modal"
-                            data-target="#sendGoodsModal">
-                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true">Apply</span>
-                    </button>
-                    <button type="button" id='delay0' class="btn btn-default navbar-btn pull-left  " data-toggle="modal"
-                            data-target="#sendGoodsModal">
-                        <span class="glyphicon glyphicon-envelope" aria-hidden="true">Delay</span>
-                    </button>
-                    <table  class="table voya-table" >
+                <div  class="panel-body" style="padding: 0px 20px 0px 20px; margin-top: 5px;">
+                    <table  class="table" >
                         <tr>
-                            <td class="td1" >Port&nbsp;Interval</td>
-                            <td class="td2">：</td>
-                            <td class="td3" ><span ng-show = "prePort != null">{{prePort}}--->{{nextPort}}</span></td>
+                            <td><span class="input-group-addon input-lg">Port&nbsp;Interval</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="interval" readonly="readonly" style = "color: #e8120f" ></td>
                         </tr>
                         <tr>
-                            <td class="td1">Longitude</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{longitude}}</td>
+                            <td><span class="input-group-addon input-lg">Longitude</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="longitude" readonly="readonly"></td>
                         </tr>
                         <tr>
-                            <td class="td1">Latitude</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{latitude}}</td>
+                            <td><span class="input-group-addon input-lg">Latitude</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="latitude" readonly="readonly"></td>
                         </tr>
                         <tr>
-                            <td class="td1" >Velocity</td>
-                            <td class="td2">：</td>
-                            <td class="td3"><span ng-show = "velocity != null" >{{velocity}} 海里/h</span></td>
+                            <td><span class="input-group-addon input-lg">Speed</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="velocity" readonly="readonly"></td>
                         </tr>
                         <tr>
-                            <td class="td1" >Timestamp</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{timestamp}}</td>
+                            <td><span class="input-group-addon input-lg">Timestamp</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="timeStamp" readonly="readonly"></td>
                         </tr>
                     </table>
+                    <hr style="margin-bottom:6px; margin-top: -16px;">
                 </div>
                 <div class="panel-footer">
-                    <span class="">Tips : display vessel state instantly.</span>
+                    <span>Tips : display vessel state instantly.</span>
                 </div>
             </div>
         </div>
 
-
 		<hr/>
+
 		<div  class="panel-group"  ng-if="model.task.name == 'AnchoringOrDocking'" ng-controller="ADTaskController">
-            <div  class="panel panel-default panel-container">
-                <div class="panel-heading">
-                 <span class="panel-title">
-                      <h3>港口 : {{curPort.pname}} / 状态 : {{status}} </h3>
-                 </span>
+            <div  class="panel panel-danger panel-container">
+                <div class="panel-heading head-container">
+                    <div class="pull-left head-title">
+                        <span class="panel-title"><h3>港口 : {{pname}} / 状态 : {{status}} </h3>
+                        </span>
+                    </div>
+                    <div class="pull-right head-btns">
+                        <button type="button" id='adApplyBtn' class="btn btn-default navbar-btn " ng-click="ApplyModalShow()">
+                            <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true">Apply</span>
+                        </button>
+                        <button type="button" id='adDelayBtn' class="btn btn-default navbar-btn" ng-click="DelayModalShow()">
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true">Delay</span>
+                        </button>
+                    </div>
                 </div>
 
-                <div  class="panel-body">
-                    <button type="button" id='apply1' class="btn btn-default navbar-btn pull-left  " data-toggle="modal"
-                            data-target="#sendGoodsModal">
-                        <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true">Apply</span>
-                    </button>
-                    <button type="button" id='delay1' class="btn btn-default navbar-btn pull-left  " data-toggle="modal"
-                            data-target="#sendGoodsModal">
-                        <span class="glyphicon glyphicon-envelope" aria-hidden="true">Delay</span>
-                    </button>
-                    <table  class="table voya-table" ng-show = "status == 'Anchoring'">
+                <div  class="panel-body" style="padding: 0px 20px 0px 20px; margin-top: 5px;">
+                    <table  class="table" ng-show = "status == 'Anchoring'">
                         <tr>
-                            <td class="td1" >距离靠港剩余</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{arrivalElapseTime}}h</td>
+                            <td><span class="input-group-addon input-lg">靠港剩余</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="arrivalElapseTime" style = "color: #e8120f" readonly="readonly" ></td>
                         </tr>
 
                         <tr>
-                            <td class="td1" >当前时间</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{curTime}}</td>
+                            <td  ><span class="input-group-addon input-lg">当前时间</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="curTime" readonly="readonly"></td>
                         </tr>
 
                         <tr>
-                            <td class="td1" >抛猫时间</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{anchoringTime}}</td>
+                            <td  ><span class="input-group-addon input-lg">抛猫时间</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="anchoringTime" readonly="readonly"></td>
                         </tr>
                         <tr >
-                            <td class="td1" >靠港时间</td>
-                            <td class="td2">：</td>
-                            <td class="td3">{{arrivalTime}}</td>
+                            <td ><span class="input-group-addon input-lg">靠港时间</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="arrivalTime"></td>
                         </tr>
                     </table>
-                    <table  class="table voya-table" ng-show = "status == 'Docking'">
+                    <table  class="table" ng-show = "status == 'Docking'">
                         <tr>
-                            <td class="td1" >距离离港剩余</td>
-                            <td class="td3">{{departureElapseTime}}h</td>
+                            <td ><span class="input-group-addon input-lg">离港剩余</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="departureElapseTime"  style = "color: #e8120f" readonly="readonly"></td>
                         </tr>
 
                         <tr>
-                            <td class="td1" >当前时间</td>
-                            <td class="td3">{{curTime}}</td>
+                            <td  ><span class="input-group-addon input-lg">当前时间</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="curTime" readonly="readonly"></td>
                         </tr>
 
                         <tr>
-                            <td class="td1" >靠港时间</td>
-                            <td class="td3">{{arrivalTime}}</td>
+                            <td><span class="input-group-addon input-lg">靠港时间</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="arrivalTime" readonly="readonly"></td>
                         </tr>
                         <tr >
-                            <td class="td1" >离港时间</td>
-                            <td class="td3">{{departureTime}}</td>
+                            <td><span class="input-group-addon input-lg">离港时间</span></td>
+                            <td><input type="text" class="form-control input-lg" ng-model="departureTime" readonly="readonly"></td>
                         </tr>
                     </table>
+                    <hr style="margin-bottom:6px; margin-top: -16px;">
                 </div>
-                <div class="panel-footer">
+                <div class="panel-footer foot-container">
                     <span class="">Tips : display vessel state instantly.</span>
                 </div>
             </div>
 		</div>
     </div>
-    <div class="modal" id="sendGoodsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" ng-controller="ApplyController">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                        &times;
-                    </button>
-                    <h4 class="modal-title" id="myModalLabel">
-                        选择货物
-                    </h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <select class="form-control input-sm" ng-init="selectedName = spNames[0]" ng-model="spName" ng-options="x for x in spNames">
-                        </select>
-                    </div>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                    </button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="apply()">
-                        提交更改
-                    </button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
-    </div>
-    
 </div>

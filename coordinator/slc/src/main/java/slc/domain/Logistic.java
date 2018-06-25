@@ -23,12 +23,12 @@ public class Logistic {
     private String wid;
 
     private String spName;
+    private double spWight;
     private int spNumber;
     private String category; // fixed or variable rendezvous
     private String rendezvous;
-    private double longitude;
-    private double latitude;
-    private List<String> candidatePorts;
+    private String  supLoc; // supplier location
+    private List<String> destinations;
     private String timeStamp;
 
 }

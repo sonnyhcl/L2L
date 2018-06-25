@@ -35,8 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @author Tijs Rademakers
  */
 @Component
-public class
-Bootstrapper implements ApplicationListener<ContextRefreshedEvent> {
+public class Bootstrapper implements ApplicationListener<ContextRefreshedEvent> {
 
     private final Logger log = LoggerFactory.getLogger(Bootstrapper.class);
 

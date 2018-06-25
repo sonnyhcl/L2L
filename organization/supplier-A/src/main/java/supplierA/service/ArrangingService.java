@@ -34,7 +34,7 @@ public class ArrangingService implements JavaDelegate ,Serializable{
     private RuntimeService runtimeService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @Autowired
     private CommonRepository commonRepository;
@@ -57,20 +57,10 @@ public class ArrangingService implements JavaDelegate ,Serializable{
         String lOrgId = pvars.get("lOrgId").toString();
         String lCategory = pvars.get("lCategory").toString();
 
-
-
         Order order = orderRepository.findById(orderId);
-
-        Logistic logistic = order.generateLogistic(null,lOrgId , null , null ,lCategory , null , 0.0 , 0.0);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
-        HttpEntity<Logistic> requestEntity = new HttpEntity<Logistic>(logistic, headers);
+        Logistic logistic = order.generateLogistic(null,lOrgId , null , null ,lCategory , null , commonRepository.getLocation());
         String url = commonRepository.getSlcContextPath()+"/supplier/"+orgId+"/"+spid+"/arrange";
-        ResponseEntity<String> response = restTemplate.postForEntity(url , requestEntity , String.class);
-        logger.info(response.getBody());
-
-        logger.info("Generate order successfully :");
+        restClient.arrange(url , logistic);
+        logger.info("Generate logistic successfully");
     }
 }

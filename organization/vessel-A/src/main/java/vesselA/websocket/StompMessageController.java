@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import vesselA.repos.VesselCache;
+import vesselA.repos.CommonRepository;
 
 import java.security.Principal;
 
@@ -18,7 +18,7 @@ public class StompMessageController {
     public SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    private VesselCache vesselCache;
+    private CommonRepository vesselCache;
 
     //Just for testing the communication of websocket
     @MessageMapping("/hello")

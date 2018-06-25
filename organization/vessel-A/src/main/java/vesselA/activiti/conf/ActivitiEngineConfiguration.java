@@ -35,10 +35,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.PlatformTransactionManager;
-import vesselA.entity.Location;
-import vesselA.entity.VPort;
-import vesselA.entity.WPort;
-import vesselA.entity.Weagon;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
@@ -47,6 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@SuppressWarnings("all")
 public class ActivitiEngineConfiguration {
 
     private final Logger logger = LoggerFactory.getLogger(ActivitiEngineConfiguration.class);
@@ -92,13 +89,9 @@ public class ActivitiEngineConfiguration {
         processEngineConfiguration.setJpaEntityManagerFactory(entityManagerFactory);
         processEngineConfiguration.setJpaCloseEntityManager(false);
         processEngineConfiguration.setJpaHandleTransaction(false);
-        List<AbstractFormType> customFormTypes = new ArrayList<AbstractFormType>();
-        customFormTypes.add(new Weagon());
-        customFormTypes.add(new Location());
-        customFormTypes.add(new VPort());
-        customFormTypes.add(new WPort());
-        processEngineConfiguration.setCustomFormTypes(customFormTypes);
-        logger.info("Custom type");
+//        List<AbstractFormType> customFormTypes = new ArrayList<AbstractFormType>();
+//        processEngineConfiguration.setCustomFormTypes(customFormTypes);
+//        logger.info("Custom type");
         String emailHost = environment.getProperty("email.host");
         if (StringUtils.isNotEmpty(emailHost)) {
             processEngineConfiguration.setMailServerHost(emailHost);

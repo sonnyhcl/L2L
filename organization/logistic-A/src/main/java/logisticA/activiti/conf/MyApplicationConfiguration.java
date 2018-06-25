@@ -12,8 +12,23 @@
  */
 package logisticA.activiti.conf;
 
+import jxl.read.biff.BiffException;
+import logisticA.domain.Freight;
+import logisticA.domain.Location;
+import logisticA.repos.FreightRepository;
+import logisticA.repos.LocationRepository;
+import logisticA.repos.MapRepository;
+import logisticA.util.CsvUtil;
+import logisticA.util.ExcelUtilJXL;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.env.Environment;
+
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.List;
 
 @Configuration
 @PropertySources({
@@ -25,12 +40,17 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 })
 @ComponentScan(basePackages = {
-        "logisticpart.*",
+        "logisticA.*",
         "org.activiti.app.repository",
         "org.activiti.app.service",
         "org.activiti.app.security",
         "org.activiti.app.model.component"})
 public class MyApplicationConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger(MyApplicationConfiguration.class);
+
+    @Inject
+    private Environment environment;
 
     /**
      * This is needed to make property resolving work on annotations ...
@@ -42,4 +62,40 @@ public class MyApplicationConfiguration {
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
+
+    @Bean
+    public MapRepository mapRepository(){
+        String key = environment.getProperty("map.key");
+        String basePath = environment.getProperty("map.basePath");
+        return new MapRepository(key , basePath);
+    }
+
+
+    @Bean
+    public LocationRepository locationRepository() throws IOException, BiffException {
+        String  fileName = environment.getProperty("locations.fileName");
+        logger.debug("--"+fileName+"--");
+        String path = this.getClass().getResource("/").getPath()+fileName;
+        List<Location> locations = CsvUtil.readLocations(path);
+        logger.debug("locations : "+locations.toString());
+        LocationRepository locationRepository = new LocationRepository();
+        locationRepository.setLocations(locations);
+        return locationRepository;
+    }
+
+    @Bean
+    public FreightRepository freightRepository() throws IOException, BiffException {
+        String  fileName = environment.getProperty("freightRates.fileName");
+        logger.debug("--"+fileName+"--");
+        String path = this.getClass().getResource("/").getPath()+fileName;
+        List<Freight> freights = CsvUtil.readFreightRates(path);
+        logger.debug("freights : "+freights.toString());
+        FreightRepository freightRepository = new FreightRepository();
+        freightRepository.setFreights(freights);
+        return freightRepository;
+    }
+
+
+
 }

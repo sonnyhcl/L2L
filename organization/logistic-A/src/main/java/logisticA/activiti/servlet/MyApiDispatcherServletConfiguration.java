@@ -26,7 +26,7 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @Configuration
 @ComponentScan(value = {
         "org.activiti.rest",
-        "logisticpart.logistic.controller"
+        "logisticA.controller"
 })
 @EnableAsync
 @EnableWebMvc

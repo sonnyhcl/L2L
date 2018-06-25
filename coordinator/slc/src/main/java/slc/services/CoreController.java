@@ -3,6 +3,7 @@ package slc.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class CoreController {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -36,6 +37,12 @@ public class CoreController {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
+    @RequestMapping("/hello")
+    public String hello(){
+        logger.debug("hello ,slc");
+        return "hello , slc";
+    }
 
 
 
@@ -57,34 +64,33 @@ public class CoreController {
 
         logger.debug("Received message : MsgStartLogistic from supplier-app : "+orgId+"--PID: "+pid);
         //TODO:Supplier shakes hands with logistic.
+        //TODO: allocate wid , logisticId
+        String wid = "W"+CommonUtil.getGuid();
+        String  logisticId = pid+ CommonUtil.getGuid();
+
         SupplierPart sp = supplierRepository.findByOrgId(orgId);
-        SupplierProcessInstance spi = new SupplierProcessInstance(pid , orgId , null  , logistic.getId());
-        Pair pair = new Pair(spi, null);
-        pairRepository.register(pair);
+        SupplierProcessInstance spi = new SupplierProcessInstance(pid , orgId , null  , logisticId);
+        spi.setLogisticId(logistic.getId());
+        if(pairRepository.isRegistried(orgId , pid) == false){
+            Pair pair = new Pair(spi, null);
+            pairRepository.register(pair);
+        }
 
         //TODO: Starting Logistic based on message.
         String lOrgId = logistic.getLOrgId();
         LogisticPart logisticPart = logisticRepository.findByLOrgId(lOrgId);
-        String url = logisticPart.getUrl()+"/logistic/"+lOrgId+"/process-instances/MsgStartLogistic";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        String  logisticId = pid+ CommonUtil.getGuid();
-        String wid = "W"+CommonUtil.getGuid();
+        String url = logisticPart.getUrl()+"/api/"+lOrgId+"/process-instances/MsgStartLogistic";
         logistic.setWid(wid);
         logistic.setId(logisticId);
-        logistic.setLongitude(sp.getLongitude());
-        logistic.setLatitude(sp.getLatitude());
-
-        HttpEntity<Logistic> requestEntity = new HttpEntity<Logistic>(logistic, headers);
-        ResponseEntity<Logistic> response = restTemplate.postForEntity(url ,requestEntity , Logistic.class);
-        logger.info(response.getBody().toString());
+        String rep = restClient.startLogistic(url , logistic);
+        logger.info(rep);
 
         return new ResponseEntity<Logistic>(logistic , HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/supplier/{orgId}/{pid}/logistic", method = RequestMethod.POST)
-    public String queryLogistic(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
+    public  HashMap<String , Object> queryLogistic(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
                                  @RequestBody HashMap<String, Object> payload){
 
         //TODO : VMC Locgic --- 取出所有变量转发给Manager流程
@@ -92,24 +98,22 @@ public class CoreController {
         String category = payload.get("category").toString();
         String logisticId = null;
         switch (category){
-            case "fixed-rendezvous" :
+            case "variable-rendezvous" :
                 logisticId = "LA1001";
                 break;
-            case "variable-rendezvous" :
+            case "fixed-rendezvous" :
                 logisticId = "LB1003";
                 break;
             default :
                 break;
         }
-        ObjectNode payloadObjectNode = objectMapper.createObjectNode();
 
+        HashMap<String , Object> res = new HashMap<String , Object>();
         if(logisticId != null){
-            payloadObjectNode.put("lOrgId", logisticId);
-            payloadObjectNode.put("lCategory", category);
+            res.put("lOrgId", logisticId);
+            res.put("lCategory", category);
         }
-        String res = payloadObjectNode.toString();
         return res;
-
     }
 
 
@@ -129,7 +133,7 @@ public class CoreController {
      * @return
      */
     @RequestMapping(value = "/logistic/{orgId}/{pid}/match", method = RequestMethod.POST)
-    public String managerDispature(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
+    public String match(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
                          @RequestBody HashMap<String, Object> payload) throws JsonProcessingException {
         //TODO : VMC Locgic --- 取出所有变量转发给Manager流程
         logger.debug("Received message : match from logistic-app : "+orgId+"--PID: "+pid);

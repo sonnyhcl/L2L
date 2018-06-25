@@ -1,15 +1,15 @@
 package managerA.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import managerA.domain.Application;
 import managerA.repos.ApplicationRepository;
 import managerA.repos.CommonRepository;
+import managerA.service.RestClient;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-import managerA.domain.Application;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,21 +17,24 @@ import java.util.Map;
 @RestController
 public class ManagerController extends AbstractController {
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @Autowired
     private CommonRepository commonRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private ApplicationRepository applicationRepository;
 
+    @RequestMapping("/hello")
+    public String hello(){
+        logger.debug("hello ,manager");
+        restClient.test();
+        return "hello , manager";
+    }
 
 
-    @RequestMapping(value = "/manager/{orgId}/process-instances/MsgStartManager", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<Application> startManagerProc(@PathVariable("orgId") String orgId,
+    @RequestMapping(value = "/{orgId}/process-instances/MsgStartManager", method = RequestMethod.POST, produces = "application/json")
+    public String startManagerProc(@PathVariable("orgId") String orgId,
                                                         @RequestBody Application application) throws JsonProcessingException {
         logger.info(orgId+" : MsgStartManager");
         logger.info("***********startManagerProc***********");
@@ -50,15 +53,11 @@ public class ManagerController extends AbstractController {
         sendData.put("vOrgId" , application.getVOrgId());
         sendData.put("vpid" , application.getVpid());
         sendData.put("vid" , application.getVid());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        String body = objectMapper.writeValueAsString(sendData);
-        HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
+        sendData.put("applyId" ,application.getId());
         String url = commonRepository.getVmcContextPath()+"/manager/"+orgId+"/"+pi.getId()+"/match";
-        ResponseEntity<String> response = restTemplate.postForEntity(url , requestEntity , String.class);
-        logger.info(response.getBody());
-
-        return new ResponseEntity<Application>(application, HttpStatus.OK);
+        String rep = restClient.matchVessel(url, sendData);
+        logger.info(rep);
+        return "Start manager successfully";
     }
 
 }

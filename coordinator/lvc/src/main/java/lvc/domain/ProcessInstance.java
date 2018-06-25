@@ -9,6 +9,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProcessInstance {
-    @NonNull private String id;
-    @NonNull private String orgId; // organization dependency.
+    @NonNull protected String id;
+    @NonNull protected String orgId; // organization dependency.
 }

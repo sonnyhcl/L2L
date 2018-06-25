@@ -2,8 +2,10 @@ package msc.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import msc.Repos.CraneRepository;
 import msc.Repos.ManagerRepository;
 import msc.domain.*;
+import msc.util.CommonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,18 +15,19 @@ import org.springframework.web.client.RestTemplate;
 import msc.Repos.PairRepository;
 import msc.Repos.SupplierRepository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @RestController
 public class CoreController {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(CoreController.class);
 
     @Autowired
-    private RestTemplate restTemplate;
+    private  RestClient restClient;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+
 
     @Autowired
     private PairRepository pairRepository;
@@ -35,6 +38,18 @@ public class CoreController {
     @Autowired
     private ManagerRepository managerRepository;
 
+    @Autowired
+    private CraneRepository craneRepository;
+    @RequestMapping(value = "/{testId}/hello",method = RequestMethod.POST)
+    public  String hello(@PathVariable("testId") String testId ,  @RequestBody HashMap<String, Object> payload ){
+        logger.debug("hello ,msc--"+testId);
+        return "hello , mscc";
+    }
+    @RequestMapping(value = "/hello",method = RequestMethod.GET)
+    public  String gethello(){
+        logger.debug("hello ,msc--");
+        return "hello , msc";
+    }
 
     /**
      * *****************from Manager participant****************************************
@@ -54,11 +69,17 @@ public class CoreController {
 
         //TODO : VMC Locgic --- 取出所有变量转发给Manager流程
         logger.debug("Received order from manager-app : "+orgId+"--PID: "+pid);
+        //TODO:generate ordId
+        String orderId = pid+ CommonUtil.getGuid();
         //TODO:Ship shakes hands with the affiliated shipping  company.
         ManagerPart managerPart = managerRepository.findByOrgId(orgId);
         ManagerProcessInstance mpi = new ManagerProcessInstance(pid , orgId);
-        Pair pair = new Pair(mpi , null);
-        pairRepository.register(pair);
+        mpi.setOrderId(orderId);
+        if(pairRepository.isRegistried(orgId , pid) == false){
+            Pair pair = new Pair(mpi , null);
+            pairRepository.register(pair);
+        }
+
 
         //TODO: According to the spare parts information, choose the best supplier according to the corresponding policy
         String spName = order.getSpName();
@@ -81,19 +102,24 @@ public class CoreController {
         //select a supplier for order.
         order.setSOrgId(sOrgId);
 
+        //TODO: According to crane information , screen effective ports.
+        List<String> validDests = new ArrayList<String>();
+        List<String> destinations = order.getDestinations();
+        for(int i = 0 ; i < destinations.size() ; i++){
+            String d = destinations.get(i);
+            double wlim = craneRepository.queryWeightLimit(d);
+            if(order.getSpWight() <= wlim){
+                validDests.add(d);
+            }
+        }
+        order.setDestinations(validDests);
+
         //TODO: Starting Supplier based on message.
-
         SupplierPart supplierPart = supplierRepository.findByOrgId(sOrgId);
-
-        String url = supplierPart.getUrl()+"/supplier/"+orgId+"/process-instances/MsgStartSupplier";
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        String orderId = pid+ CommonUtil.getGuid();
         order.setId(orderId);
-        HttpEntity<Order> requestEntity = new HttpEntity<Order>(order, headers);
-        ResponseEntity<Order> response = restTemplate.postForEntity(url ,requestEntity , Order.class);
-        logger.info(response.getBody().toString());
-
+        String url = supplierPart.getUrl()+"/api/"+orgId+"/process-instances/MsgStartSupplier";
+        String rep = restClient.startSupplier(url , order);
+        logger.info(rep);
         return new ResponseEntity<Order>(order , HttpStatus.OK);
     }
 
@@ -110,15 +136,16 @@ public class CoreController {
      * @return
      */
     @RequestMapping(value = "/supplier/{orgId}/{pid}/match", method = RequestMethod.POST)
-    public String managerDispature(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
+    public String matchManager(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
                        @RequestBody HashMap<String, Object> payload) throws JsonProcessingException {
         //TODO : VMC Locgic --- 取出所有变量转发给Manager流程
         logger.debug("Received message : match from manager-app : "+orgId+"--PID: "+pid);
-
         //TODO:Ship shakes hands with the affiliated shipping management company.
         String mOrgId = payload.get("mOrgId").toString();
         String mpid = payload.get("mpid").toString();
+        String ordId = payload.get("ordId").toString();
         SupplierProcessInstance spi = new SupplierProcessInstance(pid , orgId);
+        spi.setOrderId(ordId);
         pairRepository.match(mOrgId , mpid , spi);
         logger.info(pairRepository.getPairs().toString());
         return "M-S match successfully";

@@ -25,7 +25,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 })
 @ComponentScan(basePackages = {
-        "supplierpart.*",
+        "supplierA.*",
         "org.activiti.app.repository",
         "org.activiti.app.service",
         "org.activiti.app.security",

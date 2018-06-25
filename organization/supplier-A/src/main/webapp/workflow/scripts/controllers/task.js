@@ -756,21 +756,27 @@ angular.module('activitiApp')
 angular.module('activitiApp')
 .controller('ApprovingController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
-
-          $scope.logistics = ["固定目的地" , "可变目的地"];
-          $scope.selectedLogistic = "固定目的地";
+          $scope.model.completeButtonDisabled = true;
+          $scope.logistics = ["可变目的地","固定目的地"];
+          $scope.selectedLogistic = "可变目的地";
+          $scope.toEn ={
+              可变目的地 : "variable-rendezvous",
+              固定目的地 : "fixed-rendezvous"
+          }
 
           $scope.select = function(){
               console.log("Selected Logistic : ",$scope.selectedLogistic)
               //TODO:query  suppliers for selected supplier
-              var url = ACTIVITI.CONFIG.contextRoot+'/api/supplier/logistic';
+              var url = ACTIVITI.CONFIG.contextRoot+'/api/logistic/category';
               var params = {
-                  category : $scope.selectedLogistic,
-                  spid : $scope.model.processInstanceId
+                  category : $scope.toEn[$scope.selectedLogistic],
+                  spid : $scope.model.task.processInstanceId
               }
+
               $http.post(url , params)
                   .success(function (data) {
-                      
+                      console.log("query logistic successfully : ",data);
+                      $scope.completeTask();
                   });
           }
 

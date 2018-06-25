@@ -17,12 +17,13 @@ public class Order {
     private String sOrgId;
     private String spid;
     private String spName;
-    private String spNumber;
-    private List<String> candidatePorts;
+    private double spWight;
+    private int spNumber;
+    private List<String> destinations;
     private String timeStamp;
 
     public Order(String id, String vOrgId, String vpid, String vid, String mOrgId, String mpid,
-                 String sOrgId, String spid, String spName, String spNumber, List<String> candidatePorts, String timeStamp) {
+                 String sOrgId, String spid, String spName, int spNumber, List<String> destinations, String timeStamp) {
         this.id = id;
         this.vOrgId = vOrgId;
         this.vpid = vpid;
@@ -33,7 +34,7 @@ public class Order {
         this.spid = spid;
         this.spName = spName;
         this.spNumber = spNumber;
-        this.candidatePorts = candidatePorts;
+        this.destinations = destinations;
         this.timeStamp = timeStamp;
     }
 }

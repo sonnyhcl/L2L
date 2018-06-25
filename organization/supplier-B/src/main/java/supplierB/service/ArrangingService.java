@@ -1,12 +1,6 @@
 package supplierA.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import supplierA.domain.Logistic;
-import supplierA.domain.Order;
-import supplierA.repos.OrderRepository;
-import supplierA.util.CommonUtil;
-import supplierA.repos.CommonRepository;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
@@ -19,6 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import supplierA.domain.Logistic;
+import supplierA.domain.Order;
+import supplierA.repos.CommonRepository;
+import supplierA.repos.OrderRepository;
 
 import java.io.Serializable;
 import java.util.HashMap;

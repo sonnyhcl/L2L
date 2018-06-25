@@ -1,6 +1,7 @@
 package logisticA.controller;
 
 import org.activiti.app.service.api.UserCache;
+import org.activiti.app.service.idm.UserCacheImpl;
 import org.activiti.engine.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,5 +33,5 @@ public class AbstractController {
     @Autowired
     protected FormService formService;
     @Autowired
-    protected UserCache userCache;
+    protected UserCacheImpl userCacheImpl;
 }

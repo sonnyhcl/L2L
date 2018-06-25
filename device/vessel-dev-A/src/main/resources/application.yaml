@@ -1,2 +1,32 @@
 server:
   port: 9051
+  context-path: /vessel-dev-A
+#
+#vessel properties
+#
+vessel:
+  vid: 413362260
+  states:
+   fileName: vesselStates.xls
+   sheetName: ${vessel.vid}
+  locations:
+   fileName: locations.xls
+   sheetName: ports
+  destinations:
+   fileName: destinations.xls
+   sheetName: ${vessel.vid}
+  topic:
+   updateShadow: $aws/things/${awsiot.thingName}/shadow/update
+   updateStatus: activiti/${awsiot.thingName}/status/change
+   activiti: activiti/${awsiot.thingName}/#
+   delay: activiti/delay
+
+#
+#AWS properties
+#
+awsiot:
+  clientEndpoint: a1cf6tovfozpv3.iot.cn-north-1.amazonaws.com.cn
+  clientId: VA${vessel.vid}
+  certificate: /home/bqzhu/Desktop/device/vessel.cert.pem
+  privateKey: /home/bqzhu/Desktop/device/vessel.private.key
+  thingName: vessel

@@ -62,26 +62,29 @@
 }
 
 /* custom css  */
-.generic-container {
-	width: 80%;
-	margin-left: 10%;
-	margin-right: 10%;
-	margin-top: 60px;
-	margin-bottom: 20px;
-	padding: 20px;
-	background-color: #e9eef2;
-	border: 1px solid #ddd;
-	border-radius: 10px;
-	box-shadow: 0 0 3px black;
+.panel-container{
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top:10%
+    /*padding: 50px;*/
 }
-
 .voya-table {
 	text-align:left;
 }
 .td1 {
-	width : 20%; 
-	color:green;
+    width : 10px;
+    color:green;
+    margin:0;
+    padding:0;
 }
 .td2 {
-	color:#ef2929;
+    width : 1%;
+    color:#ef2929;
+    margin:0;
+    padding:0;
+}
+.td3 {
+    color:#ef2929;
+    width : 30px;
 }

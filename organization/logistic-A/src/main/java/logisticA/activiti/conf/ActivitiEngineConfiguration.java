@@ -12,6 +12,7 @@
  */
 package logisticA.activiti.conf;
 
+import logisticA.repos.MapRepository;
 import org.activiti.dmn.engine.DmnEngineConfiguration;
 import org.activiti.dmn.engine.configurator.DmnEngineConfigurator;
 import org.activiti.engine.*;
@@ -195,4 +196,6 @@ public class ActivitiEngineConfiguration {
     public org.activiti.form.api.FormService formEngineFormService() {
         return processEngine().getFormEngineFormService();
     }
+
+
 }

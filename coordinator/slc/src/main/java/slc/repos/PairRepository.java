@@ -8,33 +8,38 @@ import slc.domain.LogisticPart;
 import slc.domain.LogisticProcessInstance;
 import slc.domain.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 @Data
 @Service
 public class PairRepository {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(PairRepository.class);
 
-    private List<Pair> pairs;
+    private List<Pair> pairs = new ArrayList<Pair>();
 
     public boolean isRegistried(String orgId , String pid){
-        boolean isRegistried = false;
+        boolean isReg = false;
 
         for(Pair pair : pairs){
 
-            pair.isRegistried(orgId,pid);
-
+            isReg = pair.isRegistried(orgId,pid);
+            if(isReg == true){
+                return true;
+            }
         }
-        return isRegistried;
+        return isReg;
     }
 
     public boolean isPaired(String orgId , String pid){
-        boolean isPaired = false;
+        boolean paired = false;
 
         for(Pair pair : pairs){
-           pair.isPaired(orgId , pid);
-        }
+            paired = pair.isPaired(orgId , pid);
+            if(paired == true){
+                return true;
+            }        }
 
-        return isPaired;
+        return paired;
     }
 
     public void register(Pair pair){

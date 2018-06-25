@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class LogisticPart extends Participant {
     private String category;
 
-    public LogisticPart(String orgName, String orgId, String host, String port, String projectId, String category) {
+    public LogisticPart(String orgName, String orgId, String host, String port, String projectId, String category){
         super(orgName, orgId, host, port, projectId);
         this.category = category;
     }

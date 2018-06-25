@@ -12,6 +12,9 @@
     <packaging>war</packaging>
     <!--<version>1.0.0</version>-->
     <properties>
+        <server.url>http://127.0.0.1:9011/manager-A</server.url>
+        <server.port>9011</server.port>
+        <server.path>/manager-A</server.path>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <spring.version>4.3.14.RELEASE</spring.version>
         <boot.version>1.5.9.RELEASE</boot.version>
@@ -211,9 +214,9 @@
                     <update>true</update> <!-- 热部署 -->
                     <charset>utf-8</charset> <!-- 设置字符集 -->
                     <uriEncoding>UTF-8</uriEncoding><!-- 设置uri编码 -->
-                    <port>9010</port> <!-- 设置端口 -->
-                    <path>/manager-A</path><!-- 设置默认访问应用的路径 -->
-                    <url>http://127.0.0.1:9010/manager-A</url>
+                    <port>${server.port}</port> <!-- 设置端口 -->
+                    <path>${server.path}</path><!-- 设置默认访问应用的路径 -->
+                    <url>${server.url}</url>
                 </configuration>
                 <dependencies>
                     <dependency>

@@ -3,9 +3,11 @@ package managerA.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import managerA.domain.Application;
 import managerA.domain.Order;
+import managerA.domain.SparePart;
 import managerA.repos.ApplicationRepository;
 import managerA.repos.CommonRepository;
 import managerA.repos.OrderRepository;
+import managerA.repos.SparePartRepository;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.JavaDelegate;
@@ -33,7 +35,7 @@ public class OrderService implements JavaDelegate,Serializable {
     private RuntimeService runtimeService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private RestClient restClient;
 
     @Autowired
     private CommonRepository commonRepository;
@@ -46,6 +48,9 @@ public class OrderService implements JavaDelegate,Serializable {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private SparePartRepository sparePartRepository;
+
     @Override
     public void execute(DelegateExecution delegateExecution) {
         //TODO: generate ordId for applying order
@@ -55,18 +60,16 @@ public class OrderService implements JavaDelegate,Serializable {
         String orgId = pvars.get("orgId").toString();
 
         //TODO : generate order from application.
-
         Application application = applicationRepository.findById(pvars.get("applyId").toString());
         Order order =  application.generateOrder(null , null , null);
-        //Omitted timeStamp
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        HttpEntity<Order> requestEntity = new HttpEntity<Order>(order, headers);
-        String url = commonRepository.getVmcContextPath()+"/manager/"+orgId+"/"+pid+"/order";
-        ResponseEntity<String> response = restTemplate.postForEntity(url , requestEntity , String.class);
-        logger.info(response.getBody());
-
-        logger.info("Generate order successfully ：");
+        //TODO: Supplementary order information
+        SparePart sparePart = sparePartRepository.findByName(order.getSpName());
+        order.setSpWight(sparePart.getWeight());
+       // Omitted timeStamp
+        String url = commonRepository.getMscContextPath()+"/manager/"+orgId+"/"+pid+"/order";
+        String rep = restClient.postOrder(url , order);
+//        String rep = restClient.test();
+        logger.info(rep);
+        logger.info("Generate order successfully.");
     }
 }

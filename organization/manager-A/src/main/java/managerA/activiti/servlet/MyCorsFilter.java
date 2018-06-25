@@ -8,7 +8,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@SuppressWarnings("all")
 public class MyCorsFilter implements Filter {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -26,8 +26,14 @@ public class MyCorsFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
         String hostOrigin = request.getHeader("Origin");
+        logger.debug(request.getHeader("Authorization")+"--"+request.getHeader("Host")+"--"+request.getHeader("Origin"));
         //TODO : evaulate whether the hostOrigin is valid
 //        logger.debug("Host origin : "+hostOrigin);
+        if(hostOrigin == null){
+            hostOrigin = "http://"+request.getHeader("Host");
+            logger.debug("reset Host origin : "+hostOrigin);
+
+        }
         response.setHeader("Access-Control-Allow-Origin", hostOrigin);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods",

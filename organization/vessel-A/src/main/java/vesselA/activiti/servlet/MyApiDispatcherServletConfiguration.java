@@ -27,19 +27,11 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 @ComponentScan(value = {
         "org.activiti.rest",
         "vesselA.controller"
-//        "vesselpart.websocket"
 })
 @EnableAsync
 @EnableWebMvc
 public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter{
 
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    //
-//	@Autowired
-//	protected Environment environment;
-//
     @Bean
     public SessionLocaleResolver localeResolver() {
         return new SessionLocaleResolver();
@@ -52,26 +44,4 @@ public class MyApiDispatcherServletConfiguration extends WebMvcConfigurerAdapter
         configurer.enable();
     }
 
-
-//    @Bean
-//    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
-//        RequestMappingHandlerMapping requestMappingHandlerMapping = new RequestMappingHandlerMapping();
-//        requestMappingHandlerMapping.setUseSuffixPatternMatch(false);
-//        requestMappingHandlerMapping.setRemoveSemicolonContent(false);
-//        requestMappingHandlerMapping.setInterceptors(getInterceptors());
-//        return requestMappingHandlerMapping;
-//    }
-//    
-//    @Override
-//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-//        extendMessageConverters(converters);
-//        for (HttpMessageConverter<?> converter: converters) {
-//            if (converter instanceof MappingJackson2HttpMessageConverter) {
-//                MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = (MappingJackson2HttpMessageConverter)
-// converter;
-//                jackson2HttpMessageConverter.setObjectMapper(objectMapper);
-//                break;
-//            }
-//        }
-//    }
 }

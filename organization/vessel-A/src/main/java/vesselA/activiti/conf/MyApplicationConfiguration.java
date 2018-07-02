@@ -30,7 +30,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
         "org.activiti.app.service",
         "org.activiti.app.security",
         "org.activiti.app.model.component"})
-public class MyApplicationConfiguration {
+public class   MyApplicationConfiguration {
 
     /**
      * This is needed to make property resolving work on annotations ...

@@ -74,14 +74,14 @@ public class RestClient {
     }
 
     public  String postStatus(LogisticPart logisticPart , String lpid , String status){
-        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shdow/"+status;
+        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shadow/"+status;
         HttpEntity httpEntity = new HttpEntity(status, getHeaders());
         ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
         return res.getBody();
     }
 
     public  String postStatus(VesselPart vesselPart , String lpid , String status){
-        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+lpid+"/shdow/"+status;
+        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+lpid+"/shadow/"+status;
         HttpEntity httpEntity = new HttpEntity(status, getHeaders());
         ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
         return res.getBody();

@@ -34,18 +34,18 @@ public class MapRepository {
 
     public String PlanPath(String x1, String y1, String x2, String y2){
         Map<String , Object> uriVars = new HashMap<String , Object>();
-        uriVars.put("width" , 2.5);
-        uriVars.put("strategy" , 2);
-        uriVars.put("size" ,2);
-        uriVars.put("weight" , 10);
+//        uriVars.put("width" , 2.5);
+        uriVars.put("strategy" , 0);
+        uriVars.put("extensions" ," base");
+//        uriVars.put("weight" , 10);
 
         uriVars.put("origin" , x1+","+y1);
         uriVars.put("destination" , x2+","+y2);
         uriVars.put("output" , "json");
         uriVars.put("key" , key);
-        String url = basePath+"?width={width}&strategy={strategy}&size={size}&weight" +
-                "={weight}&origin={origin}&destination={destination}&output={output}&key={key}";
+        String url = basePath+"?strategy={strategy}&extensions={extensions}&origin={origin}&destination={destination}&output={output}&key={key}";
         String pathInfo = restTemplate.getForObject(url , String.class, uriVars);
+        logger.debug("path info "+ pathInfo);
         return pathInfo;
 
     }

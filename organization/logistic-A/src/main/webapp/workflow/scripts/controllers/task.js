@@ -769,20 +769,21 @@ angular.module('activitiApp')
             $scope.movedDistance = null;
 
             $scope.runTimer = $interval(function(){
-                if($scope.model.task.name != 'Voyaging'){
+                if($scope.model.task.name != 'Running'){
                     return;
                 }
                 console.log("Task Name : " + $scope.model.task.name);
-                var shadowUrl = ACTIVITI.CONFIG.contextRoot+'/api/shadow/'+$scope.model.task.processInstanceId;
+                var shadowUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+'/shadow';
                 $http.get(shadowUrl)
                     .success(function(data){
-                        $scope.interval =  data.rendezvous.name;
+                        // $scope.interval =  data.rendezvous.name;
                         $scope.longitude = data.longitude;
                         $scope.latitude = data.latitude;
                         $scope.velocity = data.speed+" Km/h";
                         $scope.timeStamp = data.timeStamp;
                         $scope.status  = data.status;
                         $scope.movedDistance = data.movedDistance;
+                        console.log($scope.status);
                         if($scope.status != "Running" && $scope.status != undefined){
                             $scope.completeTask();
                             $interval.cancel($scope.runTimer);

@@ -80,7 +80,10 @@ public class PlanningService implements JavaDelegate ,Serializable{
         List<String> destinations = logistic.getDestinations();
         int size = destinations.size();
         RoutePlan routePlan = new RoutePlan();
+
+        logger.debug("route plan : "+ size);
         for(int i = 0 ; i < size ; i++){
+            logger.debug("route plan... "+ i);
             Location destination = locationRepository.findByName(destinations.get(i));
             //double to string ""+x
             String pathInfo = mapRepository.PlanPath(""+origin.getLongitude() , ""+origin.getLatitude()
@@ -94,22 +97,24 @@ public class PlanningService implements JavaDelegate ,Serializable{
             Path route = PathUtil.extractPath(pathNode);
             Rendezvous r = new Rendezvous(destination.getName() , route);
             routePlan.getRendezvousList().add(r);
-            logger.debug("route plan : "+ i);
+            logger.debug("route plan done "+ i);
         }
 
         //TODO : decide rendezvous
         String url = commonRepository.getLvcContextPath()+"/logistic/"+orgId+"/"+pid+"/route/decide";
         Rendezvous response = restClient.decide(url , routePlan);
 
+        WagonShadow wagonShadow = wagonShadowRepository.findByPid(pid);
+        wagonShadow.setRendezvous(response);
+
         //TODO: send route info to navigator for displaying track and simulating running , navigator represents the device side.
         Rendezvous rd = response;
         ObjectNode payload = objectMapper.createObjectNode();
         payload.put("msgType" , "RENDEZVOUS");
-        payload.put("from" , wid);
+        payload.put("from" , pid);
         payload.putPOJO("msgBody" , rd);
         simpMessagingTemplate.convertAndSendToUser( "admin","/topic/route" , payload);
         runtimeService.setVariable(pid , "status" , "Running");
-        WagonShadow wagonShadow = wagonShadowRepository.findById(wid);
         wagonShadow.setStatus("Running");
 
 

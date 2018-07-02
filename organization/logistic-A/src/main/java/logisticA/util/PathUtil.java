@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@SuppressWarnings("all")
 public class PathUtil {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -22,7 +23,7 @@ public class PathUtil {
 
     public  static Path extractPath(JsonNode pathNode){
         Path path = new Path();
-        JsonNode route = pathNode.get("data").get("route");
+        JsonNode route = pathNode.get("route");
         String destStr = route.findValue("destination").asText();
         String origStr = route.findValue("origin").asText();
         JsonNode path0 = route.get("paths").get(0);

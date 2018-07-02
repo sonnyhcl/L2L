@@ -112,19 +112,16 @@ public class LogisticController extends AbstractController {
     }
     @RequestMapping(value = "/{pid}/shadow" , method = RequestMethod.POST)
     ResponseEntity<String> updateShadow(@PathVariable("pid") String pid,@RequestBody HashMap<String , Object> mp) throws JsonProcessingException {
-        String id = mp.get("id").toString();
         double longitude = Double.parseDouble(mp.get("longitude").toString());
         double latitude = Double.parseDouble(mp.get("latitude").toString());
         double speed = Double.parseDouble(mp.get("speed").toString());
         double movedDistance = Double.parseDouble(mp.get("movedDistance").toString());
-        String status = mp.get("status").toString();
 
         WagonShadow wagonShadow = wagonShadowRepository.findByPid(pid);
         wagonShadow.setLongitude(longitude);
         wagonShadow.setLatitude(latitude);
         wagonShadow.setSpeed(speed);
         wagonShadow.setMovedDistance(movedDistance);
-        wagonShadow.setStatus(status);
 
         return new ResponseEntity<String>(mp.toString() , HttpStatus.OK);
     }
@@ -135,7 +132,7 @@ public class LogisticController extends AbstractController {
     }
 
     @RequestMapping(value = "/{pid}/arrival" , method = RequestMethod.POST)
-    ResponseEntity<WagonShadow> arrival(@PathVariable("pid") String pid ) throws JsonProcessingException {
+    ResponseEntity<WagonShadow> arrival(@PathVariable("pid") String pid , @RequestBody HashMap<String , Object> body) throws JsonProcessingException {
         WagonShadow wagonShadow = wagonShadowRepository.findByPid(pid);
         wagonShadow.setStatus("Meeting");
         return new ResponseEntity<WagonShadow>(wagonShadow , HttpStatus.OK);

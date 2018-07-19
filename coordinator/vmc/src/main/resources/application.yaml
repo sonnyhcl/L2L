@@ -5,3 +5,4 @@ server:
  port: 9041
  servlet:
   context-path: /vmc
+

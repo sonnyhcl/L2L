@@ -3,7 +3,7 @@ package msc.Repos;
 import jxl.read.biff.BiffException;
 import lombok.Data;
 import msc.domain.Crane;
-import msc.util.ExcelUtil;
+import msc.util.CsvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,11 +22,10 @@ public class CraneRepository {
     private String fileName;
     private String sheetName;
 
-    public CraneRepository(@Value("${msc.cranes.file}") String fileName  ,
-                           @Value("${msc.cranes.sheet}") String sheetName) throws IOException, BiffException {
+    public CraneRepository(@Value("${msc.cranes.file}") String fileName) throws IOException, BiffException {
         logger.info(fileName+"--"+sheetName);
         String path = getClass().getResource("/").getPath()+"/"+fileName;
-        cranes = ExcelUtil.readCranes(path , sheetName);
+        cranes = CsvUtil.readCranes(path);
         logger.debug(cranes.toString());
     }
 

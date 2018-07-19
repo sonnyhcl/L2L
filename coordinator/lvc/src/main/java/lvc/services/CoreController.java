@@ -56,7 +56,7 @@ public class CoreController {
 
     @RequestMapping(value = "/vessel/{orgId}/{pid}/{msgType}" , method = RequestMethod.POST)
     public ResponseEntity<String> notifyMissing(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
-                                                @PathVariable("msgType") String msgType){
+                                                @PathVariable("msgType") String msgType , @RequestBody HashMap<String , Object> mp){
         if(pairRepository.isPaired(orgId , pid)){
             Pair pair = pairRepository.findById(orgId , pid);
             VesselProcessInstance vpi = pair.getVpi();
@@ -64,8 +64,21 @@ public class CoreController {
             VesselPart vesselPart = vesselRepository.findByOrgId(vpi.getOrgId());
             LogisticPart logisticPart = logisticRegistory.findByLOrgId(lpi.getOrgId());
 
+            String eventType = mp.get("eventType").toString();
+            logger.debug("event from vessel  : "+eventType);
+            switch (eventType){
+                case "DELAY" :
+                    break;
+                case "MISSING" :
+                    break;
+                case "MEETING" :
+                    break;
+                default :
+                    break;
+            }
+
             //send request to logistic for route plan
-            String rep = restClient.postStatus(logisticPart , lpi.getId() , msgType);
+            String rep = restClient.postStatus(logisticPart , lpi.getId() , msgType , mp);
             logger.info(rep);
             return  new ResponseEntity<String>("{\"status\":\"success\"}" , HttpStatus.OK);
         }else{
@@ -101,6 +114,10 @@ public class CoreController {
             if(res.size() > 0){
                 return  new ResponseEntity<String>("NOT_MISSING" , HttpStatus.OK);
             }else{
+                //TODO: notify logistic of "Missing"
+                HashMap<String , Object> msgBody = new HashMap<String , Object>();
+                msgBody.put("eventType" , "MISSING");
+                String rep = restClient.postStatus(logisticPart , lpi.getId() , "Missing" , msgBody);
                 return  new ResponseEntity<String>("MISSING" , HttpStatus.OK);
             }
         }else{
@@ -111,24 +128,24 @@ public class CoreController {
     }
 
 
-    @RequestMapping(value = "/logistic/{orgId}/{pid}/{msgType}" , method = RequestMethod.POST)
-    public ResponseEntity<String> arrivalNotify(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
-                                                @PathVariable("msgType") String msgType){
-        Pair pair = pairRepository.findById(orgId , pid);
-        VesselProcessInstance vpi = pair.getVpi();
-        LogisticProcessInstance lpi = pair.getLpi();
-        VesselPart vesselPart = vesselRepository.findByOrgId(vpi.getOrgId());
-        LogisticPart logisticPart = logisticRegistory.findByLOrgId(lpi.getOrgId());
-
-        String rep = restClient.postStatus(vesselPart , vpi.getId() , msgType);
-        logger.info(rep);
-        return  new ResponseEntity<String>("{\"status\":\"success\"}" , HttpStatus.OK);
-
-    }
+//    @RequestMapping(value = "/logistic/{orgId}/{pid}/{msgType}" , method = RequestMethod.POST)
+//    public ResponseEntity<String> arrivalNotify(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
+//                                                @PathVariable("msgType") String msgType){
+//        Pair pair = pairRepository.findById(orgId , pid);
+//        VesselProcessInstance vpi = pair.getVpi();
+//        LogisticProcessInstance lpi = pair.getLpi();
+//        VesselPart vesselPart = vesselRepository.findByOrgId(vpi.getOrgId());
+//        LogisticPart logisticPart = logisticRegistory.findByLOrgId(lpi.getOrgId());
+//
+//        String rep = restClient.postStatus(vesselPart , vpi.getId() , msgType);
+//        logger.info(rep);
+//        return  new ResponseEntity<String>("{\"status\":\"success\"}" , HttpStatus.OK);
+//
+//    }
 
 
     @RequestMapping(value = "/logistic/{orgId}/{pid}/route/decide", method = RequestMethod.POST)
-    public ResponseEntity<Rendezvous> routteDecideRendezvous(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
+    public ResponseEntity<RoutePlan> routteDecideRendezvous(@PathVariable("orgId") String orgId , @PathVariable("pid") String pid ,
                                                                 @RequestBody RoutePlan routePlan) throws JsonProcessingException {
 
         logger.debug("Received message : route decide  from logistic part : "+orgId+"--PID: "+pid);
@@ -163,13 +180,13 @@ public class CoreController {
             logger.debug("---all candidate ports have passed!---");
             Rendezvous tRen = new Rendezvous();
             missing(routePlan);
-            return new ResponseEntity<Rendezvous>(routePlan.getRendezvous() , HttpStatus.OK);
+            return new ResponseEntity<RoutePlan>(routePlan, HttpStatus.OK);
         }
         //TODO: check candidate rendezous
         if(rendezvousList.size() == 0){
             logger.debug("---No Candidate Rendezvous---");
             missing(routePlan);
-            return new ResponseEntity<Rendezvous>(routePlan.getRendezvous() , HttpStatus.OK);
+            return new ResponseEntity<RoutePlan>(routePlan, HttpStatus.OK);
         }
         for(int i = 0 ; i < rendezvousList.size() ; i++){ //Scan optional rendezvousList to ensure sequence of arrival at rendezvous is consistent with the index in rendezvousList.
             //TODO:screening the ports that have passed
@@ -180,32 +197,45 @@ public class CoreController {
                 String wEstiArrivalTime= DateUtil.date2str(wEstiArrivalDate);
                 String vEstiArrivalTime = vDest.getEstiArrivalTime();
                 String vEstiDespatureTime = vDest.getEstiDepartureTime();
+
                 logger.debug("Vessel: vEstiArrivalTime = "+vEstiArrivalTime+" vEstiDespatureTime = "+vEstiDespatureTime);
-                logger.debug(("Wagon wEstiArrivalTime = "+wEstiArrivalTime));
+                logger.debug(("Wagon: wEstiArrivalTime = "+wEstiArrivalTime));
                 double storageRate = storageRepository.findByName(tRend.getName());
                 double freightRate = freightRepository.findByName(tRend.getName());
                 long wEstiDistance = tRend.getRoute().getDistance();
                 if(DateUtil.TimeMinus(vEstiDespatureTime , wEstiArrivalTime) > 0){ // require arrival time of wagon  before despature time of vessel.
                     double storageCost = Math.max(DateUtil.TimeMinus(vEstiArrivalTime, wEstiArrivalTime), 0)*storageRate*spWeight/(1000 * 60 * 60);
                     double freightCost = wEstiDistance*freightRate*spWeight;
+                    tRend.setTrafficThreshold(DateUtil.TimeMinus(vEstiDespatureTime , wEstiArrivalTime)/1000);
+                    //TODO: 加上已经产生的成本
+                     double generatedCost = restClient.getCurrentCost(logisticPart , lpi.getId());
+                    tRend.setSumCost(freightCost+storageCost+generatedCost);
                     resultRends.add(tRend);
                     bills.add(new Bill(tRend.getName() , freightCost ,storageCost));
-                    candidateRends.add(tRend.getName());
-                    logger.debug("Desination : "+tRend.getName()+" Frieght Cost : "+freightCost+" Storage Cost : "+storageCost);
+                    logger.debug("Desination : "+tRend.getName()+" Frieght Cost : "+freightCost+" Storage Cost : "+storageCost+"currentCost"+generatedCost
+                    + " sum : "+(freightCost+storageCost+generatedCost));
                 }
+
+                //TODO: 将还有机会，但可能不满足到达时间约束的港口加入候选港口
+                candidateRends.add(tRend.getName());
             }
+
         }
 
+        logistic.setDestinations(candidateRends);
         //TODO: find best rendezvous
         Rendezvous bestRend = null;
         double minCost = infinite;
         int len = resultRends.size();
         logger.debug("---Select optimized solution based on the time urgency.---");
         if(len == 0){
+            logger.debug("No ports meeting the constrain.");
+            logger.debug("Decision fail.");
+            fail(routePlan);
         }else {
             for (int i = 0; i < len; i++) {
                 Rendezvous tRend = resultRends.get(i);
-                double sumCost = CommonUtil.sumCost(tRend.getName(), bills);
+                double sumCost = tRend.getSumCost();
                 double optimizedCost = (1 - Math.pow(k, i + 1)) * sumCost;
                 logger.debug("Desination : " + tRend.getName() + " Optimized Cost : " + optimizedCost + " Original Cost : " + sumCost);
                 if (optimizedCost < minCost) {
@@ -220,10 +250,11 @@ public class CoreController {
                 routePlan.setRendezvousList(resultRends);
                 //TODO: update logistic
                 logger.info("---update logistic---");
-                logistic.setDestinations(candidateRends);
                 logistic.setRendezous(bestRend.getName());
                 logistic.setTimeStamp(DateUtil.date2str(DateUtil.transForDate(currentMs)));
                 restClient.putLogistic(logisticPart, lpi.getId(), logistic);
+                logger.debug("send rendezvous port to vessel : "+bestRend.getName());
+                restClient.putRendezvous(vesselPart , vpi.getId() , bestRend.getName());
             } else {
                 logger.debug("---Best Rendezvous Not Found---");
                 missing(routePlan);
@@ -234,7 +265,7 @@ public class CoreController {
 
 
         logger.info("Deciding is completed");
-        return new ResponseEntity<Rendezvous>(routePlan.getRendezvous() , HttpStatus.OK);
+        return new ResponseEntity<RoutePlan>(routePlan , HttpStatus.OK);
     }
 
     @RequestMapping(value = "/logistic/{orgId}/{pid}/match", method = RequestMethod.POST)
@@ -260,14 +291,20 @@ public class CoreController {
         Rendezvous tRen = new Rendezvous();
         tRen.setName("MISSING");
         routePlan.setRendezvous(tRen);
-        routePlan.setRendezvousList(null);
+        routePlan.setRendezvousList(new ArrayList<Rendezvous>());
     }
 
     private void notmatched(RoutePlan routePlan){
         Rendezvous tRen = new Rendezvous();
         tRen.setName("NOT_MATCHED");
         routePlan.setRendezvous(tRen);
-        routePlan.setRendezvousList(null);
+        routePlan.setRendezvousList(new ArrayList<Rendezvous>());
+    }
+    private void fail(RoutePlan routePlan){
+        Rendezvous tRen = new Rendezvous();
+        tRen.setName("FAIL");
+        routePlan.setRendezvous(tRen);
+        routePlan.setRendezvousList(new ArrayList<Rendezvous>());
     }
 
 

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import vesselA.repos.ApplicationRepository;
 import vesselA.repos.CommonRepository;
 import vesselA.repos.ShadowRepository;
 import vesselA.util.DateUtil;
@@ -42,6 +43,10 @@ public class VesselController extends AbstractController {
 
     @Autowired
     private ShadowRepository shadowRepository;
+
+    @Autowired
+    private ApplicationRepository applicationRepository;
+
     @Autowired
     private RestTemplate restTemplate;
 
@@ -150,7 +155,12 @@ public class VesselController extends AbstractController {
         HttpEntity<Application> requestEntity = new HttpEntity<Application>(application, headers);
         String url = commonRepository.getVmcContextPath()+"/vessel/"+vOrgId+"/"+pid+"/apply";
         ResponseEntity<Application> response = restTemplate.postForEntity(url ,requestEntity , Application.class);
-        logger.info(response.getBody().toString());
+        //TODO: 保存ａpplication
+        Application activatedApplication = response.getBody();
+        activatedApplication.setStatus("Activated");
+        applicationRepository.save(activatedApplication);
+        runtimeService.setVariable(pid , "applyId" , activatedApplication.getId());
+        logger.info(activatedApplication.toString());
         return new ResponseEntity<Application>(application, HttpStatus.OK);
     }
 
@@ -198,16 +208,23 @@ public class VesselController extends AbstractController {
             //TODO: departure time
             info.put("departureTime" , curDest.getEstiDepartureTime());
         }else{
-            logger.debug("Error status.");
+            logger.debug("Error status."+status);
         }
         return  info;
     }
 
-    @RequestMapping(value = "/{pid}/shadow/{status}" , method = RequestMethod.POST , produces = "application/json")
+    @RequestMapping(value = "/{pid}/shadow/status/{status}" , method = RequestMethod.POST , produces = "application/json")
     public ResponseEntity<String> updateStatus(@PathVariable("pid") String pid , @PathVariable("status") String status){
         logger.debug("--status--"+status);
         VesselShadow vesselShadow = shadowRepository.findByPid(pid);
         vesselShadow.setStatus(status);
         return new ResponseEntity<String>(status , HttpStatus.OK);
+    }
+    @RequestMapping(value = "/{pid}/shadow/rendezvous/{rendezvous}" , method = RequestMethod.POST , produces = "application/json")
+    public ResponseEntity<String> updateRendezvous(@PathVariable("pid") String pid , @PathVariable("rendezvous") String rendezvous){
+        logger.debug("--POST /{pid}/shadow/rendezvous/{rendezvous}--"+rendezvous);
+        Application application = applicationRepository.findByPid(pid);
+        application.setRendezvous(rendezvous);
+        return new ResponseEntity<String>(rendezvous , HttpStatus.OK);
     }
 }

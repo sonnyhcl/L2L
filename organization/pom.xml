@@ -12,7 +12,6 @@
 		<module>manager-A</module>
 		<module>supplier-A</module>
 		<module>supplier-B</module>
-		<module>supplier-C</module>
 		<module>logistic-A</module>
 		<module>logistic-B</module>
 	</modules>

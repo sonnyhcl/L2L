@@ -15,7 +15,7 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          metadata-complete="true" version="3.0">
     <absolute-ordering/>
-    <display-name>supplier-app</display-name>
+    <display-name>logistic-app</display-name>
     <filter>
         <filter-name>corsFilter</filter-name>
         <filter-class>logisticA.activiti.servlet.MyCorsFilter</filter-class>

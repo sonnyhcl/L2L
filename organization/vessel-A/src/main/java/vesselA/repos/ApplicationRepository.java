@@ -29,4 +29,13 @@ public class ApplicationRepository {
         }
         return null;
     }
+
+    public Application findByPid(String pid){
+        for(Application application : applications){
+            if(pid.equals(application.getVpid())){
+                return application;
+            }
+        }
+        return null;
+    }
 }

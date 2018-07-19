@@ -18,10 +18,12 @@ public class Application {
     private String mpid;
     private String spName;
     private int spNumber;
-    private List<String> candidatePorts;
+    private String rendezvous;
+    private List<String> destinations;
+    private String status;
     private String timeStamp;
 
-    public Application(String id, String vOrgId, String vpid, String vid, String mOrgId, String mpid, String spName, int spNumber, List<String> candidatePorts, String timeStamp) {
+    public Application(String id, String vOrgId, String vpid, String vid, String mOrgId, String mpid, String spName, int spNumber, List<String> destinations, String timeStamp) {
         this.id = id;
         this.vOrgId = vOrgId;
         this.vpid = vpid;
@@ -30,7 +32,7 @@ public class Application {
         this.mpid = mpid;
         this.spName = spName;
         this.spNumber = spNumber;
-        this.candidatePorts = candidatePorts;
+        this.destinations = destinations;
         this.timeStamp = timeStamp;
     }
 }

@@ -33,7 +33,7 @@ import java.util.List;
 @Configuration
 @PropertySources({
 
-        @PropertySource("classpath:/META-INF/activiti-app/activiti-app.properties"),
+        @PropertySource(value = "classpath:/META-INF/activiti-app/activiti-app.properties",encoding = "UTF-8"),
 //        @PropertySource("classpath:log4j.properties"),
         @PropertySource(value = "classpath:activiti-app.properties", ignoreResourceNotFound = true),
         @PropertySource(value = "file:activiti-app.properties", ignoreResourceNotFound = true),

@@ -25,7 +25,6 @@ public class VesselShadow {
     private int nextPortIndex;
     private int zoomInVal;
     private int defaultDelayHour;
-    private String rendezvous;
 
     public List<Destination> getRemainingDestinations(){
         List<Destination> dlist = new ArrayList<Destination>();

@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,5 +15,5 @@ public class Path {
     private Point destination;
     private long distance;
     private long duration;
-    private List<Point> polyline = new ArrayList<Point>();
+    private List<Step> steps = new ArrayList<Step>();
 }

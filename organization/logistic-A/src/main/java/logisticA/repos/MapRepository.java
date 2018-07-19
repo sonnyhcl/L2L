@@ -45,7 +45,7 @@ public class MapRepository {
         uriVars.put("key" , key);
         String url = basePath+"?strategy={strategy}&extensions={extensions}&origin={origin}&destination={destination}&output={output}&key={key}";
         String pathInfo = restTemplate.getForObject(url , String.class, uriVars);
-        logger.debug("path info "+ pathInfo);
+//        logger.debug("path info "+ pathInfo);
         return pathInfo;
 
     }

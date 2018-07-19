@@ -17,8 +17,8 @@ public class LogisticRepository {
 
     public LogisticRepository(){
         logisticParts = new ArrayList<LogisticPart>();
-        logisticParts.add(new LogisticPart("顺丰速运", "LA1001" , "10.131.245.91","9031" , "logistic-A" ,"variable-rendezvous"));
-        logisticParts.add(new LogisticPart("圆通速运", "LB1003" , "10.131.245.91","9032" , "logistic-B" , "fixed-rendezvous"));
+        logisticParts.add(new LogisticPart("顺丰速运", "LA1001" , "10.131.245.96","9031" , "logistic-A" ,"variable-rendezvous"));
+        logisticParts.add(new LogisticPart("圆通速运", "LB1003" , "10.131.245.96","9032" , "logistic-B" , "fixed-rendezvous"));
     }
 
     public LogisticPart findByLOrgId(String orgId){

@@ -756,9 +756,9 @@ angular.module('activitiApp')
  * 改写
  */
 angular.module('activitiApp')
-.controller('ADTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
-    $scope.model.completeButtonDisabled = true
+.controller('ADTaskController', ['$window','$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($window,$filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+    $scope.model.completeButtonDisabled = true;
 	$scope.pname = null;
 	$scope.status = null;
 	$scope.curTime = null;
@@ -782,7 +782,7 @@ angular.module('activitiApp')
                     $scope.pname = data.pname;
                     $scope.status = data.status;
                     $scope.curTime = data.curTime;
-                    // console.log("ADTaskController-->vessel device status  : " , $scope.status);
+                    console.log("ADTaskController-->vessel device status  : " , $scope.status);
                     if($scope.status == "Anchoring"){
                         $scope.arrivalElapseTime = data.arrivalElapseTime+' h';
                         $scope.anchoringTime = data.anchoringTime;
@@ -794,8 +794,10 @@ angular.module('activitiApp')
                     }else if($scope.status == undefined){
                         console.log("undefined");
                     }else{
+                        console.log($scope.status);
                         $interval.cancel($scope.adTimer);
-                        $scope.completeTask();
+                        $window.location.reload();
+                        // $scope.completeTask();
                     }
                 })
         },1000)
@@ -821,8 +823,8 @@ angular.module('activitiApp')
    }
 }]);
 angular.module('activitiApp')
-.controller('VoyaTaskController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-      function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+.controller('VoyaTaskController', ['$window','$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+      function ($window ,$filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
     $scope.model.completeButtonDisabled = true
     $scope.vesselShadow = null;
@@ -865,10 +867,11 @@ angular.module('activitiApp')
             $scope.velocity = $scope.vesselShadow.velocity+" Km/h";
             $scope.timeStamp = $scope.vesselShadow.timeStamp;
             $scope.status  = $scope.vesselShadow.status;
-            // console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
+            console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
             if($scope.status != "Voyaging" && $scope.status != undefined){
-                $scope.completeTask();
+                // $scope.completeTask();
                 $interval.cancel($scope.voyageTaskTimer);
+                $window.location.reload();
             }
     	})
     }, 1000);
@@ -899,7 +902,7 @@ angular.module('activitiApp')
         function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
         $scope.spNames=["缸盖" , "钢筋","钢板"];
-        $scope.selectedName = "缸盖";
+        $scope.spName = "缸盖";
         $scope.spNumber = 1;
         console.log("ApplyController--",$scope.status);
             $scope.apply = function () {

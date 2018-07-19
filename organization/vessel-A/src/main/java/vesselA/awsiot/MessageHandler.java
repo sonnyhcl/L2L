@@ -4,6 +4,8 @@ import com.amazonaws.services.iot.client.AWSIotMessage;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,9 @@ import java.util.List;
 
 public class MessageHandler {
     private static Logger logger = LoggerFactory.getLogger(MessageHandler.class);
+
+    @Autowired
+    private TaskService  taskService;
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -34,11 +39,26 @@ public class MessageHandler {
     public void changeStatus(AWSIotMessage message) throws IOException {
         JsonNode rootNode = objectMapper.readTree(message.getStringPayload());
         String vid = rootNode.findValue("vid").asText();
+        String msgType = rootNode.findValue("msgType").asText();
         String status = rootNode.findValue("status").asText();
         VesselShadow vesselShadow = shadowRepository.findById(vid);
         String oldStatus = vesselShadow.getStatus();
+        logger.debug("---changeStatus----"+msgType+"--"+status);
         vesselShadow.setStatus(status);
-        logger.info("status changed from"+oldStatus+ " to "+status);
+        String pid = vesselShadow.getVpid();
+        if(msgType.equals("DOCKING_END")){
+            logger.debug("--DOCKING_END--");
+            Task task = taskService.createTaskQuery().processInstanceId(pid).taskName("AnchoringOrDocking").singleResult();
+            logger.debug("Complete AnchoringOrDocking Task. pid = "+pid+" : "+task.toString());
+            taskService.complete(task.getId());
+        }
+        if(msgType.equals("VOYAGING_END")){
+            logger.debug("--VOYAGING_END--");
+            Task task = taskService.createTaskQuery().processInstanceId(pid).taskName("Voyaging").singleResult();
+            taskService.complete(task.getId());
+            logger.debug("Complete Voyaging Task. pid = "+pid);
+        }
+        logger.debug("status changed from"+oldStatus+ " to "+status);
     }
 
 
@@ -54,7 +74,7 @@ public class MessageHandler {
 
         if (vid != null) {
             vesselShadow = shadowRepository.findById(vid);
-            logger.info(positionIndex +" : "+vesselShadow.getPositionIndex());
+//            logger.info(positionIndex +" : "+vesselShadow.getPositionIndex());
             if (positionIndex >= vesselShadow.getPositionIndex()) { // if shadow received is new , update
                 vesselShadow.setPositionIndex(positionIndex);
                 //TODO : extract vessel state
@@ -63,7 +83,7 @@ public class MessageHandler {
                     vesselStateNode = null;
                 }
                 if (vesselStateNode != null) {
-                    logger.debug(vesselStateNode);
+//                    logger.debug(vesselStateNode);
                     VesselState vesselState = objectMapper.readValue(vesselStateNode, VesselState.class);
                     vesselShadow.updateVesselState(vesselState);
                 }
@@ -91,17 +111,19 @@ public class MessageHandler {
                 switch (status){
                     case "Initiating" :
                         logger.info("Initiating is completed.");
+                        payloadObjectNode.putPOJO("vesselShadow" , vesselShadow);
+                        simpMessagingTemplate.convertAndSendToUser( "admin","/topic/init" , payloadObjectNode);
                         awsClient.notifyVoyaging("IS_FIRST" , vid);
                         logger.debug("start voyaging");
                         break;
                     case "Voyaging"  :
                     case "Docking" :
                     case "Anchoring" :
-                        logger.info(vesselShadow.getPositionIndex()+": "+vesselShadow.getStatus());
+//                        logger.info(vesselShadow.getPositionIndex()+": "+vesselShadow.getStatus());
                         payloadObjectNode.putPOJO("vesselShadow" , vesselShadow);
                         //user should be set more flexibly
                         VesselShadow vd = shadowRepository.findById(vid);
-                        logger.debug("send shadow to monitor : "+vd.toString());
+//                        logger.debug("send shadow to monitor : "+vd.toString());
                         simpMessagingTemplate.convertAndSendToUser( "admin","/topic/vesselShadow" , payloadObjectNode);
                         break;
                     default:

@@ -7,8 +7,7 @@ server:
 vessel:
   vid: 413362260
   states:
-   fileName: vesselStates.xls
-   sheetName: ${vessel.vid}
+   fileName: vesselStates.csv
   locations:
    fileName: locations.xls
    sheetName: ports
@@ -27,6 +26,6 @@ vessel:
 awsiot:
   clientEndpoint: a1cf6tovfozpv3.iot.cn-north-1.amazonaws.com.cn
   clientId: VA${vessel.vid}
-  certificate: /home/bqzhu/Desktop/device/vessel.cert.pem
-  privateKey: /home/bqzhu/Desktop/device/vessel.private.key
+  certificate: /home/bqzhu/IdeaProjects/l2l/organization/vessel-A/src/main/resources/vessel.cert.pem
+  privateKey: /home/bqzhu/IdeaProjects/l2l/organization/vessel-A/src/main/resources/vessel.private.key
   thingName: vessel

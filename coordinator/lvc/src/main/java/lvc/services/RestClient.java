@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -65,6 +66,12 @@ public class RestClient {
         return res.getBody();
     }
 
+    public double getCurrentCost(LogisticPart logisticPart , String lpid){
+        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shadow/currentCost";
+        HttpEntity httpEntity = new HttpEntity(getHeaders());
+        ResponseEntity<Double> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Double.class);
+        return res.getBody();
+    }
 
     public  Logistic putLogistic(LogisticPart logisticPart , String lpid , Logistic logistic){
         String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/logistic";
@@ -73,19 +80,29 @@ public class RestClient {
         return res.getBody();
     }
 
-    public  String postStatus(LogisticPart logisticPart , String lpid , String status){
-        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shadow/"+status;
-        HttpEntity httpEntity = new HttpEntity(status, getHeaders());
+    public  String postStatus(LogisticPart logisticPart , String lpid , String status , HashMap<String , Object> msgBody){
+        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shadow/status/"+status;
+        HttpEntity<?> httpEntity = new HttpEntity(msgBody, getHeaders());
         ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
         return res.getBody();
     }
 
     public  String postStatus(VesselPart vesselPart , String lpid , String status){
-        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+lpid+"/shadow/"+status;
+        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+lpid+"/shadow/status/"+status;
         HttpEntity httpEntity = new HttpEntity(status, getHeaders());
         ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
         return res.getBody();
     }
+
+    public  String putRendezvous(VesselPart vesselPart , String lpid , String bestRend){
+        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+lpid+"/shadow/rendezvous/"+bestRend;
+        HttpEntity httpEntity = new HttpEntity(bestRend, getHeaders());
+        ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
+        return res.getBody();
+    }
+
+
+
 
 
 

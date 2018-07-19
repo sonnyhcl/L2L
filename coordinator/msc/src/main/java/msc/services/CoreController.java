@@ -2,6 +2,7 @@ package msc.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import msc.Repos.CraneRepository;
 import msc.Repos.ManagerRepository;
 import msc.domain.*;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import msc.Repos.PairRepository;
@@ -27,7 +29,8 @@ public class CoreController {
     @Autowired
     private  RestClient restClient;
 
-
+    @Autowired
+    public SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
     private PairRepository pairRepository;
@@ -37,6 +40,9 @@ public class CoreController {
 
     @Autowired
     private ManagerRepository managerRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private CraneRepository craneRepository;
@@ -104,15 +110,23 @@ public class CoreController {
 
         //TODO: According to crane information , screen effective ports.
         List<String> validDests = new ArrayList<String>();
+        List<String> invalidDests = new ArrayList<String>();
         List<String> destinations = order.getDestinations();
         for(int i = 0 ; i < destinations.size() ; i++){
             String d = destinations.get(i);
             double wlim = craneRepository.queryWeightLimit(d);
             if(order.getSpWight() <= wlim){
                 validDests.add(d);
+            }else{
+                invalidDests.add(d);
             }
         }
         order.setDestinations(validDests);
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.putPOJO("invalidDestinations" , invalidDests);
+        simpMessagingTemplate.convertAndSend("/topic/destinations/invalid", payload);
+        logger.debug("send invalidDestinations "+invalidDests.toString());
+
 
         //TODO: Starting Supplier based on message.
         SupplierPart supplierPart = supplierRepository.findByOrgId(sOrgId);

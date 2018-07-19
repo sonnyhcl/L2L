@@ -116,6 +116,9 @@ public class MessageHandler {
         logger.info("first time to adjust destinations : " + destinations);
         vesselDevice.updateVid(vid);
         vesselDevice.updateDestinations(destinations);
+        VesselState initVesselState = trajectoryRepository.findVesselState(0).deepCopy();
+        vesselDevice.updateVesselState(initVesselState);
+
         String payload = "{\"state\":{\"desired\":" + objectMapper.writeValueAsString(vesselDevice) + "}}";
         logger.debug("init--->payload : " + payload);
         AWSIotMessage initPub = new VesselPublisher(updateShadowTopic, topicQos, payload);
@@ -209,6 +212,7 @@ public class MessageHandler {
                 String payload = "{\"state\":{\"desired\":" + objectMapper.writeValueAsString(vesselDevice) + "}}";
                 AWSIotMessage pub = new VesselPublisher(updateShadowTopic, topicQos, payload);
                 awsIotMqttClient.publish(pub);
+                changeStatus(changeStatusTopic , "VOYAGING_END" , vesselDevice);
                 logger.info("reach , nextPortIndex = " + nextPortIndex);
 
                 //TODO: Timing simulation of anchoring and docking status of the ship
@@ -223,35 +227,14 @@ public class MessageHandler {
                         logger.debug("Current time : " + DateUtil.ms2dateStr(curMs) + " Next time : " + DateUtil.ms2dateStr(nextMs) + "new reach time : " + curDest.getEstiArrivalTime());
                         if (newReachMs > curMs && newReachMs <= nextMs) {
                             vesselDevice.updateStatus("Docking");
-                            payloadObjectNode = objectMapper.createObjectNode();
-                            payloadObjectNode.put("msgType", "DEPARTURE_PORT");
-                            payloadObjectNode.put("vid", vesselDevice.getVid());
-                            payloadObjectNode.put("status", vesselDevice.getStatus());
-                            payloadObjectNode.put("nextPortIndex", vesselDevice.getNextPortIndex());
-                            AWSIotMessage depPub = new VesselPublisher(changeStatusTopic, topicQos, payloadObjectNode.toString());
-                            try {
-                                awsIotMqttClient.publish(depPub);
-                            } catch (AWSIotException e) {
-                                e.printStackTrace();
-                            }
+                            changeStatus(changeStatusTopic , "ANCHORING_END" , vesselDevice);
                         }
                     } else if (vesselDevice.getStatus().equals("Docking")) {
                         long newDepartureMs = DateUtil.str2date(curDest.getEstiDepartureTime()).getTime();
                         logger.info("Current time : " + DateUtil.ms2dateStr(curMs) + " Next time : " + DateUtil.ms2dateStr(nextMs) + " New arrival time : " + curDest.getEstiDepartureTime());
                         if (newDepartureMs > curMs && newDepartureMs <= nextMs) {
                             //send depature message to vessel process
-                            vesselDevice.updateStatus("Voyaging");
-                            payloadObjectNode = objectMapper.createObjectNode();
-                            payloadObjectNode.put("msgType", "DEPARTURE_PORT");
-                            payloadObjectNode.put("vid", vesselDevice.getVid());
-                            payloadObjectNode.put("status", vesselDevice.getStatus());
-                            payloadObjectNode.put("nextPortIndex", vesselDevice.getNextPortIndex());
-                            AWSIotMessage depPub = new VesselPublisher(changeStatusTopic, topicQos, payloadObjectNode.toString());
-                            try {
-                                awsIotMqttClient.publish(depPub);
-                            } catch (AWSIotException e) {
-                                e.printStackTrace();
-                            }
+                            changeStatus(changeStatusTopic , "DOCKING_END" , vesselDevice);
                             logger.info("Docking  , departure");
                             break;
                         }
@@ -295,6 +278,26 @@ public class MessageHandler {
                 destinations.add(d);
             }
             vesselDevice.updateDestinations(destinations);
+        }
+    }
+
+    /**
+     * change status
+     * @param changeStatusTopic
+     * @param msgType
+     * @param device
+     */
+    private void  changeStatus(String changeStatusTopic , String msgType ,  VesselDevice device){
+        ObjectNode payloadObjectNode = objectMapper.createObjectNode();
+        payloadObjectNode.put("msgType", msgType);
+        payloadObjectNode.put("vid", device.getVid());
+        payloadObjectNode.put("status", device.getStatus());
+        payloadObjectNode.put("nextPortIndex", device.getNextPortIndex());
+        AWSIotMessage depPub = new VesselPublisher(changeStatusTopic, topicQos, payloadObjectNode.toString());
+        try {
+            awsIotMqttClient.publish(depPub);
+        } catch (AWSIotException e) {
+            e.printStackTrace();
         }
     }
 

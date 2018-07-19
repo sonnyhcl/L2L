@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @SuppressWarnings("all")
-@NoArgsConstructor
+//@NoArgsConstructor
 public class SupplierProcessInstance extends ProcessInstance{
     private String orderId;
     private String logisticId;

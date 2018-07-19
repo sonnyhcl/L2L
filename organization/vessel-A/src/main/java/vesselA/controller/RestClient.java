@@ -63,9 +63,9 @@ public class RestClient {
     }
 
     //delay -- Planning , missing --- Missing
-    public String notifyMsg(String pid , String msgType){
+    public String notifyMsg(String pid , String msgType ,  HashMap<String , Object> msgBody){
         String url = commonRepository.getLvcContextPath()+"/vessel/"+commonRepository.getOrgId()+"/"+pid+"/"+msgType;
-        HttpEntity requestEntity = new HttpEntity(getHeaders());
+        HttpEntity<?> requestEntity = new HttpEntity(msgBody, getHeaders());
         ResponseEntity<String> status = restTemplate.exchange(url , HttpMethod.POST ,requestEntity , String.class);
         return status.getBody();
     }

@@ -756,10 +756,10 @@ angular.module('activitiApp')
  * 改写
  */
 angular.module('activitiApp')
-    .controller('RunningCtr', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-        function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+    .controller('RunningCtr', ['$window' , '$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($window, $filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
-            $scope.model.completeButtonDisabled = true
+            $scope.model.completeButtonDisabled = true;
             $scope.longitude = null;
             $scope.latitude = null;
             $scope.speed = null;
@@ -776,17 +776,19 @@ angular.module('activitiApp')
                 var shadowUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+'/shadow';
                 $http.get(shadowUrl)
                     .success(function(data){
-                        // $scope.interval =  data.rendezvous.name;
+                        console.log(data);
+                        $scope.interval =  data.rendezvous.name;
                         $scope.longitude = data.longitude;
                         $scope.latitude = data.latitude;
-                        $scope.velocity = data.speed+" Km/h";
+                        $scope.speed = data.speed.toFixed(2) +" m/s";
                         $scope.timeStamp = data.timeStamp;
                         $scope.status  = data.status;
                         $scope.movedDistance = data.movedDistance;
                         console.log($scope.status);
                         if($scope.status != "Running" && $scope.status != undefined){
-                            $scope.completeTask();
+                            // $scope.completeTask();
                             $interval.cancel($scope.runTimer);
+                            $window.location.reload();
                         }
                     })
             }, 1000);

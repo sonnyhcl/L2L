@@ -7,11 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vesselA.domain.Destination;
+import vesselA.domain.Location;
+import vesselA.domain.VesselShadow;
 import vesselA.repos.CommonRepository;
+import vesselA.repos.LocationRepository;
 import vesselA.repos.ShadowRepository;
 import vesselA.util.DateUtil;
-import vesselA.domain.Destination;
-import vesselA.domain.VesselShadow;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,8 +26,8 @@ import java.util.Map;
  */
 @RestController
 @SuppressWarnings("all")
-public class MessageBoxController extends AbstractController {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+public class MessageBoxController  extends AbstractController{
+    private static final Logger logger = LoggerFactory.getLogger(MessageBoxController.class);
 
     @Autowired
     private RestClient restClient;
@@ -35,6 +37,10 @@ public class MessageBoxController extends AbstractController {
 
     @Autowired
     private ShadowRepository shadowRepository;
+
+
+    @Autowired
+    private LocationRepository locationRepository;
 
     @RequestMapping(value = "/{pid}/delay", method = RequestMethod.POST , produces = "application/json")
     public ResponseEntity<String> delay(@PathVariable("pid") String pid, @RequestBody HashMap<String, Object> mp) throws JsonProcessingException {
@@ -107,6 +113,13 @@ public class MessageBoxController extends AbstractController {
             logger.debug("send destinations to vessel device.");
             restClient.postDestinations(destinations);
 
+            //TODO: notify logistic of "Planning"
+            HashMap<String , Object> msgBody = new HashMap<String , Object>();
+            msgBody.put("eventType" , "DELAY");
+            msgBody.put("phase" , vesselShadow.getStatus());
+            msgBody.put("dx" , dx);
+            msgBody.put("dy" , dy);
+            restClient.notifyMsg(pid , "Planning" , msgBody);
 
             //TODO : when status is "Docking"
         } else if(vesselShadow.getStatus().equals("Docking")) {
@@ -152,6 +165,13 @@ public class MessageBoxController extends AbstractController {
             //TODO : send destinations to vessel device.
             logger.info("send destinations to vessel device.");
             restClient.postDestinations(destinations);
+
+            //TODO: notify logistic of "Planning"
+            HashMap<String , Object> msgBody = new HashMap<String , Object>();
+            msgBody.put("eventType" , "DELAY");
+            msgBody.put("phase" , "Docking");
+            msgBody.put("dy" , dy);
+            restClient.notifyMsg(pid , "Planning" , msgBody);
         } else{
             logger.debug("The current situation is not considered!(the current status of the vessel is ignored)");
             return new ResponseEntity<String>("{\"Tips\":\"The current situation is not considered!(the current status of the vessel is ignored\")", HttpStatus.OK);
@@ -183,6 +203,14 @@ public class MessageBoxController extends AbstractController {
         simuStartMs += (curDate.getTime() - simuStartMs)*vesselShadow.getZoomInVal();
         return new ResponseEntity<Long>(simuStartMs, HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/location", method = RequestMethod.GET)
+    public ResponseEntity<Location> getLocationByName(@RequestParam(value = "name") String name){
+        logger.debug("--/location--"+name);
+        Location location = locationRepository.findByName(name.trim());
+        return new ResponseEntity<Location>(location , HttpStatus.OK);
+    }
+
 
 }
 

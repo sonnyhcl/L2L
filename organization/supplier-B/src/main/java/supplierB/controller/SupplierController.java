@@ -1,4 +1,4 @@
-package supplierA.controller;
+package supplierB.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import supplierA.repos.CommonRepository;
-import supplierA.domain.Order;
-import supplierA.repos.OrderRepository;
+import supplierB.repos.CommonRepository;
+import supplierB.repos.OrderRepository;
+
 
 import java.io.IOException;
 import java.util.HashMap;

@@ -19,7 +19,9 @@ public class WagonShadow {
     private String wpid;
     private String status;
     private Rendezvous rendezvous;
-    private List<Freight> candidatePorts;
+    private double lastNavsCost;
+    private double deltaNavCost;
+    private double deltaNavDist;
 
     public WagonShadow(String id , double longitude , double latitude , String status){
         this.id = id;

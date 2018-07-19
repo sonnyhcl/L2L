@@ -21,7 +21,7 @@ public class APIController {
     @RequestMapping("/hello")
     String home() {
         logger.info("test rest api.");
-        return "bazhu Hello **** World!";
+        return "hello , vessel-dev-A";
     }
 
     @RequestMapping(value = "/delay" , method = RequestMethod.POST , produces = "application/json")

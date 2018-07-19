@@ -1,33 +1,42 @@
 package supplierA.repos;
 
 import lombok.Data;
-import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 @Data
-@Component
+@Service
 public class CommonRepository {
     private  final Logger logger = LoggerFactory.getLogger(this.getClass());
     //TODO:the following properties should be configed in xxx.properties
-    private final String orgId = "SA1001";
-    private final String orgName = "深圳备件供应商";
-    private final String host = "10.131.245.91";
-    private final String port = "9021";
-    private final String projectId = "supplier-A";
-    private final String location = "深圳";
+    private  String orgId;
+    private  String orgName;
+    private  String host;
+    private  String port;
+    private  String projectId;
+    private  String location;
 
-    private final String mscContextPath = "http://10.131.245.91:9042/msc";
-    private final String slcContextPath = "http://10.131.245.91:9043/slc";
+    private  String mscContextPath;
+    private  String slcContextPath;
 
     @Autowired
     private RestTemplate restTemplate;
-    public  CommonRepository(){
+    public  CommonRepository(Environment environment){
         //TODO:register organization in VMC m MSC
+        orgId = environment.getRequiredProperty("org.id");
+        orgName = environment.getRequiredProperty("org.orgName");
+        host = environment.getRequiredProperty("org.host");
+        port = environment.getRequiredProperty("org.port");
+        projectId = environment.getRequiredProperty("org.projectId");
+        location = environment.getRequiredProperty("org.location");
+        mscContextPath = environment.getRequiredProperty("org.mscContextPath");
+        slcContextPath = environment.getRequiredProperty("org.slcContextPath");
+        logger.debug(this.toString());
     }
 
 

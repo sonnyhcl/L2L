@@ -36,6 +36,12 @@ public class CoreController {
         return "hello , vmc";
     }
 
+    @RequestMapping(value = "/hello",method = RequestMethod.GET)
+    public  String hello(){
+        logger.debug("hello ,vmc--");
+        return "hello , vmc";
+    }
+
     /**
      * *****************from Vessel participant****************************************
      */

@@ -19,7 +19,7 @@ public class VesselRepository {
     public VesselRepository(){
         //register vessel organization
         logger.info("--VesselRepository--");
-        vesselParts.add(new VesselPart("散货运输公司" , "VA1001" , "10.131.245.91" , "9001" , "vessel-A" , "A"));
+        vesselParts.add(new VesselPart("散货运输公司" , "VA1001" , "10.131.245.96" , "9001" , "vessel-A" , "A"));
     }
 
     public VesselPart findByOrgId(String orgId){

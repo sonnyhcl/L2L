@@ -42,5 +42,6 @@ vessel.activiti.private.key
 src/main/resources/logs/
 *.log
 document/
-*.xls
 .mvn/*
+logs
+*.xls

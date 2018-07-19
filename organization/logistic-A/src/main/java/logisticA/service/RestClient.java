@@ -1,8 +1,6 @@
 package logisticA.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import logisticA.domain.Logistic;
 import logisticA.domain.Rendezvous;
 import logisticA.domain.RoutePlan;
 import org.apache.commons.codec.binary.Base64;
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,17 +36,17 @@ public class RestClient {
         return headers;
     }
 
-    public Rendezvous decide(String url , RoutePlan routePlan){
+    public RoutePlan decide(String url , RoutePlan routePlan){
         HttpEntity<RoutePlan> requestEntity = new HttpEntity(routePlan, getHeaders());
-        Rendezvous response = restTemplate.postForObject(url , requestEntity , Rendezvous.class);
-        logger.info(response.toString());
+        RoutePlan response = restTemplate.postForObject(url , requestEntity , RoutePlan.class);
+//        logger.info(response.toString());
         return response;
     }
     public String matchSupplier(String url , HashMap<String , Object> payload) {
         logger.info("--match supplier--");
         HttpEntity<?> requestEntity = new HttpEntity(payload, getHeaders());
         String rep = restTemplate.postForObject(url , requestEntity , String.class);
-        logger.info(rep);
+//        logger.info(rep);
         return rep;
     }
 
@@ -57,14 +54,14 @@ public class RestClient {
         logger.info("--match vessel--");
         HttpEntity<?> requestEntity = new HttpEntity(payload, getHeaders());
         String rep = restTemplate.postForObject(url , requestEntity , String.class);
-        logger.info(rep);
+//        logger.info(rep);
         return rep;
     }
 
 
     public HashMap<String , Object> queryLogistic(String url){
         HashMap<String , Object> rep = restTemplate.getForObject(url ,HashMap.class);
-        logger.info(rep.toString());
+//        logger.info(rep.toString());
         return rep;
     }
 

@@ -53,10 +53,17 @@ public class RunningPostService implements ExecutionListener, Serializable {
         String status = wagon.getStatus();
         runtimeService.setVariable(pid , "status" , status);
         //TODO: notify vessel of arrival.
+        if(status.equals("Meeting")){
+            logger.debug("wagon status : Meeting!");
+//            String arrivalUrl = commonRepository.getLvcContextPath()+"/logistic/"+commonRepository.getOrgId()+"/"+pid+"/arrival";
+//            String rep = restClient.notifyMsg(arrivalUrl);
+//            logger.info(rep);
+        }
         if(status.equals("Missing")){
-            String arrivalUrl = commonRepository.getLvcContextPath()+"/logistic/"+commonRepository.getOrgId()+"/"+pid+"/arrival";
-            String rep = restClient.notifyMsg(arrivalUrl);
-            logger.info(rep);
+            logger.debug("wagon status : Missing!");
+//            String arrivalUrl = commonRepository.getLvcContextPath()+"/logistic/"+commonRepository.getOrgId()+"/"+pid+"/arrival";
+//            String rep = restClient.notifyMsg(arrivalUrl);
+//            logger.info(rep);
         }
     }
 

@@ -1,8 +1,6 @@
 server:
   port: 9042
-  servlet:
-    context-path: /msc
+  servlet-path:  /msc
 msc:
  cranes:
-  file: cranes_msc.xls
-  sheet: cranes
+  file: cranes_msc.csv

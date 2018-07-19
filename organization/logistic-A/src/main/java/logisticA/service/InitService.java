@@ -1,12 +1,12 @@
 package logisticA.service;
 
+import logisticA.repos.RoutePlanRepository;
 import logisticA.domain.Location;
 import logisticA.domain.Logistic;
+import logisticA.domain.RoutePlan;
 import logisticA.domain.WagonShadow;
-import logisticA.repos.CommonRepository;
-import logisticA.repos.LocationRepository;
-import logisticA.repos.LogisticRepository;
-import logisticA.repos.WagonShadowRepository;
+import logisticA.repos.*;
+import logisticA.util.CommonUtil;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -42,6 +42,9 @@ public class InitService implements ExecutionListener, Serializable {
     @Autowired
     private RuntimeService runtimeService;
 
+    @Autowired
+    private RoutePlanRepository routePlanRepository;
+
     @Override
     public void notify(DelegateExecution delegateExecution) {
         String pid = delegateExecution.getProcessInstanceId();
@@ -57,6 +60,9 @@ public class InitService implements ExecutionListener, Serializable {
         double sLatitude = loc.getLatitude();
         WagonShadow ws = new WagonShadow(logistic.getWid() , sLongitude , sLatitude,"Initiating");
         ws.setWpid(pid);
+        ws.setDeltaNavDist(0);
+        ws.setDeltaNavCost(0);
+        ws.setLastNavsCost(0);
         wagonShadowRepository.save(ws);
         //TODO: update logistic
         logistic.setLpid(pid);
@@ -88,5 +94,19 @@ public class InitService implements ExecutionListener, Serializable {
         Map<String, Object> addiVars = new HashMap<String, Object>();
         addiVars.put("status" , "Initiating");
         runtimeService.setVariables(pid, addiVars);
+
+
+        //TODO : create RoutePlan
+        RoutePlan routePlan = new RoutePlan();
+        String planId = "WP"+pid+CommonUtil.getGuid();
+        routePlan.setId(planId);// wagon plan id;
+        routePlan.setLpid(pid);
+        routePlan.setMsgType("Initiating");
+        HashMap<String , Object> msgBody = new HashMap<String , Object>();
+        msgBody.put("eventType" , "INITIATING");
+        routePlan.setMsgBody(msgBody);
+        //TODO: save RoutePlan
+        routePlanRepository.save(routePlan);
+        runtimeService.setVariable(pid  , "planId" , planId);
     }
 }

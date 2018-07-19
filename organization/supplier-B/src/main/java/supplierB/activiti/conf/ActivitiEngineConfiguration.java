@@ -10,7 +10,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package supplierA.activiti.conf;
+package supplierB.activiti.conf;
 
 import org.activiti.dmn.engine.DmnEngineConfiguration;
 import org.activiti.dmn.engine.configurator.DmnEngineConfigurator;

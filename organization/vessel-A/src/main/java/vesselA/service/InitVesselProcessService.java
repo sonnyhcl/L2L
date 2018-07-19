@@ -49,11 +49,12 @@ public class InitVesselProcessService implements ExecutionListener, Serializable
         String vid = vars.get("vid").toString();
         VesselShadow vesselShadow = shadowRepository.findById(vid);
         vesselShadow.setVpid(pid);
-        vesselShadow.setRendezvous("未知");
         //TODO send init message to vessel device
         awsClient.sendInitiation("INIT" , vid , vesselShadow.getDefaultDelayHour() , vesselShadow.getZoomInVal());
         Map<String, Object> addiVars = new HashMap<String, Object>();
         addiVars.put("status" , "Initiating");
+        addiVars.put("applyId" , "NONE");
+        addiVars.put("nextNav" , true);
         runtimeService.setVariables(pid, addiVars);
 
     }

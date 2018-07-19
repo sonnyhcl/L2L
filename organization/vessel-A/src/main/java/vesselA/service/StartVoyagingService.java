@@ -43,11 +43,11 @@ public class StartVoyagingService implements ExecutionListener, Serializable {
         String vid = vars.get("vid").toString();
         //call voyaging-service for vessel device.
         VesselShadow vs = shadowRepository.findById(vid);
-        String curStatus = vs.getStatus();
-        runtimeService.setVariable(pid , "status" , curStatus);
+        vs.setStatus("Voyaging");
+        runtimeService.setVariable(pid , "status" , vs.getStatus());
         ObjectNode payloadObjectNode = objectMapper.createObjectNode();
         //从JsonFactory创建一个JsonGenerator生成器的实例
-        if ("Voyaging".equals(curStatus)) {
+        if ("Voyaging".equals(vs.getStatus())) {
             logger.info("next.");
             //TODO: notify vessel device of start next voyaging
             awsClient.notifyVoyaging("NOT_FIRST" , vid);

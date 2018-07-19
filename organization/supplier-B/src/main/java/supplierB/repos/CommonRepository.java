@@ -1,4 +1,4 @@
-package supplierA.repos;
+package supplierB.repos;
 
 import lombok.Data;
 import org.junit.Test;

@@ -19,8 +19,8 @@ public class LogisticRepository {
     public LogisticRepository() throws IOException {
         logger.info("--LogisticRepository--");
         logisticParts = new ArrayList<LogisticPart>();
-        logisticParts.add(new LogisticPart("深圳顺丰速运", "LA1001" , "10.131.245.91","9031" , "logistic-A" ,"variable-rendezvous" ));
-        logisticParts.add(new LogisticPart("南京圆通速运", "LB1002" , "10.131.245.91","9032" , "logistic-B" , "fixed-rendezvous"));
+        logisticParts.add(new LogisticPart("深圳顺丰速运", "LA1001" , "10.131.245.96","9031" , "logistic-A" ,"variable-rendezvous" ));
+        logisticParts.add(new LogisticPart("南京圆通速运", "LB1002" , "10.131.245.96","9032" , "logistic-B" , "fixed-rendezvous"));
     }
 
     public LogisticPart findByLOrgId(String orgId){

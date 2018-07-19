@@ -1,4 +1,4 @@
-package supplierA.domain;
+package supplierB.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

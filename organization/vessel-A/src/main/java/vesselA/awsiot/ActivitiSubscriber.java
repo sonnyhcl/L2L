@@ -32,11 +32,11 @@ public class ActivitiSubscriber extends AWSIotTopic {
         try {
             switch (receivedTopic) {
                 case "$aws/things/vessel/shadow/update/accepted":
-                    logger.info("received message under topic : "+receivedTopic);
+//                    logger.info("received message under topic : "+receivedTopic);
                     updateShadowHandler(message);
                     break;
                 case "activiti/vessel/status/change" :
-                    logger.info("received message under topic : "+receivedTopic);
+//                    logger.info("received message under topic : "+receivedTopic);
                     changeStatusHandler(message);
                     break;
                 default:

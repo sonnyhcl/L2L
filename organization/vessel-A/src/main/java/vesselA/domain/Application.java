@@ -16,7 +16,9 @@ public class Application {
     private String mpid;
     private String spName;
     private int spNumber;
+    private String rendezvous;
     private List<String> destinations;
+    private String status;
     private String timeStamp;
 
     public Application(String id, String vOrgId, String vpid, String vid, String spName, int spNumber, List<String> destinations, String timeStamp) {

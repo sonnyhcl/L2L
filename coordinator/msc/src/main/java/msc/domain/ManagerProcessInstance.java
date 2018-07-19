@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @SuppressWarnings("all")
-@NoArgsConstructor
+//@NoArgsConstructor
 public class ManagerProcessInstance extends ProcessInstance{
     private String applyId;
     private String orderId;

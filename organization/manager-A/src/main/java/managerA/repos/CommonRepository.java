@@ -16,6 +16,7 @@ public class CommonRepository {
     private  String host;
     private  String port;
     private  String projectId;
+    private  String location;
 
     private  String vmcContextPath;
     private  String mscContextPath;

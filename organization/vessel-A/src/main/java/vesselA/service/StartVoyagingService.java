@@ -1,7 +1,6 @@
 package vesselA.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
@@ -9,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vesselA.controller.AwsClient;
-import vesselA.domain.VesselShadow;
+import vesselA.coordinator.AwsClient;
 import vesselA.repos.ShadowRepository;
 
 import java.io.Serializable;
@@ -36,22 +34,14 @@ public class StartVoyagingService implements ExecutionListener, Serializable {
     @Override
     public void notify(DelegateExecution execution) {
         // TODO Auto-generated method stub
-        //notify the  vessel device of start or continuing reported data
         logger.info("--startVoyagingService--");
         String pid = execution.getProcessInstanceId();
         Map<String, Object> vars = execution.getVariables();
         String vid = vars.get("vid").toString();
-        //call voyaging-service for vessel device.
-        VesselShadow vs = shadowRepository.findById(vid);
-        vs.setStatus("Voyaging");
-        runtimeService.setVariable(pid , "status" , vs.getStatus());
-        ObjectNode payloadObjectNode = objectMapper.createObjectNode();
-        //从JsonFactory创建一个JsonGenerator生成器的实例
-        if ("Voyaging".equals(vs.getStatus())) {
-            logger.info("next.");
-            //TODO: notify vessel device of start next voyaging
-            awsClient.notifyVoyaging("NOT_FIRST" , vid);
-        }
+//        VesselShadow vs = shadowRepository.findById(vid);
+//        vs.setStatus("Voyaging");
+//        runtimeService.setVariable(pid , "status" , vs.getStatus());
+        //TODO: notify vessel device of start next voyaging
     }
 
 }

@@ -805,7 +805,7 @@ ResourceManager = {
 		if(!(mask))
 			throw 'Invalid mask for resource event listener registration.';
 
-		// construct controller and token.
+		// construct coordinator and token.
 		var controller = {listener: listener, mask: mask};
 		var token = ResourceManager.__token++;
 		

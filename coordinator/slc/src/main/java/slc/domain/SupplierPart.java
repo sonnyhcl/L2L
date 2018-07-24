@@ -1,4 +1,4 @@
-package slc.domain;
+package msc.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

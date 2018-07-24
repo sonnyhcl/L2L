@@ -1,11 +1,9 @@
 package supplierA.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import supplierA.domain.Logistic;
+import supplierA.domain.Logistics;
 import supplierA.domain.Order;
 import supplierA.repos.OrderRepository;
-import supplierA.util.CommonUtil;
 import supplierA.repos.CommonRepository;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
@@ -13,12 +11,7 @@ import org.activiti.engine.delegate.JavaDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -58,9 +51,9 @@ public class ArrangingService implements JavaDelegate ,Serializable{
         String lCategory = pvars.get("lCategory").toString();
 
         Order order = orderRepository.findById(orderId);
-        Logistic logistic = order.generateLogistic(null,lOrgId , null , null ,lCategory , null , commonRepository.getLocation());
+        Logistics logistics = order.generateLogistic(null,lOrgId , null , null ,lCategory , null , commonRepository.getLocation());
         String url = commonRepository.getSlcContextPath()+"/supplier/"+orgId+"/"+spid+"/arrange";
-        restClient.arrange(url , logistic);
-        logger.info("Generate logistic successfully");
+        restClient.arrange(url , logistics);
+        logger.info("Generate logistics successfully");
     }
 }

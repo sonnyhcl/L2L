@@ -8,9 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vesselA.controller.AwsClient;
-import vesselA.repos.CommonRepository;
+import vesselA.coordinator.AwsClient;
 import vesselA.domain.VesselShadow;
+import vesselA.repos.CommonRepository;
 import vesselA.repos.ShadowRepository;
 
 import java.io.Serializable;
@@ -32,7 +32,7 @@ public class InitVesselProcessService implements ExecutionListener, Serializable
     private CommonRepository commonRepository;
 
     @Autowired
-    private  ShadowRepository shadowRepository;
+    private ShadowRepository shadowRepository;
     @Autowired
     private AwsClient awsClient;
     @Autowired
@@ -48,11 +48,11 @@ public class InitVesselProcessService implements ExecutionListener, Serializable
         String pid = execution.getProcessInstanceId();
         String vid = vars.get("vid").toString();
         VesselShadow vesselShadow = shadowRepository.findById(vid);
-        vesselShadow.setVpid(pid);
+        shadowRepository.saveRegistry(vid , pid);
         //TODO send init message to vessel device
-        awsClient.sendInitiation("INIT" , vid , vesselShadow.getDefaultDelayHour() , vesselShadow.getZoomInVal());
+        awsClient.sendInitiation("TRACK" , vid ,commonRepository.getDefaultDelayHour() , commonRepository.getZoomInVal());
         Map<String, Object> addiVars = new HashMap<String, Object>();
-        addiVars.put("status" , "Initiating");
+//        addiVars.put("status" , "Voyaging");
         addiVars.put("applyId" , "NONE");
         addiVars.put("nextNav" , true);
         runtimeService.setVariables(pid, addiVars);

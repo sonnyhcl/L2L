@@ -24,12 +24,12 @@ public class Order {
     private List<String> destinations;
     private String timeStamp;
 
-    public Logistic generateLogistic(String logisticId, String lOrgId, String lpid, String wid , String category,
-                                     String rendezvous, String supLoc) {
-        Logistic logistic = new Logistic(logisticId, this.vOrgId, vpid, vid, mOrgId, mpid, sOrgId,
+    public Logistics generateLogistic(String logisticId, String lOrgId, String lpid, String wid , String category,
+                                      String rendezvous, String supLoc) {
+        Logistics logistics = new Logistics(logisticId, this.vOrgId, vpid, vid, mOrgId, mpid, sOrgId,
                 spid, lOrgId, lpid , wid , spName, spWight, spNumber, category, rendezvous, supLoc, destinations, timeStamp);
 
-        return logistic;
+        return logistics;
 
     }
 }

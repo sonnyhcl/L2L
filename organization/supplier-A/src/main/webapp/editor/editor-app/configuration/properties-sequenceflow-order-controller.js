@@ -12,7 +12,7 @@
  */
 
 /*
- * Sequence flow order controller
+ * Sequence flow order coordinator
  */
 
 angular.module('activitiModeler').controller('KisBpmSequenceFlowOrderCtrl',

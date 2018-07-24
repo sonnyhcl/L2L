@@ -40,4 +40,3 @@ secrets.yml
 vessel.activiti.cert.pem
 vessel.activiti.private.key
 src/main/resources/logs/
-logs

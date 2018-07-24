@@ -6,10 +6,12 @@
         <artifactId>activiti-ui-root</artifactId>
         <version>6.0.0</version>
     </parent>
-
     <artifactId>vessel-A</artifactId>
     <packaging>war</packaging>
     <properties>
+        <server.port>9001</server.port> <!-- 设置端口 -->
+        <server.path>/vessel-A</server.path><!-- 设置默认访问应用的路径 -->
+        <server.url>http://127.0.0.1:9001/vessel-A</server.url>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <spring.version>4.3.14.RELEASE</spring.version>
         <boot.version>1.5.9.RELEASE</boot.version>
@@ -26,7 +28,7 @@
             <artifactId>javax.websocket-api</artifactId>
             <version>1.1</version>
             <scope>provided
-            </scope> <!-- 注意,scope必须为provided,否则runtime会冲突，如果使用tomcat 8,还需要将TOMCAT_HOME/lib下的javax.vessel.websocket-api.jar一并删除 -->
+            </scope> <!-- 注意,scope必须为provided,否则runtime会冲突，如果使用tomcat 8,还需要将TOMCAT_HOME/lib下的javax.websocket-api.jar一并删除 -->
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -59,11 +61,6 @@
                     <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j</artifactId>
-            <version>1.3.8.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -129,11 +126,11 @@
             <artifactId>lettuce</artifactId>
             <version>3.5.0.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>RELEASE</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-websocket</artifactId>-->
+            <!--<version>${boot.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -142,26 +139,32 @@
         </dependency>
 
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.caspar-chen</groupId>
-            <artifactId>swagger-ui-layer</artifactId>
-            <version>0.0.3</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.16.20</version>
             <optional>true</optional>
         </dependency>
+        <!--For Reading Excel-->
         <dependency>
-            <groupId>junit</groupId>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.17</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
+        <dependency>
+            <groupId>net.sourceforge.jexcelapi</groupId>
+            <artifactId>jxl</artifactId>
+            <version>2.6.12</version>
+        </dependency>
+        <dependency>
+        <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/net.sourceforge.javacsv/javacsv -->
         <dependency>
@@ -174,7 +177,7 @@
 
     <!-- BUILD -->
     <build>
-        <finalName>vessel-A</finalName>
+        <finalName>logistics-A</finalName>
 
         <resources>
             <resource>
@@ -215,9 +218,9 @@
                     <update>true</update> <!-- 热部署 -->
                     <charset>utf-8</charset> <!-- 设置字符集 -->
                     <uriEncoding>UTF-8</uriEncoding><!-- 设置uri编码 -->
-                    <port>9001</port> <!-- 设置端口 -->
-                    <path>/vessel-A</path><!-- 设置默认访问应用的路径 -->
-                    <url>http://127.0.0.1:9001/vessel-A</url>
+                    <port>${server.port}</port> <!-- 设置端口 -->
+                    <path>${server.path}</path><!-- 设置默认访问应用的路径 -->
+                    <url>${server.url}</url>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -319,16 +322,16 @@
                         <version>${tomcat.version}</version>
                     </dependency>
 
-                    <!--<dependency>-->
-                        <!--<groupId>org.apache.tomcat.embed</groupId>-->
-                        <!--<artifactId>tomcat-embed-logging-juli</artifactId>-->
-                        <!--<version>${tomcat.version}</version>-->
-                    <!--</dependency>-->
-                    <!--<dependency>-->
-                        <!--<groupId>org.apache.tomcat.embed</groupId>-->
-                        <!--<artifactId>tomcat-embed-logging-log4j</artifactId>-->
-                        <!--<version>${tomcat.version}</version>-->
-                    <!--</dependency>-->
+                    <dependency>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-logging-juli</artifactId>
+                        <version>${tomcat.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-logging-log4j</artifactId>
+                        <version>${tomcat.version}</version>
+                    </dependency>
                 </dependencies>
             </plugin>
             <plugin>

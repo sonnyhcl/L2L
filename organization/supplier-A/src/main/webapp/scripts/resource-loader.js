@@ -14,7 +14,7 @@
 
     if (resources) {
 
-        // Pause angular bootstrap so we have time to register and override angular services/directives etc
+        // Pause angular bootstrap so we have time to register and override angular service/directives etc
         window.name = 'NG_DEFER_BOOTSTRAP!';
 
         function load(res, node, callback, scope) {

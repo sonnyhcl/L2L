@@ -135,11 +135,11 @@ angular.module('ui.grid').directive('uiGridCell', ['$compile', '$parse', 'gridUt
             });
           }
 
-          // If the grid controller is present, use it to get the compiled cell template function
+          // If the grid coordinator is present, use it to get the compiled cell template function
           if (uiGridCtrl && $scope.col.compiledElementFn) {
              compileTemplate();
           }
-          // No controller, compile the element manually (for unit tests)
+          // No coordinator, compile the element manually (for unit tests)
           else {
             if ( uiGridCtrl && !$scope.col.compiledElementFn ){
               // gridUtil.logError('Render has been called before precompile.  Please log a ui-grid issue');  
@@ -257,7 +257,7 @@ function ( i18nService, uiGridConstants, gridUtil ) {
     initialize: function( $scope, uiGridCtrl ){
       $scope.grid = uiGridCtrl.grid;
 
-      // Store a reference to this link/controller in the main uiGrid controller
+      // Store a reference to this link/coordinator in the main uiGrid coordinator
       // to allow showMenu later
       uiGridCtrl.columnMenuScope = $scope;
       
@@ -792,7 +792,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
                 $elm.append(newElm);
 
                 if (containerCtrl) {
-                  // Inject a reference to the footer viewport (if it exists) into the grid controller for use in the horizontal scroll handler below
+                  // Inject a reference to the footer viewport (if it exists) into the grid coordinator for use in the horizontal scroll handler below
                   var footerViewport = $elm[0].getElementsByClassName('ui-grid-footer-viewport')[0];
 
                   if (footerViewport) {
@@ -1221,7 +1221,7 @@ function ($timeout, gridUtil, uiGridConstants, uiGridColumnMenuService) {
                 $elm = newElm;
 
                 if (containerCtrl) {
-                  // Inject a reference to the header viewport (if it exists) into the grid controller for use in the horizontal scroll handler below
+                  // Inject a reference to the header viewport (if it exists) into the grid coordinator for use in the horizontal scroll handler below
                   var headerViewport = $elm[0].getElementsByClassName('ui-grid-header-viewport')[0];
 
                   if (headerViewport) {
@@ -1771,12 +1771,12 @@ function (gridUtil, uiGridConstants, uiGridGridMenuService) {
  <script>
  var app = angular.module('app', ['ui.grid']);
 
- app.controller('MainCtrl', ['$scope', function ($scope) {
+ app.coordinator('MainCtrl', ['$scope', function ($scope) {
    
  }]);
  </script>
 
- <div ng-controller="MainCtrl">
+ <div ng-coordinator="MainCtrl">
    <div ui-grid-menu shown="true"  ></div>
  </div>
  </doc:source>
@@ -1986,7 +1986,7 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
                 context.context = $scope.context;
               }
 
-              // Add the grid to the function call context if the uiGrid controller is present
+              // Add the grid to the function call context if the uiGrid coordinator is present
               if (typeof(uiGridCtrl) !== 'undefined' && uiGridCtrl) {
                 context.grid = uiGridCtrl.grid;
               }
@@ -2513,12 +2513,12 @@ function ($compile, $timeout, $window, $document, gridUtil, uiGridConstants) {
    <script>
    var app = angular.module('app', ['ui.grid']);
 
-   app.controller('MainCtrl', ['$scope', function ($scope) {
+   app.coordinator('MainCtrl', ['$scope', function ($scope) {
           $scope.myStyle = '.blah { border: 1px solid }';
         }]);
    </script>
 
-   <div ng-controller="MainCtrl">
+   <div ng-coordinator="MainCtrl">
    <style ui-grid-style>{{ myStyle }}</style>
    <span class="blah">I am in a box.</span>
    </div>
@@ -2689,7 +2689,7 @@ angular.module('ui.grid')
                     '$templateCache', 'gridClassFactory', '$timeout', '$parse', '$compile', 'ScrollEvent',
     function ($scope, $elm, $attrs, gridUtil, $q, uiGridConstants,
               $templateCache, gridClassFactory, $timeout, $parse, $compile, ScrollEvent) {
-      // gridUtil.logDebug('ui-grid controller');
+      // gridUtil.logDebug('ui-grid coordinator');
 
       var self = this;
 
@@ -2904,7 +2904,7 @@ angular.module('ui.grid').directive('uiGrid',
 
               var grid = uiGridCtrl.grid;
 
-              // Initialize scrollbars (TODO: move to controller??)
+              // Initialize scrollbars (TODO: move to coordinator??)
               uiGridCtrl.scrollbars = [];
 
               //todo: assume it is ok to communicate that rendering is complete??
@@ -3118,7 +3118,7 @@ angular.module('ui.grid')
      * @ngdoc object
      * @name appScope
      * @propertyOf ui.grid.class:Grid
-     * @description reference to the application scope (the parent scope of the ui-grid element).  Assigned in ui-grid controller
+     * @description reference to the application scope (the parent scope of the ui-grid element).  Assigned in ui-grid coordinator
      * <br/>
      * use gridOptions.appScopeProvider to override the default assignment of $scope.$parent with any reference
      */
@@ -4565,7 +4565,7 @@ angular.module('ui.grid')
       })
       .forEach(function (compInfo) {
         // this used to provide $scope as a second parameter, but I couldn't find any 
-        // style builders that used it, so removed it as part of moving to grid from controller
+        // style builders that used it, so removed it as part of moving to grid from coordinator
         var ret = compInfo.func.call(self);
 
         if (angular.isString(ret)) {
@@ -6238,10 +6238,10 @@ angular.module('ui.grid')
    * @ngdoc function
    * @name ui.grid.class:GridOptions
    * @description Default GridOptions class.  GridOptions are defined by the application developer and overlaid
-   * over this object.  Setting gridOptions within your controller is the most common method for an application 
+   * over this object.  Setting gridOptions within your coordinator is the most common method for an application
    * developer to configure the behaviour of their ui-grid
    * 
-   * @example To define your gridOptions within your controller:
+   * @example To define your gridOptions within your coordinator:
    * <pre>$scope.gridOptions = {
    *   data: $scope.myData,
    *   columnDefs: [ 
@@ -17131,7 +17131,7 @@ module.filter('px', function() {
    <script>
    var app = angular.module('app', ['ui.grid', 'ui.grid.resizeColumns']);
 
-   app.controller('MainCtrl', ['$scope', function ($scope) {
+   app.coordinator('MainCtrl', ['$scope', function ($scope) {
           $scope.gridOpts = {
             data: [
               { "name": "Ethel Price", "gender": "female", "company": "Enersol" },
@@ -17143,7 +17143,7 @@ module.filter('px', function() {
         }]);
    </script>
 
-   <div ng-controller="MainCtrl">
+   <div ng-coordinator="MainCtrl">
    <div class="testGrid" ui-grid="gridOpts" ui-grid-resize-columns ></div>
    </div>
    </doc:source>
@@ -17258,7 +17258,7 @@ module.filter('px', function() {
        <script>
         var app = angular.module('app', ['ui.grid', 'ui.grid.resizeColumns']);
 
-        app.controller('MainCtrl', ['$scope', function ($scope) {
+        app.coordinator('MainCtrl', ['$scope', function ($scope) {
           $scope.gridOpts = {
             enableColumnResizing: true,
             data: [
@@ -17271,7 +17271,7 @@ module.filter('px', function() {
         }]);
        </script>
 
-       <div ng-controller="MainCtrl">
+       <div ng-coordinator="MainCtrl">
         <div class="testGrid" ui-grid="gridOpts"></div>
        </div>
      </doc:source>

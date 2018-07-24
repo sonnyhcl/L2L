@@ -4,7 +4,7 @@ import lombok.Data;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 /**
- * vessel data cache for awsiot shadow and related process data by vId
+ * vessel data cache for eventGateway shadow and related process data by vId
  * @author bqzhu
  */
 @Data
@@ -19,6 +19,9 @@ public class CommonRepository {
     private  String vmcContextPath;
     private  String lvcContextPath;
     private  String vdevContextPath;
+
+    private int zoomInVal = 1000;
+    private int defaultDelayHour = 6;
 
     public CommonRepository(Environment environment){
         //TODO:register organization in VMC and LVC

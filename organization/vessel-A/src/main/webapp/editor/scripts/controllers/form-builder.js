@@ -19,7 +19,7 @@ angular.module('activitiModeler')
             // Main page (needed for visual indicator of current page)
             $rootScope.setMainPageById('forms');
 
-            // Needs to be on root scope to be available in the toolbar controller
+            // Needs to be on root scope to be available in the toolbar coordinator
             $rootScope.formBuilder = {activeTab: 'design'};
 
             $scope.model = {

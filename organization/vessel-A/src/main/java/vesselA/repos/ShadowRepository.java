@@ -5,14 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import vesselA.domain.VesselShadow;
+import vesselA.eventGateway.ShadowWithProcesses;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+
 @Data
+@Service
 public class ShadowRepository {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    List<ShadowWithProcesses> shadowProcessRegistry = new ArrayList<ShadowWithProcesses>();
     List<VesselShadow> vesselShadows = new ArrayList<VesselShadow>();
 
     public void save(VesselShadow vs){
@@ -28,10 +31,10 @@ public class ShadowRepository {
         return null;
     }
 
-    public VesselShadow findByPid(String pid){
-        for(VesselShadow vesselShadow : vesselShadows){
-            if(pid.equals(vesselShadow.getVpid())){
-                return vesselShadow;
+    public ShadowWithProcesses findRegisteredProcessesById(String vid){
+        for(ShadowWithProcesses spr : shadowProcessRegistry){
+            if(spr.getVid().equals(vid)){
+                return spr;
             }
         }
         return null;
@@ -42,4 +45,18 @@ public class ShadowRepository {
         oldVs = newVs;
         return findById(vid);
     }
+
+    public  void  saveRegistry(String vid , String pid){
+        ShadowWithProcesses spr = findRegisteredProcessesById(vid);
+        if(spr == null){
+            ShadowWithProcesses e = new ShadowWithProcesses();
+            e.setVid(vid);
+            e.save(pid);
+            shadowProcessRegistry.add(e);
+        }else{
+            spr.save(pid);
+        }
+    }
+
+
 }

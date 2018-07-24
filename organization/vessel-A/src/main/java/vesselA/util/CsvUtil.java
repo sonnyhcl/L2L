@@ -3,6 +3,7 @@ package vesselA.util;
 import com.csvreader.CsvReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import vesselA.domain.IoTSetting;
 import vesselA.domain.Location;
 
 import java.io.BufferedReader;
@@ -23,7 +24,6 @@ public class CsvUtil {
             logger.debug(csvReader.getHeaders().toString());
         }
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
-        reader.readLine();//第一行信息，为标题信息，不用,如果需要，注释掉
         String line = null;
         while((line=reader.readLine())!=null){
             String[] items= line.split(",");//CSV格式文件为逗号分隔符文件，这里根据逗号切分
@@ -32,9 +32,28 @@ public class CsvUtil {
             Double lat = Double.parseDouble(items[2].trim());
             Location location = new Location(name , lng , lat);
             locations.add(location);
-            logger.debug(location.toString());
         }
         return  locations;
+    }
+    public static List<IoTSetting> readIoTSettings(String filePath) throws IOException {
+        List<IoTSetting> ioTSettings= new ArrayList<IoTSetting>();
+        // 创建CSV读对象
+        CsvReader csvReader = new CsvReader(filePath);
+        if (csvReader.getHeaders() != null){
+            logger.debug(csvReader.getHeaders().toString());
+        }
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line = null;
+        while((line=reader.readLine())!=null){
+            String[] items= line.split(",");//CSV格式文件为逗号分隔符文件，这里根据逗号切分
+            String id = items[0].trim();
+            String defaultTopic = items[2].trim();
+            String customTopic = items[3].trim();
+            IoTSetting ioTSetting = new IoTSetting(id , defaultTopic , customTopic);
+            ioTSettings.add(ioTSetting);
+            logger.debug(ioTSetting.toString());
+        }
+        return  ioTSettings;
     }
 
 }

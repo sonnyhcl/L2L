@@ -202,7 +202,7 @@
         if (route && route.hotkeys) {
           angular.forEach(route.hotkeys, function (hotkey) {
             // a string was given, which implies this is a function that is to be
-            // $eval()'d within that controller's scope
+            // $eval()'d within that coordinator's scope
             // TODO: hotkey here is super confusing.  sometimes a function (that gets turned into an array), sometimes a string
             var callback = hotkey[2];
             if (typeof(callback) === 'string' || callback instanceof String) {
@@ -563,7 +563,7 @@
 
   .run(['hotkeys', function(hotkeys) {
     // force hotkeys to run by injecting it. Without this, hotkeys only runs
-    // when a controller or something else asks for it via DI.
+    // when a coordinator or something else asks for it via DI.
   }]);
 
 })();

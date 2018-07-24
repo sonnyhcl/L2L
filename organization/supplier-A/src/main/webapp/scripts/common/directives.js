@@ -1141,7 +1141,7 @@ activitiModule.directive('tabControl', ['$compile', '$http', '$templateCache', f
 
             $scope.$watch('activeTabReference', function(newValue, oldValue) {
                 if(!$scope.activeTab || $scope.activeTab.id != newValue) {
-                    // Active tab ID changed from outside of the directive controller, need to switch to the
+                    // Active tab ID changed from outside of the directive coordinator, need to switch to the
                     // right tab within this scope
                     var newTab = $scope.findTab(newValue);
                     if(newTab) {

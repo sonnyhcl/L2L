@@ -1,5 +1,6 @@
 package vesselA.util;
 
+
 import vesselA.domain.Destination;
 
 import java.util.ArrayList;

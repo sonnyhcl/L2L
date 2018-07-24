@@ -56,7 +56,6 @@ public class RestClient {
         return response.getBody().toString();
     }
 
-
     public String test(){
 //        HashMap<String , Object> sendData = new HashMap<String , Object>();
 //        sendData.put("vOrgId" , "1");

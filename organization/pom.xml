@@ -11,8 +11,6 @@
 		<module>vessel-A</module>
 		<module>manager-A</module>
 		<module>supplier-A</module>
-		<module>supplier-B</module>
-		<module>logistic-A</module>
-		<module>logistic-B</module>
+		<module>logistics-A</module>
 	</modules>
 </project>

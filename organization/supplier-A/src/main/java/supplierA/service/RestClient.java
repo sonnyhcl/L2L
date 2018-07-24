@@ -10,11 +10,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import supplierA.domain.Logistic;
+import supplierA.domain.Logistics;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 @Service
 @SuppressWarnings("all")
@@ -36,9 +35,9 @@ public class RestClient {
         return headers;
     }
 
-    public void arrange(String url , Logistic logistic){
-        HttpEntity<Logistic> requestEntity = new HttpEntity<Logistic>(logistic, getHeaders());
-        ResponseEntity<Logistic> response = restTemplate.postForEntity(url , requestEntity , Logistic.class);
+    public void arrange(String url , Logistics logistics){
+        HttpEntity<Logistics> requestEntity = new HttpEntity<Logistics>(logistics, getHeaders());
+        ResponseEntity<Logistics> response = restTemplate.postForEntity(url , requestEntity , Logistics.class);
         logger.info(response.getBody().toString());
     }
     public String matchManager(String url , HashMap<String , Object> payload) throws JsonProcessingException {

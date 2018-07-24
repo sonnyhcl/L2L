@@ -12,7 +12,7 @@
  */
 
 /*
- * String controller
+ * String coordinator
  */
 
 angular.module('activitiModeler').controller('KisBpmStringPropertyCtrl', [ '$scope', function ($scope) {
@@ -49,7 +49,7 @@ angular.module('activitiModeler').controller('KisBpmStringPropertyCtrl', [ '$sco
 }]);
 
 /*
- * Boolean controller
+ * Boolean coordinator
  */
 
 angular.module('activitiModeler').controller('KisBpmBooleanPropertyCtrl', ['$scope', function ($scope) {
@@ -83,7 +83,7 @@ angular.module('activitiModeler').controller('KisBpmBooleanPropertyCtrl', ['$sco
 }]);
 
 /*
- * Text controller
+ * Text coordinator
  */
 
 angular.module('activitiModeler').controller('KisBpmTextPropertyCtrl', [ '$scope', '$modal', function($scope, $modal) {

@@ -1,20 +1,19 @@
 package vesselA.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.delegate.DelegateExecution;
 import org.activiti.engine.delegate.ExecutionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import vesselA.controller.RestClient;
+import vesselA.coordinator.RestClient;
 import vesselA.domain.Application;
+import vesselA.domain.Destination;
 import vesselA.domain.VesselShadow;
 import vesselA.repos.ApplicationRepository;
 import vesselA.repos.ShadowRepository;
+import vesselA.coordinator.StompClient;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -35,9 +34,7 @@ public class DockingPostService implements ExecutionListener, Serializable {
     private ShadowRepository shadowRepository;
 
     @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
-    @Autowired
-    private ObjectMapper objectMapper;
+    private StompClient stompClient;
 
     @Autowired
     private ApplicationRepository applicationRepository;
@@ -52,31 +49,31 @@ public class DockingPostService implements ExecutionListener, Serializable {
         String vid = vars.get("vid").toString();
         String applyId = vars.get("applyId").toString();
         logger.debug("applyId : "+applyId);
-
-        //TODO: 通知前端离港
         VesselShadow vesselShadow = shadowRepository.findById(vid);
         logger.debug("status : "+vesselShadow.getStatus());
-        String pname = vesselShadow.getDestinations().get(vesselShadow.getNextPortIndex()-1).getName();
-        ObjectNode payload = objectMapper.createObjectNode();
-        payload.put("pname" , pname);
-        simpMessagingTemplate.convertAndSendToUser( "admin","/topic/dockEnd" , payload);
-        logger.debug(pname);
-        if(vesselShadow.getNextPortIndex() == vesselShadow.getDestinations().size()-1){
-            logger.debug("到达最后一个港口：　"+pname);
-            runtimeService.setVariable(pid , "nextNav" , false);
-        }
 
-        //TODO: 如果流程发出了申请
+        Destination curPort = vesselShadow.getDestinations().get(vesselShadow.getStepIndex());
+        Destination nextPort =  null;
+        String pname = curPort.getName();
+        if(vesselShadow.getStepIndex() == vesselShadow.getDestinations().size()-1){
+            logger.debug("Arrival at the last port ：　"+pname);
+            runtimeService.setVariable(pid , "nextNav" , false);
+        }else{
+            nextPort =  vesselShadow.getDestinations().get(vesselShadow.getStepIndex()+1);
+        }
+        stompClient.sendCurrentPort("admin" , "/topic/dock/end" ,  curPort , vesselShadow.getStatus() , nextPort);
+        logger.debug(curPort.getName());
+
+
+        //TODO: if  process has applied for spare parts.
         if(!applyId.equals("NONE")){
             Application application = applicationRepository.findById(applyId);
             String rend = application.getRendezvous();
-            //TODO: 如果交付未结束　，检查交付状态
+            //TODO:  if  delivery is continuing , then  check the status of delivery.
             String applyStatus = application.getStatus();
-            if(!(applyStatus.equals("Missing") || applyStatus.equals("Meeting"))){//排除结束状态
+            if(!(applyStatus.equals("Missing") || applyStatus.equals("Meeting"))){//exclude the  end status.
                 logger.debug("rend"+rend+" applyStatus : "+applyStatus);
                 String deliveryStatus = restClient.checkDeiveryStatus(pid);
-
-                payload = objectMapper.createObjectNode();
                 switch (deliveryStatus){
                     case "MISSING" :
                         application.setStatus("Missing");
@@ -84,28 +81,28 @@ public class DockingPostService implements ExecutionListener, Serializable {
                         HashMap<String , Object> msgBody = new HashMap<String , Object>();
                         msgBody.put("eventType" , "MISSING");
                         restClient.notifyMsg(pid , "Missing" , msgBody);
-                        logger.debug("vessel status : Missing");
-                        payload.put("pid" , pid);
-                        payload.put("msgType" , "MISSING");
+                        stompClient.sendMissingMsg("admin","/topic/missing" , pid , "MISSING");
                         logger.debug("send \"MISSING\" message to monitor : ");
-                        simpMessagingTemplate.convertAndSendToUser( "admin","/topic/missing" , payload);
                         break;
                     case "NOT_MISSING" :
-                        if(rend.equals(pname)){ //在船离港时检查船是否交货成功
+                        if(rend.equals(pname)){ // check  whether the delivery is successful when departure.
                             application.setStatus("Meeting");
-                            //TODO: notify logistic of "Missing"
+                            //TODO: notify logistic of "Meeting"
                             msgBody = new HashMap<String , Object>();
                             msgBody.put("eventType" , "MEETING");
                             restClient.notifyMsg(pid , "Meeting" , msgBody);
-                            logger.debug("vessel status : Meeting");
-                            payload.put("pid" , pid);
-                            payload.put("msgType" , "MEET");
-                            payload.put("rendezvous" , application.getRendezvous());
+                            stompClient.sendMeetMsg("admin","/topic/meeting" , pid ,  "MEET" ,   application.getRendezvous());
                             logger.debug("send \"MEET\" message to monitor : ");
-                            simpMessagingTemplate.convertAndSendToUser( "admin","/topic/meeting" , payload);
                         }else{
                             logger.info("There still exists opportunity to meet!");
                         }
+                        break;
+                    case "MEETING" :
+                        msgBody = new HashMap<String , Object>();
+                        msgBody.put("eventType" , "MEETING");
+                        restClient.notifyMsg(pid , "Meeting" , msgBody);
+                        stompClient.sendMeetMsg("admin","/topic/meeting" , pid ,  "MEET" ,   application.getRendezvous());
+                        logger.debug("MEETING");
                         break;
                     case "NOT_PAIRED" :
                         logger.debug("NOT_PAIRED");

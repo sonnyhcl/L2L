@@ -977,11 +977,11 @@ angular.mock.dump = function(object) {
  *
  *
  * # Unit testing with mock $httpBackend
- * The following code shows how to setup and use the mock backend when unit testing a controller.
- * First we create the controller under test:
+ * The following code shows how to setup and use the mock backend when unit testing a coordinator.
+ * First we create the coordinator under test:
  *
   <pre>
-  // The controller code
+  // The coordinator code
   function MyController($scope, $http) {
     var authToken;
 
@@ -1006,7 +1006,7 @@ angular.mock.dump = function(object) {
  * Now we setup the mock backend and create the test specs:
  *
   <pre>
-    // testing controller
+    // testing coordinator
     describe('MyController', function() {
        var $httpBackend, $rootScope, createController;
 
@@ -1018,11 +1018,11 @@ angular.mock.dump = function(object) {
 
          // Get hold of a scope (i.e. the root scope)
          $rootScope = $injector.get('$rootScope');
-         // The $controller service is used to create instances of controllers
-         var $controller = $injector.get('$controller');
+         // The $coordinator service is used to create instances of controllers
+         var $coordinator = $injector.get('$coordinator');
 
          createController = function() {
-           return $controller('MyController', {'$scope' : $rootScope });
+           return $coordinator('MyController', {'$scope' : $rootScope });
          };
        }));
 
@@ -1035,17 +1035,17 @@ angular.mock.dump = function(object) {
 
        it('should fetch authentication token', function() {
          $httpBackend.expectGET('/auth.py');
-         var controller = createController();
+         var coordinator = createController();
          $httpBackend.flush();
        });
 
 
        it('should send msg to server', function() {
-         var controller = createController();
+         var coordinator = createController();
          $httpBackend.flush();
 
          // now you don’t care about the authentication, but
-         // the controller will still send the request and
+         // the coordinator will still send the request and
          // $httpBackend will respond without you having to
          // specify the expectation and response for this request
 
@@ -1058,7 +1058,7 @@ angular.mock.dump = function(object) {
 
 
        it('should send auth header', function() {
-         var controller = createController();
+         var coordinator = createController();
          $httpBackend.flush();
 
          $httpBackend.expectPOST('/add-msg.py', undefined, function(headers) {
@@ -1703,8 +1703,8 @@ angular.mock.$RootElementProvider = function() {
  *
  * # ngMock
  *
- * The `ngMock` module providers support to inject and mock Angular services into unit tests.
- * In addition, ngMock also extends various core ng services such that they can be
+ * The `ngMock` module providers support to inject and mock Angular service into unit tests.
+ * In addition, ngMock also extends various core ng service such that they can be
  * inspected and controlled in a synchronous manner within test code.
  *
  * {@installModule mock}

@@ -14,7 +14,7 @@ angular.module('activitiApp')
     .controller('RenderFormController', ['$rootScope', '$scope', '$http', '$translate', '$modal', 'appResourceRoot', 'FormService', 'RelatedContentService', '$sce', '$timeout', 'TaskService', 'hotkeys', 'uiGridConstants',
         function ($rootScope, $scope, $http, $translate, $modal, appResourceRoot, FormService, RelatedContentService, $sce, $timeout, TaskService, hotkeys, uiGridConstants) {
 
-            // when you bind it to the controller's scope, it will automatically unbind
+            // when you bind it to the coordinator's scope, it will automatically unbind
             // the hotkey when the scope is destroyed (due to ng-if or something that changes the DOM)
             hotkeys.bindTo($scope)
                 .add({

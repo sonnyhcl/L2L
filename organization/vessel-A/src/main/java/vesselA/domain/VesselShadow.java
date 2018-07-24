@@ -9,33 +9,27 @@ import java.util.List;
 @Data
 @ToString
 public class VesselShadow {
-    //vessel shadow data
     private String id; // vid
     private double longitude;
     private double latitude;
     private double velocity;
     private  String timeStamp;
     private List<Destination> destinations;
-    private  int positionIndex = 0;
-
-    //process data
-    private String vpid;
     private String status;
-    private String simuStartTime;
-    private int nextPortIndex;
-    private int zoomInVal;
-    private int defaultDelayHour;
+    private String startTime;
+    private int stepIndex;
+
 
     public List<Destination> getRemainingDestinations(){
         List<Destination> dlist = new ArrayList<Destination>();
         for(int i = 0 ; i < destinations.size(); i++){
-            if(i >= nextPortIndex){
+            if(i >= stepIndex){
                 Destination d = destinations.get(i);
-                if(i == nextPortIndex) {
-                    if ("Anchoring".equals(status) || "Docking".equals(status)) {
-                        dlist.add(destinations.get(nextPortIndex - 1));
-                    }
-                }
+//                if(i == stepIndex) {
+//                    if ("Anchoring".equals(status) || "Docking".equals(status)) {
+//                        dlist.add(destinations.get(stepIndex));
+//                    }
+//                }
                 dlist.add(d);
             }
         }
@@ -43,11 +37,11 @@ public class VesselShadow {
         return dlist;
     }
 
-    public void updateVesselState(VesselState vesselState){
-        this.longitude = vesselState.getLongitude();
-        this.latitude =vesselState.getLatitude();
-        this.velocity = vesselState.getVelocity();
-        this.timeStamp = vesselState.getTimeStamp();
+    public void updateState(double longitude , double latitude , double velocity , String timeStamp ){
+        this.longitude = longitude;
+        this.latitude =latitude;
+        this.velocity = velocity;
+        this.timeStamp = timeStamp;
     }
 
 

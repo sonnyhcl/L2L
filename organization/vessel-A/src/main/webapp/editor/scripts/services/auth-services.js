@@ -92,7 +92,7 @@ function wireServices(angularModule) {
       };
   }]);
   
-  // Add login controller
+  // Add login coordinator
   angularModule.controller('LoginController', ['$scope', '$location', 'AuthenticationSharedService',
      function ($scope, $location, AuthenticationSharedService) {
          $scope.status = {
@@ -115,7 +115,7 @@ function wireServices(angularModule) {
          };
      }]);
 
-  // Add logout controller
+  // Add logout coordinator
   angularModule.controller('LogoutController', ['$location', 'AuthenticationSharedService','$cookieStore',
      function ($location, AuthenticationSharedService, $cookieStore) {
          AuthenticationSharedService.logout();

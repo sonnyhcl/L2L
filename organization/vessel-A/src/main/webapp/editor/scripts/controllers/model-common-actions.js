@@ -258,7 +258,7 @@ angular.module('activitiModeler')
 }]);
 
 /**
- * The controller for driving the share model popup.
+ * The coordinator for driving the share model popup.
  */
 angular.module('activitiModeler')
 	.controller('ShareModelPopupCrtl', ['$rootScope', '$scope', '$http', '$timeout', '$translate', 'UserService',

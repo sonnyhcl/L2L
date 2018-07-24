@@ -760,8 +760,8 @@ angular.module('activitiApp')
           $scope.logistics = ["可变目的地","固定目的地"];
           $scope.selectedLogistic = "可变目的地";
           $scope.toEn ={
-              可变目的地 : "variable-rendezvous",
-              固定目的地 : "fixed-rendezvous"
+              可变目的地 : "variable-destination",
+              固定目的地 : "fixed-destination"
           }
 
           $scope.select = function(){

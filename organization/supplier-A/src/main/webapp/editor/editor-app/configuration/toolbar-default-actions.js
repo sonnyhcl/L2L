@@ -291,7 +291,7 @@ KISBPM.TOOLBAR = {
     }
 };
 
-/** Custom controller for the save dialog */
+/** Custom coordinator for the save dialog */
 angular.module('activitiModeler').controller('SaveModelCtrl', [ '$rootScope', '$scope', '$http', '$route', '$location',
     function ($rootScope, $scope, $http, $route, $location) {
 

@@ -2011,7 +2011,7 @@
                         scope.$broadcast('gridster-item-initialized', [item.sizeY, item.sizeX, item.getElementSizeY(), item.getElementSizeX()]);
 
                         function positionChanged() {
-                            // call setPosition so the element and gridster controller are updated
+                            // call setPosition so the element and gridster coordinator are updated
                             item.setPosition(item.row, item.col);
 
                             // when internal item position changes, update externally bound values

@@ -19,9 +19,7 @@
         <spring.version>4.3.14.RELEASE</spring.version>
         <boot.version>1.5.9.RELEASE</boot.version>
         <spring.security.version>4.2.5.RELEASE</spring.security.version>
-        <!--adding properties-->
         <activiti.version>6.0.0</activiti.version>
-        <!-- Web container version -->
         <tomcat.version>7.0.85</tomcat.version>
     </properties>
 
@@ -147,27 +145,17 @@
             <version>1.16.20</version>
             <optional>true</optional>
         </dependency>
-        <!--For Reading Excel-->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>3.17</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>3.17</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
-        <dependency>
-            <groupId>net.sourceforge.jexcelapi</groupId>
-            <artifactId>jxl</artifactId>
-            <version>2.6.12</version>
-        </dependency>
+
         <dependency>
         <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/net.sourceforge.javacsv/javacsv -->
+        <dependency>
+            <groupId>net.sourceforge.javacsv</groupId>
+            <artifactId>javacsv</artifactId>
+            <version>2.0</version>
         </dependency>
     </dependencies>
 

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @SuppressWarnings("all")
 public class Pair {
     private VesselProcessInstance vpi;
-    private LogisticProcessInstance lpi;
+    private LogisticsProcessInstance lpi;
 
 
     public boolean isRegistried(String orgId , String pid){

@@ -51,7 +51,7 @@ public class RestClient {
         return currentMs.getBody();
     }
 
-    public List<Freight> getFreights(LogisticPart logisticPart){
+    public List<Freight> getFreights(LogisticsPart logisticPart){
         String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/freights";
         ParameterizedTypeReference<List<Freight>> responseType = new ParameterizedTypeReference<List<Freight>>(){};
         HttpEntity httpEntity = new HttpEntity(getHeaders());
@@ -59,28 +59,28 @@ public class RestClient {
         return  res.getBody();
     }
 
-    public Logistic getLogistic(LogisticPart logisticPart , String lpid){
-        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/logistic";
+    public Logistics getLogistic(LogisticsPart logisticPart , String lpid){
+        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/logistics";
         HttpEntity httpEntity = new HttpEntity(getHeaders());
-        ResponseEntity<Logistic> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Logistic.class);
+        ResponseEntity<Logistics> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Logistics.class);
         return res.getBody();
     }
 
-    public double getCurrentCost(LogisticPart logisticPart , String lpid){
+    public double getCurrentCost(LogisticsPart logisticPart , String lpid){
         String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shadow/currentCost";
         HttpEntity httpEntity = new HttpEntity(getHeaders());
         ResponseEntity<Double> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Double.class);
         return res.getBody();
     }
 
-    public  Logistic putLogistic(LogisticPart logisticPart , String lpid , Logistic logistic){
-        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/logistic";
-        HttpEntity httpEntity = new HttpEntity(logistic , getHeaders());
-        ResponseEntity<Logistic> res = restTemplate.postForEntity(url , httpEntity  , Logistic.class);
+    public Logistics putLogistic(LogisticsPart logisticPart , String lpid , Logistics logistics){
+        String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/logistics";
+        HttpEntity httpEntity = new HttpEntity(logistics, getHeaders());
+        ResponseEntity<Logistics> res = restTemplate.postForEntity(url , httpEntity  , Logistics.class);
         return res.getBody();
     }
 
-    public  String postStatus(LogisticPart logisticPart , String lpid , String status , HashMap<String , Object> msgBody){
+    public  String postStatus(LogisticsPart logisticPart , String lpid , String status , HashMap<String , Object> msgBody){
         String url = "http://"+logisticPart.getHost()+":"+logisticPart.getPort()+"/"+logisticPart.getProjectId()+"/api/"+lpid+"/shadow/status/"+status;
         HttpEntity<?> httpEntity = new HttpEntity(msgBody, getHeaders());
         ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
@@ -94,16 +94,31 @@ public class RestClient {
         return res.getBody();
     }
 
-    public  String putRendezvous(VesselPart vesselPart , String lpid , String bestRend){
-        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+lpid+"/shadow/rendezvous/"+bestRend;
+    public  String putRendezvous(VesselPart vesselPart , String vpid , String bestRend){
+        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+vpid+"/rendezvous/"+bestRend;
         HttpEntity httpEntity = new HttpEntity(bestRend, getHeaders());
         ResponseEntity<String> res = restTemplate.postForEntity(url , httpEntity  , String.class);
         return res.getBody();
     }
 
 
+  public Application getApplication(VesselPart  vesselPart  , String vpid ){
+        String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+vpid+"/application";
+      HttpEntity httpEntity = new HttpEntity(getHeaders());
+      ResponseEntity<Application> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Application.class);
+      return res.getBody();
+  }
 
-
-
-
+  public Destination getCurrentPort(VesselPart vesselPart , String vpid){
+      String url = "http://"+vesselPart.getHost()+":"+vesselPart.getPort()+"/"+vesselPart.getProjectId()+"/api/"+vpid+"/currentPort";
+      HttpEntity httpEntity = new HttpEntity(getHeaders());
+      ResponseEntity<Destination> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Destination.class);
+        return res.getBody();
+  }
+  public String getWagonStatus(LogisticsPart logisticsPart , String lpid){
+      String url = "http://"+logisticsPart.getHost()+":"+logisticsPart.getPort()+"/"+logisticsPart.getProjectId()+"/api/"+lpid+"/wagon/status";
+      HttpEntity httpEntity = new HttpEntity(getHeaders());
+      ResponseEntity<String> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , String.class);
+      return res.getBody();
+  }
 }

@@ -3,6 +3,10 @@
 
 server:
  port: 9041
- servlet:
-  context-path: /vmc
+ servlet-path: /vmc
 
+# enterprises
+vesselParts:
+ fileName:  vessel_parts.csv
+managerParts:
+ fileName:  manager_parts.csv

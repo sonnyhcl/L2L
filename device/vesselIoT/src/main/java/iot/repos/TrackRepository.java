@@ -1,9 +1,6 @@
 package iot.repos;
 
-import iot.domain.Location;
-import iot.domain.Step;
-import iot.domain.Track;
-import iot.domain.VesselState;
+import iot.domain.*;
 import iot.util.CsvUtil;
 import lombok.Data;
 import org.slf4j.Logger;
@@ -17,18 +14,18 @@ import java.util.List;
 
 @Service
 @Data
-public class TrackService {
-    private static final Logger logger = LoggerFactory.getLogger(TrackService.class);
+public class TrackRepository {
+    private static final Logger logger = LoggerFactory.getLogger(TrackRepository.class);
     private List<Track> tracks = new ArrayList<Track>();
 
-    public TrackService(@Value("${vessel.vids}") String vidsCsv , LocationRepository locationRepository) throws IOException {
-        String dataPath = this.getClass().getResource("/").getPath()+"data/";
+    public TrackRepository(@Value("${awsiot.keys}") String keysCsv , LocationRepository locationRepository) throws IOException {
+        String dataPath = this.getClass().getResource("/").getPath()+ "data/";
         logger.debug("root path : "+dataPath);
-        List<String> vids = CsvUtil.readVids(dataPath+vidsCsv);
+        List<AwsKey> awsKeys = CsvUtil.readAwsKeys(dataPath+keysCsv);
         //Construct tracks
-        for(int i = 0; i < vids.size(); i++){
+        for(int i = 0; i < awsKeys.size(); i++){
             Track t = new Track();
-            String vid = vids.get(i);
+            String vid = awsKeys.get(i).getVid();
             List<String> destinations = CsvUtil.readDestinations(dataPath+"DE"+vid+".csv");
             List<VesselState> vesselStates = CsvUtil.readTracjectory(dataPath+"VS"+vid+".csv");
             //split into steps

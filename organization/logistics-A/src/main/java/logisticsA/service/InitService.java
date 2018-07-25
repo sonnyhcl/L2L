@@ -91,7 +91,7 @@ public class InitService implements ExecutionListener, Serializable {
         logger.info(matchVRep);
 
         Map<String, Object> addiVars = new HashMap<String, Object>();
-        addiVars.put("status" , "Initiating");
+        addiVars.put("processStatus" , "Initiating");
         runtimeService.setVariables(pid, addiVars);
 
 

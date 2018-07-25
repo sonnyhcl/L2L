@@ -22,12 +22,13 @@ public class CommonRepository {
     private  String mscContextPath;
     public  CommonRepository(Environment environment){
         //TODO:register organization in VMC m MSC
-        orgId = environment.getRequiredProperty("org.id");
-        host = environment.getRequiredProperty("org.host");
-        port = environment.getRequiredProperty("org.port");
-        projectId = environment.getRequiredProperty("org.projectId");
-        vmcContextPath = environment.getRequiredProperty("org.vmcContextPath");
-        mscContextPath = environment.getRequiredProperty("org.mscContextPath");
+        this.orgId = environment.getRequiredProperty("org.id");
+        this.host = environment.getRequiredProperty("org.host");
+        this.port = environment.getRequiredProperty("org.port");
+        this.projectId = environment.getRequiredProperty("org.projectId");
+        this.location = environment.getRequiredProperty("org.location");
+        this.vmcContextPath = environment.getRequiredProperty("org.vmcContextPath");
+        this.mscContextPath = environment.getRequiredProperty("org.mscContextPath");
     }
 
 }

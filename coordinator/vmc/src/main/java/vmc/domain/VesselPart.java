@@ -10,7 +10,6 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class VesselPart extends Participant {
     private String category;
-
     public VesselPart(String orgName, String orgId, String host, String port, String projectId, String category) {
         super(orgName, orgId, host, port, projectId);
         this.category = category;

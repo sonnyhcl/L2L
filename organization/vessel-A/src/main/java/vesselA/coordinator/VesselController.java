@@ -178,7 +178,6 @@ public class VesselController extends AbstractController {
         String startTime = vesselShadow.getStartTime();
         Date curDate = new Date();
         long startMs = DateUtil.str2date(startTime).getTime();
-        logger.debug(startTime+"--"+commonRepository.getZoomInVal());
         String currentTime = DateUtil.date2str(DateUtil.transForDate( startMs + (curDate.getTime() - startMs)*commonRepository.getZoomInVal()));
         info.put("curTime" , currentTime);
         if(status.equals("Anchoring")){
@@ -193,6 +192,7 @@ public class VesselController extends AbstractController {
             info.put("arrivalTime" , curDest.getEstiArrivalTime());
         }else if(status.equals("Docking")){
             //TODO:  elapse time of despature
+            logger.debug(curDest.toString()+"---"+currentTime);
             double departureElapseHour = DateUtil.TimeMinus(curDest.getEstiDepartureTime(), currentTime)*1.0/(1000*60*60);
             DecimalFormat df = new DecimalFormat("0.###");
             String departureElapseTime = df.format(departureElapseHour);
@@ -246,5 +246,13 @@ public class VesselController extends AbstractController {
         VesselShadow vesselShadow = shadowRepository.findById(vid);
         Destination curPort = vesselShadow.getDestinations().get(vesselShadow.getStepIndex());
         return  new   ResponseEntity<Destination>(curPort ,  HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{pid}/process/status" , method = RequestMethod.GET , produces = "application/json")
+    public ResponseEntity<String> getProcessStatus(@PathVariable("pid") String pid ){
+        String processStatus = runtimeService.getVariable(pid , "processStatus").toString();
+        logger.debug("/{pid}/process/status--"+processStatus);
+        String payload= "{\"processStatus\":\""+processStatus+"\"}";
+        return  new ResponseEntity<String>(payload ,  HttpStatus.OK);
     }
 }

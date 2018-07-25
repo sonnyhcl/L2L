@@ -1,7 +1,7 @@
 package lvc.repos;
 
 import lombok.Data;
-import lvc.domain.LogisticProcessInstance;
+import lvc.domain.LogisticsProcessInstance;
 import lvc.domain.Pair;
 import lvc.domain.VesselProcessInstance;
 import org.slf4j.Logger;
@@ -67,7 +67,7 @@ public class PairRepository {
         return null;
     }
 
-    public void createPair(VesselProcessInstance vpi , LogisticProcessInstance lpi){
+    public void createPair(VesselProcessInstance vpi , LogisticsProcessInstance lpi){
         pairs.add(new Pair(vpi , lpi));
     }
 

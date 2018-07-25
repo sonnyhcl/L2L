@@ -9,7 +9,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import slc.domain.Logistic;
+import slc.domain.Logistics;
+import slc.domain.LogisticsPart;
 
 import java.util.Arrays;
 
@@ -30,8 +31,9 @@ public class RestClient {
         return headers;
     }
 
-    public String startLogistic(String url , Logistic logistic){
-        HttpEntity<Logistic> requestEntity = new HttpEntity<Logistic>(logistic, getHeaders());
+    public String startLogistics(LogisticsPart logisticsPart, Logistics logistics){
+        String url = logisticsPart.getUrl() + "/api/" + logisticsPart.getOrgId() + "/process-instances/MsgStartLogistic";
+        HttpEntity<Logistics> requestEntity = new HttpEntity<Logistics>(logistics, getHeaders());
         String rep = restTemplate.postForObject(url , requestEntity , String.class);
         return rep;
     }

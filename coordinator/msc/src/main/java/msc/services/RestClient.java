@@ -1,18 +1,19 @@
 package msc.services;
 
+import msc.domain.Location;
 import msc.domain.Order;
+import msc.domain.SupplierPart;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @SuppressWarnings("all")
@@ -31,9 +32,19 @@ public class RestClient {
         return headers;
     }
 
-    public String startSupplier(String url , Order order){
+    public String startSupplier(SupplierPart supplierPart, Order order){
+        String url = supplierPart.getUrl() + "/api/" + supplierPart.getOrgId() + "/process-instances/MsgStartSupplier";
         HttpEntity<Order> requestEntity = new HttpEntity<Order>(order, getHeaders());
         String rep = restTemplate.postForObject(url , requestEntity , String.class);
         return rep;
+    }
+
+    public Location getLoc(SupplierPart  supplierPart){
+        String url = "http://"+supplierPart.getHost()+":"+supplierPart.getPort()+"/"+supplierPart.getProjectId()+"/api/location?name={name}";
+        HttpEntity httpEntity = new HttpEntity(getHeaders());
+        Map<String, Object> urlVariables = new HashMap<String, Object>();
+        urlVariables.put("name",supplierPart.getLocation());
+        ResponseEntity<Location> res = restTemplate.exchange(url , HttpMethod.GET , httpEntity , Location.class, urlVariables);
+        return res.getBody();
     }
 }

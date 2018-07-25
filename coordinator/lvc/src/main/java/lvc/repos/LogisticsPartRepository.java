@@ -1,16 +1,16 @@
-package slc.repos;
+package lvc.repos;
 
 import lombok.Data;
+import lvc.domain.LogisticsPart;
+import lvc.util.CsvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import slc.domain.LogisticsPart;
-import slc.util.CsvUtil;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+
 @Data
 @Service
 public class LogisticsPartRepository {

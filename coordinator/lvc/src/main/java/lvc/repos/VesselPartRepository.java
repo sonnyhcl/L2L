@@ -1,12 +1,12 @@
-package vmc.repos;
+package lvc.repos;
 
 import lombok.Data;
+import lvc.domain.VesselPart;
+import lvc.util.CsvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import vmc.domain.VesselPart;
-import vmc.util.CsvUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;

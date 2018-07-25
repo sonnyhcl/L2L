@@ -40,7 +40,7 @@ public class StartVoyagingService implements ExecutionListener, Serializable {
         String vid = vars.get("vid").toString();
 //        VesselShadow vs = shadowRepository.findById(vid);
 //        vs.setStatus("Voyaging");
-//        runtimeService.setVariable(pid , "status" , vs.getStatus());
+        runtimeService.setVariable(pid , "processStatus" , "Voyaging");
         //TODO: notify vessel device of start next voyaging
     }
 

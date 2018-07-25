@@ -4,7 +4,6 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import slc.domain.LogisticPart;
 import slc.domain.LogisticProcessInstance;
 import slc.domain.Pair;
 

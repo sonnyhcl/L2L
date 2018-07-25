@@ -1,55 +1,53 @@
-package vesseldevA.repos;
+package iot.service;
 
 import com.amazonaws.services.iot.client.*;
 import com.amazonaws.services.iot.client.sample.sampleUtil.SampleUtil;
-import jxl.read.biff.BiffException;
+import iot.domain.AwsKey;
+import iot.domain.IoTClient;
+import iot.domain.VesselDevice;
+import iot.util.CsvUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import vesseldevA.domain.AwsKey;
-import vesseldevA.domain.DeviceClient;
-import vesseldevA.services.shadow.VesselDevice;
-import vesseldevA.util.CsvUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
 @Data
 public class AWSClientService {
     private static final Logger logger = LoggerFactory.getLogger(AWSClientService.class);
-    private List<DeviceClient> awsClients = new ArrayList<DeviceClient>();
+    private List<IoTClient> iotClients = new ArrayList<IoTClient>();
 
-    public  AWSClientService(@Value("${awsiot.keys}") String keysCsv) throws IOException, BiffException, AWSIotException, InterruptedException {
-        String dataPath = this.getClass().getResource("/").getPath()+"data/";
+    public  AWSClientService(String keysCsv) throws IOException, AWSIotException, InterruptedException {
+        String dataPath = this.getClass().getResource("/").getPath()+ "data/";
         List<AwsKey> awsKeys = CsvUtil.readAwsKeys(dataPath+keysCsv);
         logger.debug("---AwsClientService---"+awsKeys.toString());
         for(int i = 0; i < awsKeys.size();i++){
             AwsKey awsKey = awsKeys.get(i);
-            DeviceClient deviceClient = new DeviceClient();
+            IoTClient ioTClient = new IoTClient();
             String vid = awsKey.getVid();
             String thingName = 'V'+vid;
-            deviceClient.setVid(vid);
+            ioTClient.setVid(vid);
             VesselDevice device = createVesselDevice(thingName);
             device.updateVid(vid);
             AWSIotMqttClient awsIotMqttClient = createMqttClient(awsKey , device);
-            deviceClient.setVesselDevice(device);
-            deviceClient.setAwsIotMqttClient(awsIotMqttClient);
-            deviceClient.setAwsUpdateShadowTopic("$aws/things/"+thingName+"/shadow/update");
-            awsClients.add(deviceClient);
+            ioTClient.setVesselDevice(device);
+            ioTClient.setAwsIotMqttClient(awsIotMqttClient);
+            ioTClient.setDefaultTopic(awsKey.getDefaultTopic());
+            ioTClient.setCustomTopic(awsKey.getCustomTopic());
+            iotClients.add(ioTClient);
 
         }
     }
 
 
-    public DeviceClient findDeviceClient(String vid){
-        for(DeviceClient deviceClient : awsClients){
-            if(vid.equals(deviceClient.getVid())){
-                return deviceClient;
+    public IoTClient findDeviceClient(String vid){
+        for(IoTClient ioTClient : iotClients){
+            if(vid.equals(ioTClient.getVid())){
+                return ioTClient;
             }
         }
         return null;
@@ -89,7 +87,6 @@ public class AWSClientService {
         awsIotMqttClient.connect();
         // Delete existing document if any
         device.delete();
-        AWSIotConnectionStatus status = AWSIotConnectionStatus.DISCONNECTED;
 
         return awsIotMqttClient;
     }

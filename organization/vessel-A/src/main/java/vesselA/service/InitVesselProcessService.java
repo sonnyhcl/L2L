@@ -55,6 +55,7 @@ public class InitVesselProcessService implements ExecutionListener, Serializable
 //        addiVars.put("status" , "Voyaging");
         addiVars.put("applyId" , "NONE");
         addiVars.put("nextNav" , true);
+        addiVars.put("processStatus" , "Voyaging");
         runtimeService.setVariables(pid, addiVars);
 
     }

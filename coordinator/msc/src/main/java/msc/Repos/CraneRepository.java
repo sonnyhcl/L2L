@@ -24,7 +24,7 @@ public class CraneRepository {
 
     public CraneRepository(@Value("${msc.cranes.file}") String fileName) throws IOException, BiffException {
         logger.info(fileName+"--"+sheetName);
-        String path = getClass().getResource("/").getPath()+"/"+fileName;
+        String path = getClass().getResource("/").getPath()+"/data/"+fileName;
         cranes = CsvUtil.readCranes(path);
         logger.debug(cranes.toString());
     }

@@ -45,7 +45,7 @@ public class RunningPostService implements ExecutionListener, Serializable {
         String logisticsId = vars.get("logisticId").toString();
         Logistics logistics = logisticsRepository.findById(logisticsId);
         String logisStatus = logistics.getStatus();
-        runtimeService.setVariable(pid , "status" , logisStatus);
+        runtimeService.setVariable(pid , "processStatus" , logisStatus);
         //TODO: notify vessel of arrival.
         if(logisStatus.equals("Meeting")){
             logger.debug("logistics status : Meeting!");

@@ -785,11 +785,16 @@ angular.module('activitiApp')
                         $scope.status  = data.status;
                         $scope.movedDistance = data.movedDistance;
                         console.log($scope.status);
-                        if($scope.status != "Running" && $scope.status != undefined){
-                            // $scope.completeTask();
-                            $interval.cancel($scope.runTimer);
-                            $window.location.reload();
-                        }
+                        var tUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/process/status";
+                        $http.get(tUrl)
+                            .success(function(pvars){
+                                console.log(pvars)
+                                if(pvars.processStatus != 'Running'){
+                                    console.log(pvars);
+                                    $interval.cancel($scope.runTimer);
+                                    $window.location.reload();
+                                }
+                            })
                     })
             }, 1000);
 

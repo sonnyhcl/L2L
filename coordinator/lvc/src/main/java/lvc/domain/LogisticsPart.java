@@ -1,4 +1,4 @@
-package slc.domain;
+package lvc.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

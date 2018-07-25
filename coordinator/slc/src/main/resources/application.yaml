@@ -1,7 +1,10 @@
 server:
  port: 9043
- servlet:
-   context-path: /slc
+ servlet-path: /slc
 
-slc:
+# enterprises
+supplierParts:
+ fileName: supplier_parts.csv
+logisticsParts:
+ fileName: logistics_parts.csv
 

@@ -1,4 +1,4 @@
-package managerA.domain;
+package vmc.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

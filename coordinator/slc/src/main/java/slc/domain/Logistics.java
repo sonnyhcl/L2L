@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Logistic {
+public class Logistics {
     private String id;
     private String vOrgId;
     private String vpid;

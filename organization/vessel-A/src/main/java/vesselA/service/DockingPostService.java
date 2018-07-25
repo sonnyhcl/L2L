@@ -72,17 +72,19 @@ public class DockingPostService implements ExecutionListener, Serializable {
             //TODO:  if  delivery is continuing , then  check the status of delivery.
             String applyStatus = application.getStatus();
             if(!(applyStatus.equals("Missing") || applyStatus.equals("Meeting"))){//exclude the  end status.
-                logger.debug("rend"+rend+" applyStatus : "+applyStatus);
+                logger.debug("rend "+rend+" applyStatus : "+applyStatus);
                 String deliveryStatus = restClient.checkDeiveryStatus(pid);
+                logger.debug(deliveryStatus);
                 switch (deliveryStatus){
                     case "MISSING" :
+                        runtimeService.setVariable(pid , "nextNav" , false);
                         application.setStatus("Missing");
                         //TODO: notify logistic of "Missing"
                         HashMap<String , Object> msgBody = new HashMap<String , Object>();
                         msgBody.put("eventType" , "MISSING");
                         restClient.notifyMsg(pid , "Missing" , msgBody);
-                        stompClient.sendMissingMsg("admin","/topic/missing" , pid , "MISSING");
-                        logger.debug("send \"MISSING\" message to monitor : ");
+//                        stompClient.sendMissingMsg("admin","/topic/missing" , pid , "MISSING");
+//                        logger.debug("send \"MISSING\" message to monitor : ");
                         break;
                     case "NOT_MISSING" :
                         if(rend.equals(pname)){ // check  whether the delivery is successful when departure.
@@ -98,6 +100,7 @@ public class DockingPostService implements ExecutionListener, Serializable {
                         }
                         break;
                     case "MEETING" :
+                        runtimeService.setVariable(pid , "nextNav" , false);
                         msgBody = new HashMap<String , Object>();
                         msgBody.put("eventType" , "MEETING");
                         restClient.notifyMsg(pid , "Meeting" , msgBody);
@@ -112,6 +115,9 @@ public class DockingPostService implements ExecutionListener, Serializable {
                 }
             }
         }
+
+//        runtimeService.setVariable(pid , "processStatus" , "Voyaging");
+
     }
 
 }

@@ -774,7 +774,7 @@ angular.module('activitiApp')
 
 	if($scope.model.task.name == 'AnchoringOrDocking') {
 	    $scope.adTimer = $interval(function(){
-            console.log("Task name ： AnchoringOrDocking");
+            // console.log("Task name ： AnchoringOrDocking");
             var infoUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/ADTask/info";
             $http.get(infoUrl)
                 .success(function(data){
@@ -782,7 +782,7 @@ angular.module('activitiApp')
                     $scope.pname = data.pname;
                     $scope.status = data.status;
                     $scope.curTime = data.curTime;
-                    console.log("ADTaskController-->vessel device status  : " , $scope.status);
+                    // console.log("ADTaskController-->vessel device status  : " , $scope.status);
                     if($scope.status == "Anchoring"){
                         $scope.arrivalElapseTime = data.arrivalElapseTime+' h';
                         $scope.anchoringTime = data.anchoringTime;
@@ -791,14 +791,16 @@ angular.module('activitiApp')
                         $scope.departureElapseTime = data.departureElapseTime+' h';
                         $scope.arrivalTime = data.arrivalTime;
                         $scope.departureTime = data.departureTime;
-                    }else if($scope.status == undefined){
-                        console.log("undefined");
-                    }else{
-                        console.log($scope.status);
-                        $interval.cancel($scope.adTimer);
-                        $window.location.reload();
-                        // $scope.completeTask();
                     }
+                    var tUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/process/status";
+                    $http.get(tUrl)
+                        .success(function(pvars){
+                            if(pvars.processStatus != "AnchoringOrDocking"){
+                                console.log(pvars);
+                                $interval.cancel($scope.adTimer);
+                                $window.location.reload();
+                            }
+                        })
                 })
         },1000)
 	}
@@ -841,7 +843,7 @@ angular.module('activitiApp')
     	if($scope.model.task.name != 'Voyaging'){
      	 	return;
         }
-        console.log("Task Name : " + $scope.model.task.name);
+        // console.log("Task Name : " + $scope.model.task.name);
         var shadowUrl = ACTIVITI.CONFIG.contextRoot+'/api/vessel/shadow/'+$scope.model.task.processInstanceId;
     	$http.get(shadowUrl)
     	.success(function(data){
@@ -867,12 +869,16 @@ angular.module('activitiApp')
             $scope.velocity = $scope.vesselShadow.velocity+" Km/h";
             $scope.timeStamp = $scope.vesselShadow.timeStamp;
             $scope.status  = $scope.vesselShadow.status;
-            console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
-            if($scope.status != "Voyaging" && $scope.status != undefined){
-                // $scope.completeTask();
-                $interval.cancel($scope.voyageTaskTimer);
-                $window.location.reload();
-            }
+            // console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
+            var tUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/process/status";
+            $http.get(tUrl)
+                .success(function(pvars){
+                    if(pvars.processStatus != "Voyaging"){
+                        console.log(pvars);
+                        $interval.cancel($scope.adTimer);
+                        $window.location.reload();
+                    }
+                })
     	})
     }, 1000);
 

@@ -1,10 +1,15 @@
 server:
  port: 9044
- servlet:
-   context-path: /lvc
+ servlet-path: /lvc
 
 #
 #custom properties
 #
 storages:
  fileName: storageRates.csv
+
+# enterprises
+logisticsParts:
+ fileName: logistics_parts.csv
+vesselParts:
+ fileName: vessel_parts.csv

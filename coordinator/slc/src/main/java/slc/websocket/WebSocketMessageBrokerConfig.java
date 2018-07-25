@@ -1,4 +1,4 @@
-package msc.websocket;
+package slc.websocket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;

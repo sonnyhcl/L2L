@@ -1,13 +1,12 @@
-package vesseldevA.repos;
+package iot.repos;
 
-import jxl.read.biff.BiffException;
+import iot.domain.Location;
+import iot.util.CsvUtil;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import vesseldevA.domain.Location;
-import vesseldevA.util.CsvUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,9 +17,9 @@ public class LocationRepository {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private List<Location> locations = new ArrayList<Location>();
 
-    public LocationRepository(@Value("${vessel.locations.fileName}") String filePath) throws IOException, BiffException {
+    public LocationRepository(@Value("${vessel.locations}") String filePath) throws IOException {
         logger.debug("--"+filePath+"--");
-        String path = this.getClass().getResource("/").getPath()+"data/"+filePath;
+        String path = this.getClass().getResource("/").getPath()+ "data/" +filePath;
         locations = CsvUtil.readLocations(path);
         logger.debug("locations : ");
     }

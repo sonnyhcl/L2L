@@ -79,15 +79,15 @@ public class LogisticsController extends AbstractController {
         return "Start logistics successfully.";
     }
 
-    @RequestMapping(value = "/{lpid}/logistic", method = RequestMethod.GET)
+    @RequestMapping(value = "/{lpid}/logistics", method = RequestMethod.GET)
     public ResponseEntity<Logistics> queryLogisticByLPid(@PathVariable("lpid") String lpid) {
-        logger.info("--GET /{pid}/logistic---" + lpid);
+        logger.info("--GET /{pid}/logistics---" + lpid);
         Logistics result = null;
         result = logisticsRepository.findByLpid(lpid);
         return new ResponseEntity<Logistics>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{pid}/logistic", method = RequestMethod.POST)
+    @RequestMapping(value = "/{pid}/logistics", method = RequestMethod.POST)
     public ResponseEntity<Logistics> updateLogistic(@PathVariable("pid") String pid, @RequestBody Logistics logistics) {
         logger.info("--POST /{pid}/logistics---" + pid);
         Logistics result = null;
@@ -111,6 +111,7 @@ public class LogisticsController extends AbstractController {
         Logistics logistics = logisticsRepository.findByLpid(pid);
         String policy = logistics.getCategory();
         logistics.setStatus(status);
+        runtimeService.setVariable(pid , "processStatus" , status);
         if (status.equals("Planning") || status.equals("Meeting") || status.equals("Missing")) {
             if (policy.equals("variable-destination")) {
                 if (status.equals("Planning")) {
@@ -138,19 +139,19 @@ public class LogisticsController extends AbstractController {
                 if(status.equals("Missing")){
                     RoutePlan routePlan = routePlanRepository.getLatestPlan(pid);
                     double totalCost = routePlan.getRendezvous().getSumCost();
-                    double riskCost = totalCost *0.5;
-                    stompClient.sendPlanSuccessMsg("admin", "/topic/route/missing", pid, policy, "Missing delivery opportunity", totalCost , riskCost);
+                    double riskCost = totalCost *0.42;
+                    stompClient.sendPlanMissingMsg("admin", "/topic/route/missing", pid, policy, "Missing delivery opportunity", totalCost , riskCost);
                 }
             } else {
                 logger.debug("unsuppoted policy.");
             }
         }
-        return new ResponseEntity<String>(status, HttpStatus.OK);
+        return new ResponseEntity<String>("{\"status\": \"OK\"}", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{pid}/shadow", method = RequestMethod.POST)
     ResponseEntity<WagonShadow> updateShadow(@PathVariable("pid") String pid, @RequestBody HashMap<String, Object> mp) throws JsonProcessingException {
-        logger.debug("--POST /{pid}/shadow--" + mp.toString());
+//        logger.debug("--POST /{pid}/shadow--" + mp.toString());
         double longitude = Double.parseDouble(mp.get("longitude").toString());
         double latitude = Double.parseDouble(mp.get("latitude").toString());
         double speed = Double.parseDouble(mp.get("speed").toString());
@@ -163,9 +164,14 @@ public class LogisticsController extends AbstractController {
         if (r == null) {
             logger.debug("目的港口不能为空");
         } else {
+            Logistics logistics = logisticsRepository.findByLpid(pid);
+            String policy = logistics.getCategory();
+
             String pname = r.getName();
             double f = freightRepository.findByName(pname);
-            Logistics logistics = logisticsRepository.findByLpid(pid);
+            if(policy.equals("fixed-destination")){ // freight discount fifty percent.
+                    f = f * 0.5;
+            }
             deltaNavCost = f * deltaNavDist * logistics.getSpWight();
         }
 
@@ -195,26 +201,43 @@ public class LogisticsController extends AbstractController {
     ResponseEntity<WagonShadow> arrival(@PathVariable("pid") String pid, @RequestBody HashMap<String, Object> body) throws JsonProcessingException {
         logger.debug("--POST /{pid}/arrival--");
         WagonShadow wagonShadow = wagonShadowRepository.findByPid(pid);
-        wagonShadow.setStatus("Meeting");
+        wagonShadow.setStatus("Arrival");
         return new ResponseEntity<WagonShadow>(wagonShadow, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{pid}/traffic", method = RequestMethod.POST)
-    ResponseEntity<WagonShadow> traffic(@PathVariable("pid") String pid, @RequestBody HashMap<String, Object> body) throws JsonProcessingException {
+    ResponseEntity<String> traffic(@PathVariable("pid") String pid, @RequestBody HashMap<String, Object> body) throws JsonProcessingException {
         logger.debug("--/{pid}/traffic--");
-        WagonShadow wagonShadow = wagonShadowRepository.findByPid(pid);
-        wagonShadow.setStatus("Planning");
-        return new ResponseEntity<WagonShadow>(wagonShadow, HttpStatus.OK);
+        Logistics logistics = logisticsRepository.findByLpid(pid);
+        String policy = logistics.getCategory();
+        if(policy.equals("variable-destination")){
+            logistics.setStatus("Planning");
+            runtimeService.setVariable(pid , "processStatus" , "Planning");
+        }else if(policy.equals("fixed-destination")){
+            logger.debug("Don't allow to re-plan  rendezvous  according to poilcy : fixed-destination");
+        }else{
+            logger.debug("unsuppoted policy.");
+        }
+        return new ResponseEntity<String>("{\"status\": \"OK\"}", HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{pid}/wagon/status", method = RequestMethod.POST)
+    @RequestMapping(value = "/{pid}/wagon/status", method = RequestMethod.GET)
     ResponseEntity<String> checkStatus(@PathVariable("pid") String pid) {
         WagonShadow wagonShadow = wagonShadowRepository.findByPid(pid);
-        String status = "Running";
-        Location rendLoc = locationRepository.findByName(wagonShadow.getRendezvous().getName());
-        if (rendLoc.getLongitude() == wagonShadow.getLongitude() && rendLoc.getLatitude() == wagonShadow.getLatitude()) {
-            status = "Arrival";
-        }
-        return new ResponseEntity<String>(status, HttpStatus.OK);
+//        String status = "Running";
+//        Location rendLoc = locationRepository.findByName(wagonShadow.getRendezvous().getName());
+//        logger.debug(rendLoc+"--"+wagonShadow.getLatitude()+" , "+wagonShadow.getLatitude());
+//        if (rendLoc.getLongitude() == wagonShadow.getLongitude() && rendLoc.getLatitude() == wagonShadow.getLatitude()) {
+//            status = "Arrival";
+//        }
+        return new ResponseEntity<String>(wagonShadow.getStatus(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{pid}/process/status" , method = RequestMethod.GET , produces = "application/json")
+    public ResponseEntity<String> getProcessStatus(@PathVariable("pid") String pid ){
+        String processStatus = runtimeService.getVariable(pid , "processStatus").toString();
+        logger.debug("/{pid}/process/status--"+processStatus);
+        String payload= "{\"processStatus\":\""+processStatus+"\"}";
+        return  new ResponseEntity<String>(payload ,  HttpStatus.OK);
     }
 }

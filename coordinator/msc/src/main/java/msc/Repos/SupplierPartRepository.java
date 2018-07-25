@@ -1,7 +1,6 @@
 package msc.Repos;
 
 import lombok.Data;
-import msc.domain.Participant;
 import msc.domain.SupplierPart;
 import msc.util.CsvUtil;
 import org.slf4j.Logger;
@@ -14,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 @Data
 @Service
-public class SupplierRepository {
-    private static  final Logger logger = LoggerFactory.getLogger(SupplierRepository.class);
+public class SupplierPartRepository {
+    private static  final Logger logger = LoggerFactory.getLogger(SupplierPartRepository.class);
     private List<SupplierPart> supplierParts = new ArrayList<SupplierPart>();
-    public SupplierRepository(@Value("${supplierParts.fileName}") String fileName) throws IOException {
+    public SupplierPartRepository(@Value("${supplierParts.fileName}") String fileName) throws IOException {
         //register vessel organization
         logger.info("--"+fileName+"--");
         String filePath = this.getClass().getResource("/").getPath()+"data/"+fileName;

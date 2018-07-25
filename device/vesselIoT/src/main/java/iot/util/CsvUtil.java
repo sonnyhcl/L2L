@@ -1,20 +1,15 @@
-package vesseldevA.util;
+package iot.util;
 
 import com.csvreader.CsvReader;
-import jxl.Cell;
-import jxl.Sheet;
-import jxl.read.biff.BiffException;
+import iot.domain.AwsKey;
+import iot.domain.Location;
+import iot.domain.VesselState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vesseldevA.domain.AwsKey;
-import vesseldevA.domain.Destination;
-import vesseldevA.domain.Location;
-import vesseldevA.domain.VesselState;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +45,7 @@ public class CsvUtil {
         }
         return  vesselStates;
     }
-    public static List<String> readDestinations(String filePath) throws IOException, BiffException {
+    public static List<String> readDestinations(String filePath) throws IOException {
         List<String> destinations= new ArrayList<String>();
         // 创建CSV读对象
         CsvReader csvReader = new CsvReader(filePath);
@@ -68,7 +63,7 @@ public class CsvUtil {
         return  destinations;
     }
 
-    public static List<String> readVids(String filePath) throws IOException, BiffException {
+    public static List<String> readVids(String filePath) throws IOException {
         List<String> vids= new ArrayList<String>();
         // 创建CSV读对象
         CsvReader csvReader = new CsvReader(filePath);
@@ -86,7 +81,7 @@ public class CsvUtil {
         return  vids;
     }
 
-    public static List<Location> readLocations(String filePath) throws IOException, BiffException {
+    public static List<Location> readLocations(String filePath) throws IOException {
         List<Location> locations= new ArrayList<Location>();
         // 创建CSV读对象
         CsvReader csvReader = new CsvReader(filePath);
@@ -108,7 +103,7 @@ public class CsvUtil {
     }
 
 
-    public static List<AwsKey> readAwsKeys(String filePath) throws IOException, BiffException {
+    public static List<AwsKey> readAwsKeys(String filePath) throws IOException {
         List<AwsKey> awsKeys = new ArrayList<AwsKey>();
         // 创建CSV读对象
         CsvReader csvReader = new CsvReader(filePath);
@@ -117,13 +112,16 @@ public class CsvUtil {
         }
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
         String line = null;
-        int i = 0;
+        logger.debug( reader.readLine());
         while((line=reader.readLine())!=null){
             String[] items= line.split(",");//CSV格式文件为逗号分隔符文件，这里根据逗号切分
             String vid = items[0].trim();
-            String localPath = items[1].trim();
-            String clientEndpoint = items[2].trim();
-            AwsKey k = new AwsKey(vid , localPath , clientEndpoint);
+            String thingName = items[1].trim();
+            String localPath = items[2].trim();
+            String clientEndpoint = items[3].trim();
+            String defaultTopic = items[4].trim();
+            String customTopic = items[5].trim();
+            AwsKey k = new AwsKey(vid , thingName, localPath , clientEndpoint , defaultTopic , customTopic);
             awsKeys.add(k);
         }
         return  awsKeys;

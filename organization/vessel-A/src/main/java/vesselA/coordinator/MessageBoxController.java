@@ -42,6 +42,9 @@ public class MessageBoxController  extends AbstractController{
     @Autowired
     private LocationRepository locationRepository;
 
+    @Autowired
+    private StompClient stompClient;
+
     @RequestMapping(value = "/{pid}/delay", method = RequestMethod.POST , produces = "application/json")
     public ResponseEntity<String> delay(@PathVariable("pid") String pid, @RequestBody HashMap<String, Object> mp) throws JsonProcessingException {
         logger.info("--POST /{pid}/delay--"+pid+"--"+mp);
@@ -118,6 +121,32 @@ public class MessageBoxController  extends AbstractController{
             msgBody.put("dy" , dy);
             restClient.notifyMsg(pid , "Planning" , msgBody);
 
+            String anchoringMsg = "";
+            String dockingMsg = "";
+            String msg ="The ship will";
+            if(dx != 0){
+                if(dx > 0){
+                    anchoringMsg = " arrive the port port after a delay of "+ dy +" hours";
+                }else{
+                    anchoringMsg = " arrive the port " + (-dy) + " hours in advance";
+                }
+
+                msg += anchoringMsg;
+            }
+            if(dy != 0){
+                msg+= " and ";
+                if(dy > 0){
+                    dockingMsg = "leave the port port after a delay of "+ dy +" hours";
+                }else{
+                    dockingMsg = "leave the port " + (-dy) + " hours in advance";
+                }
+                msg+=dockingMsg;
+            }
+
+            if(!msg.equals("The ship will")){
+                stompClient.sendDelayMsg("admin" , "/topic/vessel/delay" , pid , msg);
+                logger.debug(msg);
+            }
             //TODO : when status is "Docking"
         } else if(vesselShadow.getStatus().equals("Docking")) {
             logger.debug("when status is \"Docking\"");
@@ -169,6 +198,16 @@ public class MessageBoxController  extends AbstractController{
             msgBody.put("phase" , "Docking");
             msgBody.put("dy" , dy);
             restClient.notifyMsg(pid , "Planning" , msgBody);
+            String msg = "";
+            if(dy != 0){
+                if(dy > 0){
+                    msg = "The ship will leave the port port after a delay of "+ dy +" hours";
+                }else{
+                    msg = "The ship will leave the port " + (-dy) + " hours in advance";
+                }
+                stompClient.sendDelayMsg("admin" , "/topic/vessel/delay" , pid , msg);
+                logger.debug(msg);
+            }
         } else{
             logger.debug("The current situation is not considered!(the current status of the vessel is ignored)");
             return new ResponseEntity<String>("{\"Tips\":\"The current situation is not considered!(the current status of the vessel is ignored\")", HttpStatus.OK);

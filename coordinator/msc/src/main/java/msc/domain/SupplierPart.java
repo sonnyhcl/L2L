@@ -7,18 +7,16 @@ import lombok.Data;
 @AllArgsConstructor
 public class SupplierPart extends Participant {
     private String category;
-    private double longitude;
-    private double latitude;
+    private String location;
 
-    public SupplierPart(String orgName, String orgId, String host, String port, String projectId, String category, double longitude, double latitude) {
+    public SupplierPart(String orgName, String orgId, String host, String port, String projectId, String category, String location) {
         super(orgName, orgId, host, port, projectId);
         this.category = category;
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.location = location;
     }
 
     public SupplierPart deepCopy(){
-        SupplierPart supplierPart = new SupplierPart(orgName, orgId, host, port, projectId,category, longitude, latitude);
+        SupplierPart supplierPart = new SupplierPart(orgName, orgId, host, port, projectId,category, location);
         return supplierPart;
     }
 }

@@ -69,12 +69,13 @@ public class StompClient {
         simpMessagingTemplate.convertAndSendToUser( username,topic , payload);
     }
 
-    public void sendPlanSuccessMsg(String username , String topic , String pid , String policy ,   String reason ,double totalCost , double riskCost){
+    public void sendPlanSuccessMsg(String username , String topic , String pid , String policy ,   String reason  , Rendezvous rend,double totalCost , double riskCost){
         ObjectNode payload = objectMapper.createObjectNode();
         payload = objectMapper.createObjectNode();
         payload.put("policy" , policy);
         payload.put("from" , pid);
         payload.put("reason" , reason);
+        payload.putPOJO("rendezvous", rend);
         payload.put("totalCost" ,  totalCost);
         payload.put("riskCost" , riskCost);
         simpMessagingTemplate.convertAndSendToUser( username,topic , payload);

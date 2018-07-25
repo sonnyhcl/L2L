@@ -4,3 +4,9 @@ server:
 msc:
  cranes:
   file: cranes_msc.csv
+
+# enterprises
+managerParts:
+ fileName:  manager_parts.csv
+supplierParts:
+ fileName:  supplier_parts.csv

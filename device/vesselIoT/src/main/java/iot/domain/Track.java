@@ -1,4 +1,4 @@
-package vesseldevA.domain;
+package iot.domain;
 
 import lombok.Data;
 

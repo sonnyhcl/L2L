@@ -69,7 +69,7 @@ public class PlanningService implements JavaDelegate, Serializable {
         String orgId = pvars.get("orgId").toString();
         String wid = pvars.get("wid").toString();
         String planId = pvars.get("planId").toString();
-        String status = pvars.get("status").toString();
+        String status = pvars.get("processStatus").toString();
 
         //TODO: get logistics.
         Logistics logistics = logisticsRepository.findById(logisticId);
@@ -86,7 +86,7 @@ public class PlanningService implements JavaDelegate, Serializable {
     }
 
     private void onFixedDestination(Logistics logistics, String status, String wid, String planId, String orgId, String pid) {
-
+        logger.debug("--onFixedDestination--");
         WagonShadow wagonShadow = wagonShadowRepository.findById(wid);
         List<String> destinations = logistics.getDestinations();
         //TODO: 获取当前规划对象
@@ -98,7 +98,8 @@ public class PlanningService implements JavaDelegate, Serializable {
         routePlan.setRendezvousList(decidedRoutePlan.getRendezvousList());
         routePlan.setRendezvous(decidedRoutePlan.getRendezvous());
         String destName = routePlan.getRendezvous().getName();
-        logger.debug("destination : " + destName);
+        logger.debug("destination : " + routePlan.getRendezvous().getName());
+        wagonShadow.setRendezvous(routePlan.getRendezvous());
 
         switch (destName) {
             case "MISSING":
@@ -115,15 +116,16 @@ public class PlanningService implements JavaDelegate, Serializable {
                 break;
             default:
                 //TODO: send route info to navigator for displaying track and simulating running , navigator represents the device side.
-                stompClient.sendPlanSuccessMsg("admin", "/topic/route/success", pid, logistics.getCategory(), "Initial  planning", routePlan.getRendezvous().getSumCost(), 0.0);
+                stompClient.sendPlanSuccessMsg("admin", "/topic/route/success", pid, logistics.getCategory(), "Initial  planning", routePlan.getRendezvous() , routePlan.getRendezvous().getSumCost(), 0.0);
                 break;
         }
         //TODO: update wagon shadow
         wagonShadow.setStatus("Running");
-        runtimeService.setVariable(pid, "status", "Running");
+        runtimeService.setVariable(pid  , "processStatus" , "Running");
     }
 
     private void onVariableDestination(Logistics logistics, String status, String wid, String planId, String orgId, String pid) {
+        logger.debug("--onVariableDestination--");
         //TODO:  if  not  the first  time to plan , stop wagon , than re-plan.
         if (!status.equals("Initiating")) {
             stompClient.sendCommand("admin", "/topic/wagon/pause", "PAUSE", wid);
@@ -138,6 +140,7 @@ public class PlanningService implements JavaDelegate, Serializable {
         RoutePlan decidedRoutePlan = restClient.decide(url, routePlan);
         routePlan.setRendezvousList(decidedRoutePlan.getRendezvousList());
         routePlan.setRendezvous(decidedRoutePlan.getRendezvous());
+        wagonShadow.setRendezvous(routePlan.getRendezvous());
         String destName = routePlan.getRendezvous().getName();
         logger.debug("destination : " + destName);
         boolean isFirst = routePlanRepository.getEventType(pid).equals("INITIATING");
@@ -165,8 +168,10 @@ public class PlanningService implements JavaDelegate, Serializable {
 
         //TODO: update wagon shadow
         wagonShadow.setStatus("Running");
+        runtimeService.setVariable(pid  , "processStatus" , "Running");
     }
     private void planPath(RoutePlan routePlan, List<String> destinations, WagonShadow wagonShadow) {
+        logger.debug("route plan size : "+destinations.size());
         for (int i = 0; i < destinations.size(); i++) {
             logger.debug("route plan... " + i);
             Location destination = locationRepository.findByName(destinations.get(i));

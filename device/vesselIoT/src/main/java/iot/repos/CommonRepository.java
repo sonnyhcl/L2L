@@ -1,4 +1,4 @@
-package vesseldevA.repos;
+package iot.repos;
 
 import lombok.Data;
 import org.slf4j.Logger;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommonRepository {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private int defautDelayHour = 4; //默认港口停留时间
+    private int defautDelayHour = 6; //默认港口停留时间
     private int zoomInVal = 1000; // 如果按1000的压缩比，停留一小时只需要3.6s
 
     public CommonRepository(){

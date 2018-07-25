@@ -1,4 +1,4 @@
-package vmc.websocket;
+package vmc.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import vmc.domain.ManagerPart;
-import vmc.services.RestClient;
 
 @Service
 @SuppressWarnings("all")
@@ -26,7 +25,7 @@ public class StompClient {
     public void showManager(ManagerPart managerPart){
         ObjectNode payload = objectMapper.createObjectNode();
         payload.putPOJO("location" , restClient.getLoc(managerPart));
-        simpMessagingTemplate.convertAndSend("/topic/destinations/invalid", payload);
+        simpMessagingTemplate.convertAndSend("/topic/manager/location", payload);
         logger.debug("send manager location "+managerPart.getLocation());
     }
 

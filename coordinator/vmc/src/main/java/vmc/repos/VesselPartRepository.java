@@ -14,11 +14,11 @@ import java.util.List;
 
 @Data
 @Service
-public class VesselRepository {
-    private static  final Logger logger = LoggerFactory.getLogger(VesselRepository.class);
+public class VesselPartRepository {
+    private static  final Logger logger = LoggerFactory.getLogger(VesselPartRepository.class);
     private List<VesselPart>  vesselParts = new ArrayList<VesselPart>();
 
-    public VesselRepository(@Value("${vesselParts.fileName}") String fileName) throws IOException {
+    public VesselPartRepository(@Value("${vesselParts.fileName}") String fileName) throws IOException {
         //register vessel organization
         logger.info("--"+fileName+"--");
         String filePath = this.getClass().getResource("/").getPath()+"data/"+fileName;

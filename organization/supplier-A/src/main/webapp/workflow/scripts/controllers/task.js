@@ -757,11 +757,16 @@ angular.module('activitiApp')
 .controller('ApprovingController', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
       function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
           $scope.model.completeButtonDisabled = true;
-          $scope.logistics = ["可变目的地","固定目的地"];
-          $scope.selectedLogistic = "可变目的地";
-          $scope.toEn ={
-              可变目的地 : "variable-destination",
-              固定目的地 : "fixed-destination"
+          $scope.logistics = ["Variable Destination","Fixed Destination"];
+          $scope.selectedLogistic = "Fixed Destination";
+          $scope.toEn = function(policy){
+              if(policy == 'Variable Destination'){
+                  return  "variable-destination";
+              }
+              if(policy == 'Fixed Destination'){
+                  return "fixed-destination";
+              }
+              return "Unsupported Policy";
           }
 
           $scope.select = function(){
@@ -769,7 +774,7 @@ angular.module('activitiApp')
               //TODO:query  suppliers for selected supplier
               var url = ACTIVITI.CONFIG.contextRoot+'/api/logistic/category';
               var params = {
-                  category : $scope.toEn[$scope.selectedLogistic],
+                  category : $scope.toEn($scope.selectedLogistic),
                   spid : $scope.model.task.processInstanceId
               }
 

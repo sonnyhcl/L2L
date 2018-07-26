@@ -14,13 +14,13 @@
 
 
 angular.module('activitiApp')
-    .controller('TaskController', ['$rootScope', '$scope', '$translate', '$timeout','$location', '$modal', '$popover', 'appResourceRoot', 'CommentService', 'TaskService', '$routeParams', 'AppDefinitionService',
+    .controller('TaskController', ['$rootScope', '$scope', '$translate', '$timeout', '$location', '$modal', '$popover', 'appResourceRoot', 'CommentService', 'TaskService', '$routeParams', 'AppDefinitionService',
         function ($rootScope, $scope, $translate, $timeout, $location, $modal, $popover, appResourceRoot, CommentService, TaskService, $routeParams, AppDefinitionService) {
 
             // Ensure correct main page is set
             $rootScope.setMainPageById('tasks');
 
-            $scope.selectedTask = { id: $routeParams.taskId };
+            $scope.selectedTask = {id: $routeParams.taskId};
 
             $scope.deploymentKey = $routeParams.deploymentKey;
 
@@ -30,669 +30,671 @@ angular.module('activitiApp')
                 $scope.openTasks();
             });
 
-            $scope.openTasks = function(task) {
-                var path='';
-                if($rootScope.activeAppDefinition && !ACTIVITI.CONFIG.integrationProfile) {
+            $scope.openTasks = function (task) {
+                var path = '';
+                if ($rootScope.activeAppDefinition && !ACTIVITI.CONFIG.integrationProfile) {
                     path = "/apps/" + $rootScope.activeAppDefinition.id;
                 }
                 $location.path(path + "/tasks");
             };
         }]
-);
+    );
 
 angular.module('activitiApp')
-  .controller('TaskDetailController', ['SessionService' ,'$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-        function (SessionService , $filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+    .controller('TaskDetailController', ['SessionService', '$filter', '$interval', '$rootScope', '$scope', '$translate', '$http', '$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function (SessionService, $filter, $interval, $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
-	 $scope.$on('task-completed' , function(event , data){
-		 	console.log("TaskDetailCtrl : " + data.taskId + " completed");
-		 	 $scope.$broadcast('complete-apply' , data);
-	 })
-    $scope.model = {
-        // Indirect binding between selected task in parent scope to have control over display
-        // before actual selected task is switched
-	    task: $scope.selectedTask,
-	    completeButtonDisabled: false,
-	    claimButtonDisabled: false,
-        uploadInProgress: false
-	};
-    $scope.activeTab = 'form';
-    /**
-     * *******************************************************************
-     * custom variables
-     * ********************************************************************
-     */
-      $scope.ZoomInVal= 500; // 1000ms ---> 10ms 时间压缩100倍$scope.ZoomInVal= 1000; // 1000ms ---> 10ms 时间压缩100倍
-      /**
-       * ***************************************************************
-       * Custom functions
-       * ***************************************************************
-       */
-      //返回下标，供子controller使用
-      $scope.createPidxs = function(pvars){
-      	var i = 0;
-      	var pidxs = {};
-      	var arr = pvars;
-      	for(i in arr){
-      		pidxs[arr[i]['name']] = i;
-      	}
-      	return pidxs;
-      }
-      //dateString to ms
-      $scope.dateStr2ms = function(dateStr){
-      	return Date.parse(dateStr);
-      }
-      
-      //ms to dateString 
-      $scope.ms2dateStr = function(vms){
-      	var d = new Date();
-  	    d.setTime(vms);
-  		if(d != 'Invalid Date') {
-  				return $filter('date')(d, "yyyy-MM-dd HH:mm:ss");	
-  		}else{
-  			return null;
-  		}
-      }
-      
-
-    $scope.model.involvementSummary = {
-        loading: false
-    };
-
-    $scope.model.contentSummary = {
-        loading: false
-    };
-
-    $scope.model.commentSummary = {
-        loading: false
-    };
-
-
-    $scope.resetModel =  function() {
-        // Reset tabs
-        $scope.taskTabs = [];
-        if ($scope.model.task.formKey != null) {
-            $scope.taskTabs.push(
-                {
-                    'id': 'form',
-                    'title': 'TASK.TITLE.FORM'
-                }
-            );
-            $scope.activeTab = 'form';
-        } else {
-            $scope.activeTab = 'details';
-        }
-
-        $scope.taskTabs.push( {
-            'id': 'details',
-            'title': 'TASK.TITLE.DETAILS'
-        });
-
-        // Reset summary model
-        $scope.model.involvementSummary = {
-            loading: true
-        };
-
-        $scope.model.contentSummary = {
-            loading: true
-        };
-
-        $scope.model.commentSummary = {
-            loading: true
-        };
-
-        $scope.model.content = undefined;
-        $scope.model.comments = undefined;
-
-        $timeout(function() {
-            // Force refresh of all auto-height components as the tabs can be hidden or shown
-            $rootScope.window.forceRefresh = true;
-        }, 100);
-
-        var today = new Date();
-        $scope.today = new Date(today.getFullYear(), today.getMonth(), today.getDate() , 0, 0, 0, 0);
-    };
-
-    $scope.showPeople = function() {
-        $scope.activeTab = 'details';
-    };
-    $scope.showContent = function() {
-        $scope.activeTab = 'details';
-    };
-    $scope.showComments= function() {
-        $scope.activeTab = 'details';
-    };
-    $scope.toggleForm= function() {
-        if($scope.activeTab == 'form') {
-            $scope.activeTab = 'details';
-        } else {
-            $scope.activeTab = 'form';
-        }
-    };
-
-    // The selected task is set by the parent, eg in tasks.js
-    $scope.$watch('selectedTask', function(newValue) {
-        if(newValue && newValue.id) {
-            $scope.model.taskUpdating = true;
-            $scope.model.task = newValue;
-            if ($scope.model.task.formKey) {
-                $scope.resetModel();
-            }
-            $scope.getTask(newValue.id);
-        } else {
-            // Reset whole model to make sure nothing is left behind in case a new task will
-            // be selected in the future
-            $scope.model = {};
-        }
-    });
-
-	// Ensure correct main page is set
-    $rootScope.setMainPageById('tasks');
-
-
-    $scope.setTaskAssignee = function(user) {
-        var alertData = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            taskName: $scope.model.task.name
-        };
-
-        TaskService.assignTask($scope.model.task.id, user.id).then(function(data) {
-            $rootScope.addAlertPromise($translate('TASK.ALERT.ASSIGNED', alertData));
-            $scope.model.task = data;
-        });
-    };
-
-    $scope.setTaskAssigneeByEmail = function(email) {
-        TaskService.assignTaskByEmail($scope.model.task.id, email).then(function() {
-            $scope.model.task.assignee = {email: email}; // Faking a user (since it will only be an email address)
-        });
-    };
-
-    $scope.involvePerson = function (user) {
-        var alertData = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            taskName: $scope.model.task.name
-        };
-
-        TaskService.involveUserInTask(user.id, $scope.model.task.id).then(function() {
-            $rootScope.addAlertPromise($translate('TASK.ALERT.PERSON-INVOLVED',
-                alertData));
-
-            if(!$scope.model.task.involvedPeople) {
-                $scope.model.task.involvedPeople = [user];
-            } else {
-                $scope.model.task.involvedPeople.push(user);
-            }
-        });
-    };
-
-    $scope.involvePersonByEmail = function(email) {
-        TaskService.involveUserInTaskByEmail(email, $scope.model.task.id).then(function() {
-            if(!$scope.model.task.involvedPeople) {
-                $scope.model.task.involvedPeople = {email: email};
-            } else {
-                $scope.model.task.involvedPeople.push({email: email});
-            }
-        });
-    };
-
-    $scope.removeInvolvedUser = function (user) {
-        var alertData = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            taskName: $scope.model.task.name
-        };
-
-        TaskService.removeInvolvedUserInTask(user, $scope.model.task.id).then(function() {
-            $rootScope.addAlertPromise($translate('TASK.ALERT.PERSON-NO-LONGER-INVOLVED',
-                alertData));
-
-            $scope.model.task.involvedPeople.splice($.inArray(user, $scope.model.task.involvedPeople),1);
-        });
-    };
-
-    $scope.getTask = function(taskId) {
-        $scope.model.loading = true;
-        $scope.model.formData = undefined;
-        $scope.model.hasFormKey = false;
-        if ($scope.model.task.formKey) {
-            $scope.model.hasFormKey = true;
-        }
-
-        $http({method: 'GET', url: ACTIVITI.CONFIG.contextRoot + '/app/rest/tasks/' + taskId}).
-            success(function(response, status, headers, config) {
-
-                // Do not replace the model, as it's still used in the task-list
-                angular.extend($scope.model.task, response);
-
-                $scope.model.loading = false;
-                $scope.noSuchTask = false;
-                          
-                if (!$scope.model.hasFormKey) {
-                    $scope.resetModel();
-                }
-
-                $scope.loadComments();
-                $scope.loadRelatedContent();
-
-                if($scope.model.task.processInstanceId) {
-                    $scope.loadProcessInstance();
-                } else {
-                    $scope.model.processInstance = null;
-                }
-
-                $scope.refreshInvolvmentSummary();
-
-                // Loading form already
-                if ($scope.model.task.formKey !== null && $scope.model.task.formKey !== undefined) {
-                    FormService.getTaskForm($scope.model.task.id).then(function(formData) {
-                        $scope.model.formData = formData;
-                    });
-                } else {
-                    $scope.model.formData = undefined;
-                }
-
-                $scope.model.taskUpdating = false;
-            }).
-            error(function(response, status, headers, config) {
-                $scope.noSuchTask = true;
-            });
-    };
-
-    $scope.$watch('model.task.involvedPeople', function(newValue) {
-        $scope.refreshInvolvmentSummary();
-    }, true);
-
-    $scope.refreshInvolvmentSummary = function() {
-        if($scope.model.task) {
-            var newValue = $scope.model.task.involvedPeople;
-            $scope.model.involvementSummary.loading = false;
-            if(newValue && newValue.length > 0) {
-                $scope.model.involvementSummary.count = newValue.length;
-
-                if(newValue.length > 8) {
-                    $scope.model.involvementSummary.overflow = true;
-                    $scope.model.involvementSummary.items = [];
-
-                    for(var i=0; i< 8; i++) {
-                        $scope.model.involvementSummary.items.push(newValue[i]);
-                    }
-                } else {
-                    $scope.model.involvementSummary.overflow = false;
-                    $scope.model.involvementSummary.items = newValue;
-                }
-
-            } else {
-                $scope.model.involvementSummary.count = 0;
-            }
-        }
-    };
-
-    $scope.$watch('model.content.data', function(newValue) {
-        if($scope.model.task) {
-            $scope.model.contentSummary.loading = false;
-            if(newValue && newValue.length > 0) {
-                $scope.model.contentSummary.count = newValue.length;
-
-                if(newValue.length > 8) {
-                    $scope.model.contentSummary.overflow = true;
-                    $scope.model.contentSummary.items = [];
-
-                    for(var i=0; i< 8; i++) {
-                        $scope.model.contentSummary.items.push(newValue[i]);
-                    }
-                } else {
-                    $scope.model.contentSummary.overflow = false;
-                    $scope.model.contentSummary.items = newValue;
-                }
-
-            } else {
-                $scope.model.contentSummary.count = 0;
-            }
-        }
-    }, true);
-
-    $scope.$watch('model.comments.data', function(newValue) {
-       $scope.refreshCommentSummary();
-    }, true);
-
-    $scope.refreshCommentSummary = function() {
-        if ($scope.model.task) {
-            var newValue = $scope.model.comments ? $scope.model.comments.data : undefined;
-            $scope.model.commentSummary.loading = false;
-
-            if(newValue) {
-                $scope.model.commentSummary.count = newValue.length;
-            } else {
-                $scope.model.commentSummary.loading = true;
-                $scope.model.commentSummary.count = undefined;
-            }
-        }
-    };
-
-    $scope.dragOverContent = function(over) {
-        if(over && ! $scope.model.contentSummary.addContent) {
-            $scope.model.contentSummary.addContent = true;
-        }
-    };
-
-    $scope.$watch('model.content.data', function(newValue) {
-        if($scope.model.task) {
-        }
-    }, true);
-
-    $scope.loadComments = function() {
-        CommentService.getTaskComments($scope.model.task.id).then(function (data) {
-            $scope.model.comments = data;
-
-            $scope.refreshCommentSummary();
-        });
-    };
-
-    $scope.toggleCreateComment = function() {
-        if($scope.model.commentSummary.addComment) {
-            $scope.model.commentSummary.newComment = undefined;
-        }
-
-        $scope.model.commentSummary.addComment = ! $scope.model.commentSummary.addComment;
-
-        if($scope.model.commentSummary.addComment) {
-            $timeout(function() {
-                angular.element('.focusable').focus();
-            }, 100);
-
-        }
-    };
-
-    $scope.toggleCreateContent = function() {
-        $scope.model.contentSummary.addContent = ! $scope.model.contentSummary.addContent;
-    };
-
-    $scope.onContentUploaded = function(content) {
-        if ($scope.model.content && $scope.model.content.data) {
-            $scope.model.content.data.push(content);
-            RelatedContentService.addUrlToContent(content);
-            $scope.model.selectedContent = content;
-        }
-        $rootScope.addAlertPromise($translate('TASK.ALERT.RELATED-CONTENT-ADDED', content), 'info');
-        $scope.toggleCreateContent();
-    };
-
-    $scope.onContentDeleted = function(content) {
-        if ($scope.model.content && $scope.model.content.data) {
-            $scope.model.content.data.forEach(function(value, i, arr){
-                if (content === value) {
-                    arr.splice(i, 1);
-                }
+            $scope.$on('task-completed', function (event, data) {
+                console.log("TaskDetailCtrl : " + data.taskId + " completed");
+                $scope.$broadcast('complete-apply', data);
             })
-        }
-    };
-
-    $scope.selectContent = function (content) {
-        if ($scope.model.selectedContent == content) {
-            $scope.model.selectedContent = undefined;
-        } else {
-            $scope.model.selectedContent = content;
-        }
-    };
-
-    $scope.confirmNewComment = function() {
-        $scope.model.commentSummary.loading = true;
-        CommentService.createTaskComment($scope.model.task.id, $scope.model.commentSummary.newComment.trim())
-            .then(function(comment) {
-                $scope.model.commentSummary.newComment = undefined;
-                $scope.model.commentSummary.addComment = false;
-                $scope.model.commentSummary.loading = false;
-                $rootScope.addAlertPromise($translate('TASK.ALERT.COMMENT-ADDED', $scope.model.task));
-                $scope.loadComments();
-            });
-    };
-
-    $scope.$watch('model.task.dueDate', function(newValue, oldValue) {
-        if (!$scope.model.taskUpdating && $scope.model.task) {
-            // Update task due-date
-
-            if (oldValue === null && newValue === null
-                || oldValue === null && newValue === undefined
-                || oldValue === undefined && newValue === undefined
-                || oldValue === undefined && newValue === null) {
-                return;
-            }
-
-            // Normalize the date to midnight
-            if(newValue && newValue !== undefined && newValue.getHours && newValue.getHours() != 23) {
-                newValue.setHours(23);
-                newValue.setMinutes(59);
-                newValue.setSeconds(59);
-                $scope.model.task.dueDate = newValue;
-            }
-
-            if (new Date(oldValue).getTime() != new Date(newValue).getTime() || oldValue != null && newValue != null) {
-                $scope.model.taskUpdating = true;
-                // Explicitly force NULL value when undefined to make sure the null
-                // is sent to the service
-                var data = {
-                    dueDate: newValue ? newValue : null
-                };
-                TaskService.updateTask($scope.model.task.id, data).then(function(response) {
-                    $scope.model.taskUpdating = false;
-                });
-            }
-        }
-    });
-
-    $scope.createTaskInline = function() {
-        if(!$scope.newTask) {
-            $scope.newTask = {
-                name: 'New task',
-                inline: true
+            $scope.model = {
+                // Indirect binding between selected task in parent scope to have control over display
+                // before actual selected task is switched
+                task: $scope.selectedTask,
+                completeButtonDisabled: false,
+                claimButtonDisabled: false,
+                uploadInProgress: false
             };
-        }
-    };
+            $scope.activeTab = 'form';
+            /**
+             * *******************************************************************
+             * custom variables
+             * ********************************************************************
+             */
+            $scope.ZoomInVal = 500; // 1000ms ---> 10ms 时间压缩100倍$scope.ZoomInVal= 1000; // 1000ms ---> 10ms 时间压缩100倍
+            /**
+             * ***************************************************************
+             * Custom functions
+             * ***************************************************************
+             */
+            //返回下标，供子controller使用
+            $scope.createPidxs = function (pvars) {
+                var i = 0;
+                var pidxs = {};
+                var arr = pvars;
+                for (i in arr) {
+                    pidxs[arr[i]['name']] = i;
+                }
+                return pidxs;
+            }
+            //dateString to ms
+            $scope.dateStr2ms = function (dateStr) {
+                return Date.parse(dateStr);
+            }
 
-    $scope.createProcess = function() {
-        $rootScope.createProcessInstance = true;
-        $scope.openProcessInstance();
-    };
+            //ms to dateString
+            $scope.ms2dateStr = function (vms) {
+                var d = new Date();
+                d.setTime(vms);
+                if (d != 'Invalid Date') {
+                    return $filter('date')(d, "yyyy-MM-dd HH:mm:ss");
+                } else {
+                    return null;
+                }
+            }
 
-    $scope.selectProcessDefinition = function (definition) {
-        $scope.newProcessInstance.processDefinitionId = definition.id;
-        $scope.newProcessInstance.name = definition.name + ' - ' + new moment().format('MMMM Do YYYY');
 
-        $timeout(function () {
-            angular.element('#start-process-name').focus();
-        }, 20);
-    };
+            $scope.model.involvementSummary = {
+                loading: false
+            };
 
-    $scope.closeInlineTaskCreation = function($event) {
-        $scope.newTask = undefined;
-        $event.stopPropagation();
-    };
+            $scope.model.contentSummary = {
+                loading: false
+            };
 
-    $scope.completeTask = function() {
-        $scope.model.completeButtonDisabled = true;
-        TaskService.completeTask($scope.model.task.id);
-    };
+            $scope.model.commentSummary = {
+                loading: false
+            };
 
-    $scope.claimTask = function() {
-        $scope.model.loading = true;
-        $scope.model.claimButtonDisabled = true;
-        TaskService.claimTask($scope.model.task.id).then(function(data) {
-            // Refetch data on claim success
-            $scope.getTask($scope.model.task.id);
-        });
-    };
 
-    // TODO: move process instance loading to separate service and merge with process.js
-    $scope.loadProcessInstance = function() {
-        $http({method: 'GET', url: ACTIVITI.CONFIG.contextRoot + '/app/rest/process-instances/' + $scope.model.task.processInstanceId}).
-            success(function(response, status, headers, config) {
-                $scope.model.processInstance = response;
-            }).
-            error(function(response, status, headers, config) {
-                // Do nothing. User is not allowed to see the process instance
+            $scope.resetModel = function () {
+                // Reset tabs
+                $scope.taskTabs = [];
+                if ($scope.model.task.formKey != null) {
+                    $scope.taskTabs.push(
+                        {
+                            'id': 'form',
+                            'title': 'TASK.TITLE.FORM'
+                        }
+                    );
+                    $scope.activeTab = 'form';
+                } else {
+                    $scope.activeTab = 'details';
+                }
+
+                $scope.taskTabs.push({
+                    'id': 'details',
+                    'title': 'TASK.TITLE.DETAILS'
+                });
+
+                // Reset summary model
+                $scope.model.involvementSummary = {
+                    loading: true
+                };
+
+                $scope.model.contentSummary = {
+                    loading: true
+                };
+
+                $scope.model.commentSummary = {
+                    loading: true
+                };
+
+                $scope.model.content = undefined;
+                $scope.model.comments = undefined;
+
+                $timeout(function () {
+                    // Force refresh of all auto-height components as the tabs can be hidden or shown
+                    $rootScope.window.forceRefresh = true;
+                }, 100);
+
+                var today = new Date();
+                $scope.today = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, 0, 0, 0);
+            };
+
+            $scope.showPeople = function () {
+                $scope.activeTab = 'details';
+            };
+            $scope.showContent = function () {
+                $scope.activeTab = 'details';
+            };
+            $scope.showComments = function () {
+                $scope.activeTab = 'details';
+            };
+            $scope.toggleForm = function () {
+                if ($scope.activeTab == 'form') {
+                    $scope.activeTab = 'details';
+                } else {
+                    $scope.activeTab = 'form';
+                }
+            };
+
+            // The selected task is set by the parent, eg in tasks.js
+            $scope.$watch('selectedTask', function (newValue) {
+                if (newValue && newValue.id) {
+                    $scope.model.taskUpdating = true;
+                    $scope.model.task = newValue;
+                    if ($scope.model.task.formKey) {
+                        $scope.resetModel();
+                    }
+                    $scope.getTask(newValue.id);
+                } else {
+                    // Reset whole model to make sure nothing is left behind in case a new task will
+                    // be selected in the future
+                    $scope.model = {};
+                }
             });
-    };
 
-    $scope.openProcessInstance = function(id) {
-        $rootScope.root.selectedProcessId = id;
-        var path='';
-        if($rootScope.activeAppDefinition && !ACTIVITI.CONFIG.integrationProfile) {
-            path = "/apps/" + $rootScope.activeAppDefinition.id;
-        }
-        $location.path(path + "/processes");
-    };
-
-    $scope.returnToTaskList = function() {
-        var path='';
-        if($rootScope.activeAppDefinition && !ACTIVITI.CONFIG.integrationProfile) {
-            path = "/apps/" + $rootScope.activeAppDefinition.id;
-        }
-        $location.path(path + "/tasks");
-    };
-
-    // OLD STUFF
+            // Ensure correct main page is set
+            $rootScope.setMainPageById('tasks');
 
 
-    $scope.returnToList = function() {
-        $location.path("/tasks");
-    };
+            $scope.setTaskAssignee = function (user) {
+                var alertData = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    taskName: $scope.model.task.name
+                };
 
-    $scope.loadRelatedContent = function() {
-        $scope.model.content = undefined;
-        TaskService.getRelatedContent($scope.model.task.id).then(function (data) {
-            $scope.model.content = data;
-        });
-    };
+                TaskService.assignTask($scope.model.task.id, user.id).then(function (data) {
+                    $rootScope.addAlertPromise($translate('TASK.ALERT.ASSIGNED', alertData));
+                    $scope.model.task = data;
+                });
+            };
 
-    $scope.$watch("model.content", function(newValue) {
-       if(newValue && newValue.data && newValue.data.length > 0) {
-           var needsRefresh = false;
-           for(var i=0; i<newValue.data.length; i++) {
-               var entry =  newValue.data[i];
-               if(!entry.contentAvailable) {
-                   needsRefresh = true;
-                   break;
-               }
-           }
-       }
-    }, true);
+            $scope.setTaskAssigneeByEmail = function (email) {
+                TaskService.assignTaskByEmail($scope.model.task.id, email).then(function () {
+                    $scope.model.task.assignee = {email: email}; // Faking a user (since it will only be an email address)
+                });
+            };
 
-    $scope.editComment = function() {
-        $scope.model.editingComment = true;
-    };
+            $scope.involvePerson = function (user) {
+                var alertData = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    taskName: $scope.model.task.name
+                };
 
-    $scope.stopEditComment = function() {
-        $scope.model.editingComment = false;
-    };
+                TaskService.involveUserInTask(user.id, $scope.model.task.id).then(function () {
+                    $rootScope.addAlertPromise($translate('TASK.ALERT.PERSON-INVOLVED',
+                        alertData));
+
+                    if (!$scope.model.task.involvedPeople) {
+                        $scope.model.task.involvedPeople = [user];
+                    } else {
+                        $scope.model.task.involvedPeople.push(user);
+                    }
+                });
+            };
+
+            $scope.involvePersonByEmail = function (email) {
+                TaskService.involveUserInTaskByEmail(email, $scope.model.task.id).then(function () {
+                    if (!$scope.model.task.involvedPeople) {
+                        $scope.model.task.involvedPeople = {email: email};
+                    } else {
+                        $scope.model.task.involvedPeople.push({email: email});
+                    }
+                });
+            };
+
+            $scope.removeInvolvedUser = function (user) {
+                var alertData = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    taskName: $scope.model.task.name
+                };
+
+                TaskService.removeInvolvedUserInTask(user, $scope.model.task.id).then(function () {
+                    $rootScope.addAlertPromise($translate('TASK.ALERT.PERSON-NO-LONGER-INVOLVED',
+                        alertData));
+
+                    $scope.model.task.involvedPeople.splice($.inArray(user, $scope.model.task.involvedPeople), 1);
+                });
+            };
+
+            $scope.getTask = function (taskId) {
+                $scope.model.loading = true;
+                $scope.model.formData = undefined;
+                $scope.model.hasFormKey = false;
+                if ($scope.model.task.formKey) {
+                    $scope.model.hasFormKey = true;
+                }
+
+                $http({
+                    method: 'GET',
+                    url: ACTIVITI.CONFIG.contextRoot + '/app/rest/tasks/' + taskId
+                }).success(function (response, status, headers, config) {
+
+                    // Do not replace the model, as it's still used in the task-list
+                    angular.extend($scope.model.task, response);
+
+                    $scope.model.loading = false;
+                    $scope.noSuchTask = false;
+
+                    if (!$scope.model.hasFormKey) {
+                        $scope.resetModel();
+                    }
+
+                    $scope.loadComments();
+                    $scope.loadRelatedContent();
+
+                    if ($scope.model.task.processInstanceId) {
+                        $scope.loadProcessInstance();
+                    } else {
+                        $scope.model.processInstance = null;
+                    }
+
+                    $scope.refreshInvolvmentSummary();
+
+                    // Loading form already
+                    if ($scope.model.task.formKey !== null && $scope.model.task.formKey !== undefined) {
+                        FormService.getTaskForm($scope.model.task.id).then(function (formData) {
+                            $scope.model.formData = formData;
+                        });
+                    } else {
+                        $scope.model.formData = undefined;
+                    }
+
+                    $scope.model.taskUpdating = false;
+                }).error(function (response, status, headers, config) {
+                    $scope.noSuchTask = true;
+                });
+            };
+
+            $scope.$watch('model.task.involvedPeople', function (newValue) {
+                $scope.refreshInvolvmentSummary();
+            }, true);
+
+            $scope.refreshInvolvmentSummary = function () {
+                if ($scope.model.task) {
+                    var newValue = $scope.model.task.involvedPeople;
+                    $scope.model.involvementSummary.loading = false;
+                    if (newValue && newValue.length > 0) {
+                        $scope.model.involvementSummary.count = newValue.length;
+
+                        if (newValue.length > 8) {
+                            $scope.model.involvementSummary.overflow = true;
+                            $scope.model.involvementSummary.items = [];
+
+                            for (var i = 0; i < 8; i++) {
+                                $scope.model.involvementSummary.items.push(newValue[i]);
+                            }
+                        } else {
+                            $scope.model.involvementSummary.overflow = false;
+                            $scope.model.involvementSummary.items = newValue;
+                        }
+
+                    } else {
+                        $scope.model.involvementSummary.count = 0;
+                    }
+                }
+            };
+
+            $scope.$watch('model.content.data', function (newValue) {
+                if ($scope.model.task) {
+                    $scope.model.contentSummary.loading = false;
+                    if (newValue && newValue.length > 0) {
+                        $scope.model.contentSummary.count = newValue.length;
+
+                        if (newValue.length > 8) {
+                            $scope.model.contentSummary.overflow = true;
+                            $scope.model.contentSummary.items = [];
+
+                            for (var i = 0; i < 8; i++) {
+                                $scope.model.contentSummary.items.push(newValue[i]);
+                            }
+                        } else {
+                            $scope.model.contentSummary.overflow = false;
+                            $scope.model.contentSummary.items = newValue;
+                        }
+
+                    } else {
+                        $scope.model.contentSummary.count = 0;
+                    }
+                }
+            }, true);
+
+            $scope.$watch('model.comments.data', function (newValue) {
+                $scope.refreshCommentSummary();
+            }, true);
+
+            $scope.refreshCommentSummary = function () {
+                if ($scope.model.task) {
+                    var newValue = $scope.model.comments ? $scope.model.comments.data : undefined;
+                    $scope.model.commentSummary.loading = false;
+
+                    if (newValue) {
+                        $scope.model.commentSummary.count = newValue.length;
+                    } else {
+                        $scope.model.commentSummary.loading = true;
+                        $scope.model.commentSummary.count = undefined;
+                    }
+                }
+            };
+
+            $scope.dragOverContent = function (over) {
+                if (over && !$scope.model.contentSummary.addContent) {
+                    $scope.model.contentSummary.addContent = true;
+                }
+            };
+
+            $scope.$watch('model.content.data', function (newValue) {
+                if ($scope.model.task) {
+                }
+            }, true);
+
+            $scope.loadComments = function () {
+                CommentService.getTaskComments($scope.model.task.id).then(function (data) {
+                    $scope.model.comments = data;
+
+                    $scope.refreshCommentSummary();
+                });
+            };
+
+            $scope.toggleCreateComment = function () {
+                if ($scope.model.commentSummary.addComment) {
+                    $scope.model.commentSummary.newComment = undefined;
+                }
+
+                $scope.model.commentSummary.addComment = !$scope.model.commentSummary.addComment;
+
+                if ($scope.model.commentSummary.addComment) {
+                    $timeout(function () {
+                        angular.element('.focusable').focus();
+                    }, 100);
+
+                }
+            };
+
+            $scope.toggleCreateContent = function () {
+                $scope.model.contentSummary.addContent = !$scope.model.contentSummary.addContent;
+            };
+
+            $scope.onContentUploaded = function (content) {
+                if ($scope.model.content && $scope.model.content.data) {
+                    $scope.model.content.data.push(content);
+                    RelatedContentService.addUrlToContent(content);
+                    $scope.model.selectedContent = content;
+                }
+                $rootScope.addAlertPromise($translate('TASK.ALERT.RELATED-CONTENT-ADDED', content), 'info');
+                $scope.toggleCreateContent();
+            };
+
+            $scope.onContentDeleted = function (content) {
+                if ($scope.model.content && $scope.model.content.data) {
+                    $scope.model.content.data.forEach(function (value, i, arr) {
+                        if (content === value) {
+                            arr.splice(i, 1);
+                        }
+                    })
+                }
+            };
+
+            $scope.selectContent = function (content) {
+                if ($scope.model.selectedContent == content) {
+                    $scope.model.selectedContent = undefined;
+                } else {
+                    $scope.model.selectedContent = content;
+                }
+            };
+
+            $scope.confirmNewComment = function () {
+                $scope.model.commentSummary.loading = true;
+                CommentService.createTaskComment($scope.model.task.id, $scope.model.commentSummary.newComment.trim())
+                    .then(function (comment) {
+                        $scope.model.commentSummary.newComment = undefined;
+                        $scope.model.commentSummary.addComment = false;
+                        $scope.model.commentSummary.loading = false;
+                        $rootScope.addAlertPromise($translate('TASK.ALERT.COMMENT-ADDED', $scope.model.task));
+                        $scope.loadComments();
+                    });
+            };
+
+            $scope.$watch('model.task.dueDate', function (newValue, oldValue) {
+                if (!$scope.model.taskUpdating && $scope.model.task) {
+                    // Update task due-date
+
+                    if (oldValue === null && newValue === null
+                        || oldValue === null && newValue === undefined
+                        || oldValue === undefined && newValue === undefined
+                        || oldValue === undefined && newValue === null) {
+                        return;
+                    }
+
+                    // Normalize the date to midnight
+                    if (newValue && newValue !== undefined && newValue.getHours && newValue.getHours() != 23) {
+                        newValue.setHours(23);
+                        newValue.setMinutes(59);
+                        newValue.setSeconds(59);
+                        $scope.model.task.dueDate = newValue;
+                    }
+
+                    if (new Date(oldValue).getTime() != new Date(newValue).getTime() || oldValue != null && newValue != null) {
+                        $scope.model.taskUpdating = true;
+                        // Explicitly force NULL value when undefined to make sure the null
+                        // is sent to the service
+                        var data = {
+                            dueDate: newValue ? newValue : null
+                        };
+                        TaskService.updateTask($scope.model.task.id, data).then(function (response) {
+                            $scope.model.taskUpdating = false;
+                        });
+                    }
+                }
+            });
+
+            $scope.createTaskInline = function () {
+                if (!$scope.newTask) {
+                    $scope.newTask = {
+                        name: 'New task',
+                        inline: true
+                    };
+                }
+            };
+
+            $scope.createProcess = function () {
+                $rootScope.createProcessInstance = true;
+                $scope.openProcessInstance();
+            };
+
+            $scope.selectProcessDefinition = function (definition) {
+                $scope.newProcessInstance.processDefinitionId = definition.id;
+                $scope.newProcessInstance.name = definition.name + ' - ' + new moment().format('MMMM Do YYYY');
+
+                $timeout(function () {
+                    angular.element('#start-process-name').focus();
+                }, 20);
+            };
+
+            $scope.closeInlineTaskCreation = function ($event) {
+                $scope.newTask = undefined;
+                $event.stopPropagation();
+            };
+
+            $scope.completeTask = function () {
+                $scope.model.completeButtonDisabled = true;
+                TaskService.completeTask($scope.model.task.id);
+            };
+
+            $scope.claimTask = function () {
+                $scope.model.loading = true;
+                $scope.model.claimButtonDisabled = true;
+                TaskService.claimTask($scope.model.task.id).then(function (data) {
+                    // Refetch data on claim success
+                    $scope.getTask($scope.model.task.id);
+                });
+            };
+
+            // TODO: move process instance loading to separate service and merge with process.js
+            $scope.loadProcessInstance = function () {
+                $http({
+                    method: 'GET',
+                    url: ACTIVITI.CONFIG.contextRoot + '/app/rest/process-instances/' + $scope.model.task.processInstanceId
+                }).success(function (response, status, headers, config) {
+                    $scope.model.processInstance = response;
+                }).error(function (response, status, headers, config) {
+                    // Do nothing. User is not allowed to see the process instance
+                });
+            };
+
+            $scope.openProcessInstance = function (id) {
+                $rootScope.root.selectedProcessId = id;
+                var path = '';
+                if ($rootScope.activeAppDefinition && !ACTIVITI.CONFIG.integrationProfile) {
+                    path = "/apps/" + $rootScope.activeAppDefinition.id;
+                }
+                $location.path(path + "/processes");
+            };
+
+            $scope.returnToTaskList = function () {
+                var path = '';
+                if ($rootScope.activeAppDefinition && !ACTIVITI.CONFIG.integrationProfile) {
+                    path = "/apps/" + $rootScope.activeAppDefinition.id;
+                }
+                $location.path(path + "/tasks");
+            };
+
+            // OLD STUFF
 
 
-    $scope.userInvolved = function (user) {
-        var alertData = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            taskName: $scope.model.task.name
-        };
+            $scope.returnToList = function () {
+                $location.path("/tasks");
+            };
 
-        TaskService.involveUserInTask(user.id, $scope.model.task.id).then(function() {
-            $rootScope.addAlertPromise($translate('TASK.ALERT.PERSON-INVOLVED',
-                alertData));
+            $scope.loadRelatedContent = function () {
+                $scope.model.content = undefined;
+                TaskService.getRelatedContent($scope.model.task.id).then(function (data) {
+                    $scope.model.content = data;
+                });
+            };
 
-            if(!$scope.model.task.involvedPeople) {
-                $scope.model.task.involvedPeople = [user];
-            } else {
-                $scope.model.task.involvedPeople.push(user);
-            }
+            $scope.$watch("model.content", function (newValue) {
+                if (newValue && newValue.data && newValue.data.length > 0) {
+                    var needsRefresh = false;
+                    for (var i = 0; i < newValue.data.length; i++) {
+                        var entry = newValue.data[i];
+                        if (!entry.contentAvailable) {
+                            needsRefresh = true;
+                            break;
+                        }
+                    }
+                }
+            }, true);
 
-        });
-    };
+            $scope.editComment = function () {
+                $scope.model.editingComment = true;
+            };
 
-    $scope.assigneeSelected = function(user) {
-        var alertData = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            taskName: $scope.model.task.name
-        };
-
-        TaskService.assignTask($scope.model.task.id, user.id).then(function() {
-            $rootScope.addAlertPromise($translate('TASK.ALERT.ASSIGNED',
-                alertData));
-
-        $scope.model.task.assignee = user;
-        });
-    };
+            $scope.stopEditComment = function () {
+                $scope.model.editingComment = false;
+            };
 
 
-    $scope.revealContent = function(content) {
-        $scope.model.activeTab = "content";
-        $scope.model.selectedContent = content;
-    };
+            $scope.userInvolved = function (user) {
+                var alertData = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    taskName: $scope.model.task.name
+                };
 
-    $scope.hasDetails = function() {
+                TaskService.involveUserInTask(user.id, $scope.model.task.id).then(function () {
+                    $rootScope.addAlertPromise($translate('TASK.ALERT.PERSON-INVOLVED',
+                        alertData));
 
-        if ($scope.model.loading == true
-            || ($scope.model.involvementSummary === null || $scope.model.involvementSummary === undefined || $scope.model.involvementSummary.loading === true)
-            || ($scope.model.contentSummary === null || $scope.model.contentSummary === undefined || $scope.model.contentSummary.loading === true)
-            || ($scope.model.commentSummary === null || $scope.model.commentSummary === undefined || $scope.model.commentSummary.loading === true) ) {
-            return false;
-        }
+                    if (!$scope.model.task.involvedPeople) {
+                        $scope.model.task.involvedPeople = [user];
+                    } else {
+                        $scope.model.task.involvedPeople.push(user);
+                    }
 
-        if ($scope.model.task !== null && $scope.model.task !== undefined) {
+                });
+            };
 
-            // Returning true by default, or the screen will flicker until all the data (people/comments/content) have been fetched
-            var hasPeople = false;
-            var hasContent = false;
-            var hasComments = false;
+            $scope.assigneeSelected = function (user) {
+                var alertData = {
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    taskName: $scope.model.task.name
+                };
 
-            // Involved people
-            if ($scope.model.task.involvedPeople !== null
-                && $scope.model.task.involvedPeople !== undefined
-                && $scope.model.task.involvedPeople.length > 0) {
-                hasPeople = true;
-            }
+                TaskService.assignTask($scope.model.task.id, user.id).then(function () {
+                    $rootScope.addAlertPromise($translate('TASK.ALERT.ASSIGNED',
+                        alertData));
 
-            // Content
-            if ($scope.model.content !== null
-                && $scope.model.content !== undefined
-                && $scope.model.content.data.length > 0) {
-                hasContent = true;
-            }
+                    $scope.model.task.assignee = user;
+                });
+            };
 
-            // Comments
-            if ($scope.model.comments !== null
-                && $scope.model.comments !==undefined
-                && $scope.model.comments.data.length > 0) {
-                hasComments = true;
-            }
 
-            return hasPeople || hasContent || hasComments;
+            $scope.revealContent = function (content) {
+                $scope.model.activeTab = "content";
+                $scope.model.selectedContent = content;
+            };
 
-        }
-        return false;
-    };
+            $scope.hasDetails = function () {
 
-        $scope.uploadInProgress = function(state) {
-            if (state !== 'undefined') {
-                $scope.model.uploadInProgress = state;
-            }
-        };
- }]);
+                if ($scope.model.loading == true
+                    || ($scope.model.involvementSummary === null || $scope.model.involvementSummary === undefined || $scope.model.involvementSummary.loading === true)
+                    || ($scope.model.contentSummary === null || $scope.model.contentSummary === undefined || $scope.model.contentSummary.loading === true)
+                    || ($scope.model.commentSummary === null || $scope.model.commentSummary === undefined || $scope.model.commentSummary.loading === true)) {
+                    return false;
+                }
+
+                if ($scope.model.task !== null && $scope.model.task !== undefined) {
+
+                    // Returning true by default, or the screen will flicker until all the data (people/comments/content) have been fetched
+                    var hasPeople = false;
+                    var hasContent = false;
+                    var hasComments = false;
+
+                    // Involved people
+                    if ($scope.model.task.involvedPeople !== null
+                        && $scope.model.task.involvedPeople !== undefined
+                        && $scope.model.task.involvedPeople.length > 0) {
+                        hasPeople = true;
+                    }
+
+                    // Content
+                    if ($scope.model.content !== null
+                        && $scope.model.content !== undefined
+                        && $scope.model.content.data.length > 0) {
+                        hasContent = true;
+                    }
+
+                    // Comments
+                    if ($scope.model.comments !== null
+                        && $scope.model.comments !== undefined
+                        && $scope.model.comments.data.length > 0) {
+                        hasComments = true;
+                    }
+
+                    return hasPeople || hasContent || hasComments;
+
+                }
+                return false;
+            };
+
+            $scope.uploadInProgress = function (state) {
+                if (state !== 'undefined') {
+                    $scope.model.uploadInProgress = state;
+                }
+            };
+        }]);
 
 
 angular.module('activitiApp')
     .controller('CreateTaskController', ['$rootScope', '$scope', '$translate', '$http', '$location', 'TaskService',
         function ($rootScope, $scope, $translate, $http, $location, TaskService) {
 
-            $scope.createTask = function() {
-                TaskService.createTask($scope.newTask).then(function(createdTask) {
+            $scope.createTask = function () {
+                TaskService.createTask($scope.newTask).then(function (createdTask) {
                     $scope.resetModel();
                     $rootScope.addAlertPromise($translate('TASK.ALERT.CREATED', createdTask));
                 });
             };
 
-            $scope.resetModel = function() {
+            $scope.resetModel = function () {
                 $scope.newTask = {
                     name: '',
                     description: ''
@@ -702,7 +704,7 @@ angular.module('activitiApp')
             $scope.resetModel();
 
         }
-]);
+    ]);
 
 angular.module('activitiApp')
     .controller('ContentDetailsController', ['$rootScope', '$scope', '$translate', '$modal', 'appResourceRoot', 'RelatedContentService',
@@ -710,28 +712,28 @@ angular.module('activitiApp')
 
             $scope.model = {
                 selectedContent: $scope.content,
-                selectedTask : $scope.task
+                selectedTask: $scope.task
             };
 
             // Map simple-type to readable content type name
             var translateKey;
-            if($scope.content) {
+            if ($scope.content) {
                 translateKey = "CONTENT.SIMPLE-TYPE." + $scope.content.simpleType.toUpperCase();
             } else {
                 translateKey = "CONTENT.SIMPLE-TYPE.CONTENT";
             }
 
-            $translate(translateKey).then(function(message) {
+            $translate(translateKey).then(function (message) {
                 $scope.model.contentType = message;
             });
 
-            $scope.getPdfViewerUrl = function(content) {
+            $scope.getPdfViewerUrl = function (content) {
                 var urlEncoded = encodeURIComponent(content.pdfUrl);
 
                 return appResourceRoot + 'views/templates/viewer.html?file=' + urlEncoded;
             };
 
-            $scope.deleteContent = function(content, task) {
+            $scope.deleteContent = function (content, task) {
                 var modalInstance = _internalCreateModal({
                     template: appResourceRoot + 'views/modal/delete-content.html',
                     show: true
@@ -742,8 +744,8 @@ angular.module('activitiApp')
                     loading: false
                 };
 
-                modalInstance.$scope.ok = function() {
-                    RelatedContentService.deleteContent(content.id, task && task.id).then(function() {
+                modalInstance.$scope.ok = function () {
+                    RelatedContentService.deleteContent(content.id, task && task.id).then(function () {
                         $scope.$emit('content-deleted', {content: content});
                         $scope.model.selectedContent = null;
                         $scope.model.selectedTask = null;
@@ -751,197 +753,218 @@ angular.module('activitiApp')
                 };
             };
         }
-]);
+    ]);
 /**
  * 改写
  */
 angular.module('activitiApp')
-.controller('ADTaskController', ['$window','$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-      function ($window,$filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
-    $scope.model.completeButtonDisabled = true;
-	$scope.pname = null;
-	$scope.status = null;
-	$scope.curTime = null;
+    .controller('ADTaskController', ['$window', '$filter', '$interval', '$rootScope', '$scope', '$translate', '$http', '$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($window, $filter, $interval, $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+            $scope.model.completeButtonDisabled = true;
+            $scope.pname = null;
+            $scope.status = null;
+            $scope.curTime = null;
 
-	$scope.adTimer = null;
+            $scope.adTimer = null;
 
-	$scope.arrivalElapseTime = null;
-	$scope.anchoringTime = null;
-	$scope.arrivalTime = null;
+            $scope.arrivalElapseTime = null;
+            $scope.anchoringTime = null;
+            $scope.arrivalTime = null;
 
-	$scope.departureElapseTime = null;
-	$scope.departureTime = null;
+            $scope.departureElapseTime = null;
+            $scope.departureTime = null;
 
-	if($scope.model.task.name == 'AnchoringOrDocking') {
-	    $scope.adTimer = $interval(function(){
-            // console.log("Task name ： AnchoringOrDocking");
-            var infoUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/ADTask/info";
-            $http.get(infoUrl)
-                .success(function(data){
-                    // console.log(data);
-                    $scope.pname = data.pname;
-                    $scope.status = data.status;
-                    $scope.curTime = data.curTime;
-                    // console.log("ADTaskController-->vessel device status  : " , $scope.status);
-                    if($scope.status == "Anchoring"){
-                        $scope.arrivalElapseTime = data.arrivalElapseTime+' h';
-                        $scope.anchoringTime = data.anchoringTime;
-                        $scope.arrivalTime = data.arrivalTime;
-                    }else if($scope.status == "Docking"){
-                        $scope.departureElapseTime = data.departureElapseTime+' h';
-                        $scope.arrivalTime = data.arrivalTime;
-                        $scope.departureTime = data.departureTime;
-                    }
-                    var tUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/process/status";
-                    $http.get(tUrl)
-                        .success(function(pvars){
-                            if(pvars.processStatus != "AnchoringOrDocking"){
-                                console.log(pvars);
-                                $interval.cancel($scope.adTimer);
-                                $window.location.reload();
+            $scope.vHttpUrl = ACTIVITI.CONFIG.contextRoot + '/api/sps';
+            $scope.vSocket = new SockJS($scope.vHttpUrl);
+            $scope.vesselStompClient = Stomp.over($scope.vSocket);
+            $scope.vmarker = null;
+            $scope.onVAConnected = function () {
+                console.log("Connect to vessel-A successfully : ");
+                $scope.vesselStompClient.subscribe("/user/topic/dock/complete", $scope.onDockEnd);
+            };
+            $scope.vesselStompClient.connect({}, $scope.onVAConnected, $scope.onVAError);
+            $scope.onVAError = function (error) {
+
+                console.log(error);
+            };
+            $scope.onDockEnd = function(payload){
+                console.log(payload)
+                $interval.cancel($scope.adTimer);
+                $window.location.reload();
+            }
+            if ($scope.model.task.name == 'AnchoringOrDocking') {
+                $scope.adTimer = $interval(function () {
+                    // console.log("Task name ： AnchoringOrDocking");
+                    var infoUrl = ACTIVITI.CONFIG.contextRoot + '/api/' + $scope.model.task.processInstanceId + "/ADTask/info";
+                    $http.get(infoUrl)
+                        .success(function (data) {
+                            // console.log(data);
+                            $scope.pname = data.pname;
+                            $scope.status = data.status;
+                            $scope.curTime = data.curTime;
+                            // console.log("ADTaskController-->vessel device status  : " , $scope.status);
+                            if ($scope.status == "Anchoring") {
+                                $scope.arrivalElapseTime = data.arrivalElapseTime + ' h';
+                                $scope.anchoringTime = data.anchoringTime;
+                                $scope.arrivalTime = data.arrivalTime;
+                            } else if ($scope.status == "Docking") {
+                                $scope.departureElapseTime = data.departureElapseTime + ' h';
+                                $scope.arrivalTime = data.arrivalTime;
+                                $scope.departureTime = data.departureTime;
                             }
+                            // var tUrl = ACTIVITI.CONFIG.contextRoot + '/api/' + $scope.model.task.processInstanceId + "/process/status";
+                            // $http.get(tUrl)
+                            //     .success(function (pvars) {
+                            //         console.log(pvars);
+                            //         if (pvars.processStatus != "AnchoringOrDocking") {
+                            //             console.log(pvars);
+                            //             $interval.cancel($scope.adTimer);
+                            //             $window.location.reload();
+                            //         }
+                            //     })
                         })
-                })
-        },1000)
-	}
-   $scope.DelayModalShow = function(){
-      // 定义模态框
-      var modalInstance = _internalCreateModal({
-          template :  appResourceRoot + 'views/modal/delay.html',  // 摸态框视图
-          scope: $scope,
-          show: true
-      }, $modal , $scope);
-      modalInstance.$scope.setDxy = function() {
-          // console.log("DelayController--",$scope.status);
-      };
-   }
-   $scope.ApplyModalShow = function(){
-      // 定义模态框
-      var modalInstance = _internalCreateModal({
-          template :  appResourceRoot + 'views/modal/apply.html',  // 摸态框视图
-          scope: $scope,
-          show: true
-      }, $modal , $scope);
-   }
-}]);
-angular.module('activitiApp')
-.controller('VoyaTaskController', ['$window','$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-      function ($window ,$filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
-
-    $scope.model.completeButtonDisabled = true
-    $scope.vesselShadow = null;
-    $scope.prePort = null;
-    $scope.nextPort = null;
-    $scope.longitude = null;
-    $scope.latitude = null;
-    $scope.velocity = null;
-    $scope.timeStamp = null;
-    $scope.status = null;
-    $scope.interval = null;
-
-    $scope.voyageTaskTimer = $interval(function(){
-    	if($scope.model.task.name != 'Voyaging'){
-     	 	return;
-        }
-        // console.log("Task Name : " + $scope.model.task.name);
-        var shadowUrl = ACTIVITI.CONFIG.contextRoot+'/api/vessel/shadow/'+$scope.model.task.processInstanceId;
-    	$http.get(shadowUrl)
-    	.success(function(data){
-    		$scope.vesselShadow = data;
-            // console.log("vessel shadow : " , data);
-            var stepIndex = $scope.vesselShadow.stepIndex;
-            if(stepIndex == 0){
-                $scope.prePort = "始发港"
-                $scope.nextPort = $scope.vesselShadow.destinations[stepIndex].name;
-            }else if(stepIndex == $scope.vesselShadow.destinations.length-1){
-                $scope.prePort = $scope.vesselShadow.destinations[stepIndex].name;
-                $scope.nextPort = "无（已到达最后一个港口)"
-            }else{
-                $scope.prePort = $scope.vesselShadow.destinations[stepIndex].name;
-                $scope.nextPort = $scope.vesselShadow.destinations[stepIndex+1].name;
+                }, 1000)
             }
 
-            if($scope.prePort != null){
-                $scope.interval = $scope.prePort+"-->"+$scope.nextPort;
-            }
-            $scope.longitude = $scope.vesselShadow.longitude;
-            $scope.latitude = $scope.vesselShadow.latitude;
-            $scope.velocity = $scope.vesselShadow.velocity+" Km/h";
-            $scope.timeStamp = $scope.vesselShadow.timeStamp;
-            $scope.status  = $scope.vesselShadow.status;
-            // console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
-            var tUrl = ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+"/process/status";
-            $http.get(tUrl)
-                .success(function(pvars){
-                    if(pvars.processStatus != "Voyaging"){
-                        console.log(pvars);
-                        $interval.cancel($scope.adTimer);
-                        $window.location.reload();
-                    }
-                })
-    	})
-    }, 1000);
 
-   $scope.DelayModalShow = function(){
-      // 定义模态框
-       var modalInstance = _internalCreateModal({
-           template :  appResourceRoot + 'views/modal/delay.html',  // 摸态框视图
-           scope: $scope,
-           show: true
-       }, $modal , $scope);
-       modalInstance.$scope.setDxy = function() {
-           // console.log("DelayController--",$scope.status);
-       };
-   }
-   $scope.ApplyModalShow = function(){
-      // 定义模态框
-      var modalInstance = _internalCreateModal({
-          template :  appResourceRoot + 'views/modal/apply.html',  // 摸态框视图
-          scope: $scope,
-          show: true
-      }, $modal , $scope);
-   }
-}]);
+            $scope.DelayModalShow = function () {
+                // 定义模态框
+                var modalInstance = _internalCreateModal({
+                    template: appResourceRoot + 'views/modal/delay.html',  // 摸态框视图
+                    scope: $scope,
+                    show: true
+                }, $modal, $scope);
+                modalInstance.$scope.setDxy = function () {
+                    // console.log("DelayController--",$scope.status);
+                };
+            }
+            $scope.ApplyModalShow = function () {
+                // 定义模态框
+                var modalInstance = _internalCreateModal({
+                    template: appResourceRoot + 'views/modal/apply.html',  // 摸态框视图
+                    scope: $scope,
+                    show: true
+                }, $modal, $scope);
+            }
+        }]);
+angular.module('activitiApp')
+    .controller('VoyaTaskController', ['$window', '$filter', '$interval', '$rootScope', '$scope', '$translate', '$http', '$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($window, $filter, $interval, $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+
+            $scope.model.completeButtonDisabled = true
+            $scope.vesselShadow = null;
+            $scope.prePort = null;
+            $scope.nextPort = null;
+            $scope.longitude = null;
+            $scope.latitude = null;
+            $scope.velocity = null;
+            $scope.timeStamp = null;
+            $scope.status = null;
+            $scope.interval = null;
+
+            $scope.voyageTaskTimer = $interval(function () {
+                if ($scope.model.task.name != 'Voyaging') {
+                    return;
+                }
+                // console.log("Task Name : " + $scope.model.task.name);
+                var shadowUrl = ACTIVITI.CONFIG.contextRoot + '/api/vessel/shadow/' + $scope.model.task.processInstanceId;
+                $http.get(shadowUrl)
+                    .success(function (data) {
+                        $scope.vesselShadow = data;
+                        // console.log("vessel shadow : " , data);
+                        var stepIndex = $scope.vesselShadow.stepIndex;
+                        if (stepIndex == 0) {
+                            $scope.prePort = "始发港"
+                            $scope.nextPort = $scope.vesselShadow.destinations[stepIndex].name;
+                        } else if (stepIndex == $scope.vesselShadow.destinations.length - 1) {
+                            $scope.prePort = $scope.vesselShadow.destinations[stepIndex].name;
+                            $scope.nextPort = "无（已到达最后一个港口)"
+                        } else {
+                            $scope.prePort = $scope.vesselShadow.destinations[stepIndex].name;
+                            $scope.nextPort = $scope.vesselShadow.destinations[stepIndex + 1].name;
+                        }
+
+                        if ($scope.prePort != null) {
+                            $scope.interval = $scope.prePort + "-->" + $scope.nextPort;
+                        }
+                        $scope.longitude = $scope.vesselShadow.longitude;
+                        $scope.latitude = $scope.vesselShadow.latitude;
+                        $scope.velocity = $scope.vesselShadow.velocity + " Km/h";
+                        $scope.timeStamp = $scope.vesselShadow.timeStamp;
+                        $scope.status = $scope.vesselShadow.status;
+                        // console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
+                        var tUrl = ACTIVITI.CONFIG.contextRoot + '/api/' + $scope.model.task.processInstanceId + "/process/status";
+                        $http.get(tUrl)
+                            .success(function (pvars) {
+                                if (pvars.processStatus != "Voyaging") {
+                                    console.log(pvars);
+                                    $interval.cancel($scope.adTimer);
+                                    $window.location.reload();
+                                }
+                            })
+                    })
+            }, 1000);
+
+            $scope.DelayModalShow = function () {
+                // 定义模态框
+                var modalInstance = _internalCreateModal({
+                    template: appResourceRoot + 'views/modal/delay.html',  // 摸态框视图
+                    scope: $scope,
+                    show: true
+                }, $modal, $scope);
+                modalInstance.$scope.setDxy = function () {
+                    // console.log("DelayController--",$scope.status);
+                };
+            }
+            $scope.ApplyModalShow = function () {
+                // 定义模态框
+                var modalInstance = _internalCreateModal({
+                    template: appResourceRoot + 'views/modal/apply.html',  // 摸态框视图
+                    scope: $scope,
+                    show: true
+                }, $modal, $scope);
+            }
+        }]);
 
 angular.module('activitiApp')
-    .controller('ApplyCtrl', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-        function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+    .controller('ApplyCtrl', ['$filter', '$interval', '$rootScope', '$scope', '$translate', '$http', '$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($filter, $interval, $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
-        $scope.spNames=["缸盖" , "钢筋","钢板"];
-        $scope.spName = "缸盖";
-        $scope.spNumber = 1;
-        console.log("ApplyController--",$scope.status);
+            $scope.spNames = ["Hydraulic cylinder", "Gangway winch", "Steel pontoon"];
+            $scope.spName = "Hydraulic cylinder";
+            $scope.spNumber = 1;
+            console.log("ApplyController--", $scope.status);
             $scope.apply = function () {
-            var body = {
-                spName : $scope.spName,
-                spNumber : $scope.spNumber
-            }
-            $http.post(ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+'/apply' , body)
-                .success(function (data) {
-                    console.log("Apply successfully.",data);
-                    $scope.$hide();
-                })
-        };
-    }]);
+                var body = {
+                    spName: $scope.spName,
+                    spNumber: $scope.spNumber
+                }
+                $http.post(ACTIVITI.CONFIG.contextRoot + '/api/' + $scope.model.task.processInstanceId + '/apply', body)
+                    .success(function (data) {
+                        console.log("Apply successfully.", data);
+                        $scope.$hide();
+                    })
+            };
+        }]);
 angular.module('activitiApp')
-    .controller('DelayCtrl', ['$filter','$interval' , '$rootScope', '$scope', '$translate', '$http','$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
-        function ($filter, $interval , $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
+    .controller('DelayCtrl', ['$filter', '$interval', '$rootScope', '$scope', '$translate', '$http', '$location', '$routeParams', 'appResourceRoot', 'CommentService', 'TaskService', 'FormService', 'RelatedContentService', '$timeout', '$modal', '$popover',
+        function ($filter, $interval, $rootScope, $scope, $translate, $http, $location, $routeParams, appResourceRoot, CommentService, TaskService, FormService, RelatedContentService, $timeout, $modal, $popover) {
 
             $scope.dx = 0;
             $scope.dy = 0;
-            console.log("DelayController--",$scope.status);
+            console.log("DelayController--", $scope.status);
             $scope.setDxy = function () {
                 var body = {
-                    dx : $scope.dx,
-                    dy : $scope.dy
+                    dx: $scope.dx,
+                    dy: $scope.dy
                 }
                 console.log(body);
-                $http.post(ACTIVITI.CONFIG.contextRoot+'/api/'+$scope.model.task.processInstanceId+'/delay' , body)
+                $http.post(ACTIVITI.CONFIG.contextRoot + '/api/' + $scope.model.task.processInstanceId + '/delay', body)
                     .success(function (data) {
                         console.log("Delay successfully.", data);
                         $scope.$hide();
                     });
             };
-    }]);
+        }]);
 
 

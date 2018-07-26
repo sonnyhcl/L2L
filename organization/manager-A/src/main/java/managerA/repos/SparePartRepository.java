@@ -19,9 +19,9 @@ public class SparePartRepository {
     public SparePartRepository(){
         logger.info("--SparePartRepository--");
         //TODO : read from xxx.xls
-        spareParts.add(new SparePart("缸盖" , "A" , 3.9));
-        spareParts.add(new SparePart("螺丝" , "B" , 3.7));
-        spareParts.add(new SparePart("钢筋" , "C" , 5.8));
+        spareParts.add(new SparePart("Hydraulic cylinder" , "A" , 3.9));
+        spareParts.add(new SparePart("Gangway winch" , "B" , 3.7));
+        spareParts.add(new SparePart("Steel pontoon" , "C" , 5.8));
 
 
     }

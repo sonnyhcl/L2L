@@ -326,7 +326,7 @@
         <div class="panel-group" id="accordion" ng-if="model.task.name == 'Voyaging'" ng-controller="VoyaTaskController">
             <div  class="panel panel-danger panel-container">
                 <div class="panel-heading head-container">
-                    <div class="pull-left head-title"><span class="panel-title"><h2 >Current state</h2></span>
+                    <div class="pull-left head-title"><span class="panel-title"><h2 >Vessel State</h2></span>
                     </div>
                     <div class="pull-right head-btns">
                         <button type="button" id='vApplyBtn' class="btn btn-default navbar-btn " ng-click="ApplyModalShow()">
@@ -374,7 +374,7 @@
             <div  class="panel panel-danger panel-container">
                 <div class="panel-heading head-container">
                     <div class="pull-left head-title">
-                        <span class="panel-title"><h3>港口 : {{pname}} / 状态 : {{status}} </h3>
+                        <span class="panel-title"><h3>Port : {{pname}} / State : {{status}} </h3>
                         </span>
                     </div>
                     <div class="pull-right head-btns">
@@ -390,41 +390,41 @@
                 <div  class="panel-body" style="padding: 0px 20px 0px 20px; margin-top: 5px;">
                     <table  class="table" ng-show = "status == 'Anchoring'">
                         <tr>
-                            <td><span class="input-group-addon input-lg">靠港剩余</span></td>
+                            <td><span class="input-group-addon input-lg">Arrive in</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="arrivalElapseTime" style = "color: #e8120f" readonly="readonly" ></td>
                         </tr>
 
                         <tr>
-                            <td  ><span class="input-group-addon input-lg">当前时间</span></td>
+                            <td  ><span class="input-group-addon input-lg">Current time</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="curTime" readonly="readonly"></td>
                         </tr>
 
                         <tr>
-                            <td  ><span class="input-group-addon input-lg">抛猫时间</span></td>
+                            <td  ><span class="input-group-addon input-lg">Anchor at</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="anchoringTime" readonly="readonly"></td>
                         </tr>
                         <tr >
-                            <td ><span class="input-group-addon input-lg">靠港时间</span></td>
+                            <td ><span class="input-group-addon input-lg">Arrive at</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="arrivalTime"></td>
                         </tr>
                     </table>
                     <table  class="table" ng-show = "status == 'Docking'">
                         <tr>
-                            <td ><span class="input-group-addon input-lg">离港剩余</span></td>
+                            <td ><span class="input-group-addon input-lg">Depart in</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="departureElapseTime"  style = "color: #e8120f" readonly="readonly"></td>
                         </tr>
 
                         <tr>
-                            <td  ><span class="input-group-addon input-lg">当前时间</span></td>
+                            <td  ><span class="input-group-addon input-lg">Current time</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="curTime" readonly="readonly"></td>
                         </tr>
 
                         <tr>
-                            <td><span class="input-group-addon input-lg">靠港时间</span></td>
+                            <td><span class="input-group-addon input-lg">Arrive at</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="arrivalTime" readonly="readonly"></td>
                         </tr>
                         <tr >
-                            <td><span class="input-group-addon input-lg">离港时间</span></td>
+                            <td><span class="input-group-addon input-lg">Depart at</span></td>
                             <td><input type="text" class="form-control input-lg" ng-model="departureTime" readonly="readonly"></td>
                         </tr>
                     </table>

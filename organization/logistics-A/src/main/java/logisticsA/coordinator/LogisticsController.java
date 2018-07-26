@@ -141,6 +141,9 @@ public class LogisticsController extends AbstractController {
                     double totalCost = routePlan.getRendezvous().getSumCost();
                     double riskCost = totalCost *0.42;
                     stompClient.sendPlanMissingMsg("admin", "/topic/route/missing", pid, policy, "Missing delivery opportunity", totalCost , riskCost);
+                    Task task = taskService.createTaskQuery().processInstanceId(pid).taskName("Running").singleResult();
+                    taskService.complete(task.getId());
+                    logger.debug("Complete Running Task. pid = " + pid);
                 }
             } else {
                 logger.debug("unsuppoted policy.");

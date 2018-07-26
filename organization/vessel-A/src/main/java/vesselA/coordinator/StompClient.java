@@ -78,4 +78,11 @@ public class StompClient {
     }
 
 
+    public void sendDockComplete(String username, String topic, String pid  , String  msg){
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("pid" , pid);
+        payload.put("message" , msg);
+        simpMessagingTemplate.convertAndSendToUser( username, topic , payload);
+    }
+
 }

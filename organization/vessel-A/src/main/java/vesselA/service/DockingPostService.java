@@ -48,76 +48,84 @@ public class DockingPostService implements ExecutionListener, Serializable {
         Map<String, Object> vars = exec.getVariables();
         String vid = vars.get("vid").toString();
         String applyId = vars.get("applyId").toString();
-        logger.debug("applyId : "+applyId);
+        logger.debug("applyId : " + applyId);
         VesselShadow vesselShadow = shadowRepository.findById(vid);
-        logger.debug("status : "+vesselShadow.getStatus());
+        logger.debug("status : " + vesselShadow.getStatus());
 
         Destination curPort = vesselShadow.getDestinations().get(vesselShadow.getStepIndex());
-        Destination nextPort =  null;
+        Destination nextPort = null;
         String pname = curPort.getName();
-        if(vesselShadow.getStepIndex() == vesselShadow.getDestinations().size()-1){
-            logger.debug("Arrival at the last port ：　"+pname);
-            runtimeService.setVariable(pid , "nextNav" , false);
-        }else{
-            nextPort =  vesselShadow.getDestinations().get(vesselShadow.getStepIndex()+1);
+        if (vesselShadow.getStepIndex() == vesselShadow.getDestinations().size() - 1) {
+            logger.debug("Arrival at the last port ：　" + pname);
+            runtimeService.setVariable(pid, "nextNav", false);
+        } else {
+            nextPort = vesselShadow.getDestinations().get(vesselShadow.getStepIndex() + 1);
         }
-        stompClient.sendCurrentPort("admin" , "/topic/dock/end" ,  curPort , vesselShadow.getStatus() , nextPort);
+        stompClient.sendCurrentPort("admin", "/topic/dock/end", curPort, vesselShadow.getStatus(), nextPort);
         logger.debug(curPort.getName());
 
 
         //TODO: if  process has applied for spare parts.
-        if(!applyId.equals("NONE")){
+        if (!applyId.equals("NONE")) {
             Application application = applicationRepository.findById(applyId);
             String rend = application.getRendezvous();
             //TODO:  if  delivery is continuing , then  check the status of delivery.
             String applyStatus = application.getStatus();
-            if(!(applyStatus.equals("Missing") || applyStatus.equals("Meeting"))){//exclude the  end status.
-                logger.debug("rend "+rend+" applyStatus : "+applyStatus);
+            if (!(applyStatus.equals("Missing") || applyStatus.equals("Meeting"))) {//exclude the  end status.
+                logger.debug("rend " + rend + " applyStatus : " + applyStatus);
                 String deliveryStatus = restClient.checkDeiveryStatus(pid);
                 logger.debug(deliveryStatus);
-                switch (deliveryStatus){
-                    case "MISSING" :
-                        runtimeService.setVariable(pid , "nextNav" , false);
+                switch (deliveryStatus) {
+                    case "MISSING":
+                        runtimeService.setVariable(pid, "nextNav", false);
                         application.setStatus("Missing");
                         //TODO: notify logistic of "Missing"
-                        HashMap<String , Object> msgBody = new HashMap<String , Object>();
-                        msgBody.put("eventType" , "MISSING");
-                        restClient.notifyMsg(pid , "Missing" , msgBody);
+                        HashMap<String, Object> msgBody = new HashMap<String, Object>();
+                        msgBody.put("eventType", "MISSING");
+                        restClient.notifyMsg(pid, "Missing", msgBody);
 //                        stompClient.sendMissingMsg("admin","/topic/missing" , pid , "MISSING");
 //                        logger.debug("send \"MISSING\" message to monitor : ");
+                        runtimeService.setVariable(pid, "processStatus", "Missing");
                         break;
-                    case "NOT_MISSING" :
-                        if(rend.equals(pname)){ // check  whether the delivery is successful when departure.
+                    case "NOT_MISSING":
+                        if (rend.equals(pname)) { // check  whether the delivery is successful when departure.
                             application.setStatus("Meeting");
                             //TODO: notify logistic of "Meeting"
-                            msgBody = new HashMap<String , Object>();
-                            msgBody.put("eventType" , "MEETING");
-                            restClient.notifyMsg(pid , "Meeting" , msgBody);
-                            stompClient.sendMeetMsg("admin","/topic/meeting" , pid ,  "MEET" ,   application.getRendezvous());
+                            msgBody = new HashMap<String, Object>();
+                            msgBody.put("eventType", "MEETING");
+                            restClient.notifyMsg(pid, "Meeting", msgBody);
+                            stompClient.sendMeetMsg("admin", "/topic/meeting", pid, "MEET", application.getRendezvous());
                             logger.debug("send \"MEET\" message to monitor : ");
-                        }else{
+                            runtimeService.setVariable(pid, "processStatus", "Meeting");
+                        } else {
+                            runtimeService.setVariable(pid, "processStatus", "Voyaging");
                             logger.info("There still exists opportunity to meet!");
                         }
                         break;
-                    case "MEETING" :
-                        runtimeService.setVariable(pid , "nextNav" , false);
-                        msgBody = new HashMap<String , Object>();
-                        msgBody.put("eventType" , "MEETING");
-                        restClient.notifyMsg(pid , "Meeting" , msgBody);
-                        stompClient.sendMeetMsg("admin","/topic/meeting" , pid ,  "MEET" ,   application.getRendezvous());
+                    case "MEETING":
+                        runtimeService.setVariable(pid, "nextNav", false);
+                        msgBody = new HashMap<String, Object>();
+                        msgBody.put("eventType", "MEETING");
+                        restClient.notifyMsg(pid, "Meeting", msgBody);
+                        stompClient.sendMeetMsg("admin", "/topic/meeting", pid, "MEET", application.getRendezvous());
                         logger.debug("MEETING");
+                        runtimeService.setVariable(pid, "processStatus", "Meeting");
                         break;
-                    case "NOT_PAIRED" :
+                    case "NOT_PAIRED":
                         logger.debug("NOT_PAIRED");
+                        runtimeService.setVariable(pid, "processStatus", "Voyaging");
                         break;
                     default:
+                        runtimeService.setVariable(pid, "processStatus", "Voyaging");
                         break;
                 }
             }
+        } else {
+            runtimeService.setVariable(pid, "processStatus", "Voyaging");
+
         }
-
-//        runtimeService.setVariable(pid , "processStatus" , "Voyaging");
-
+        logger.debug("process status : "+runtimeService.getVariable(pid , "processStatus"));
+        stompClient.sendDockComplete("admin", "/topic/dock/complete" , pid , "DockComplete");
     }
 
 }

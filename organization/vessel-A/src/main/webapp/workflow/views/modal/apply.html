@@ -1,18 +1,18 @@
 <div class="modal" id="apply" tabindex="-1" role="dialog" aria-labelledby="applyLabel" aria-hidden="true" ng-controller="ApplyCtrl">
-    <div class="panel panel-default modal-panel-container">
+    <div class="panel panel-default modal-panel-container apply-modal-panel-container">
         <div class="panel-heading">
             <div class="modal-header">
                 <div class="pull-right">
                     <button type="button" class="close" ng-click="$hide()">&times;</button>
                 </div>
-                <h4 class="modal-title" id="applyLabel">选择货物
+                <h4 class="modal-title" id="applyLabel">Spare Parts Selection
                 </h4>
             </div>
         </div>
         <div class="panel-body">
             <table class="table apply-panel-table">
                 <tr>
-                    <td><span class="input-group-addon input-lg">货物:</span></td>
+                    <td><span class="input-group-addon input-lg">Spare part : </span></td>
                     <td>
                         <select class="form-control input-lg" ng-init="spName=spNames[0]" ng-model="spName" ng-options="x for x in spNames">
                         </select>
@@ -20,7 +20,7 @@
                 </tr>
             </table>
             <hr style="margin-top: 2px; ">
-            <button type="button" class="btn btn-primary pull-right delay-btn-right" ng-click="apply()">申请
+            <button type="button" class="btn btn-primary pull-right delay-btn-right" ng-click="apply()">Apply
             </button>
         </div>
     </div>

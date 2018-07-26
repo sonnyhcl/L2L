@@ -146,7 +146,13 @@
  margin-bottom: 0px;
 }
 .delay-modal-panel-container{
-    width: 25%;
+    width: 35%;
+    margin-top: 10%;
+    margin-left:40%;
+    margin-right:20%;
+}
+.apply-modal-panel-container{
+    width: 40%;
     margin-top: 10%;
     margin-left:40%;
     margin-right:20%;

@@ -2,14 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>soaring</groupId>
-	<artifactId>l2l</artifactId>
+	<groupId>soaring.l2l</groupId>
+	<artifactId>Coordinators</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>BusinessEntities</module>
-		<module>Coordinators</module>
-		<module>Enterprises</module>
+		<module>vmc</module>
+		<module>msc</module>
+		<module>slc</module>
+		<module>lvc</module>
 	</modules>
 </project>

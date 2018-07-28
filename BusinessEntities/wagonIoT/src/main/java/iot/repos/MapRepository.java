@@ -17,20 +17,17 @@ import java.util.Map;
 @SuppressWarnings("all")
 public class MapRepository {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    @Value("${map.key}")
     private String key;
-
-    @Value("${map.basePath}")
     private String basePath;
 
-    @Autowired
     private RestTemplate restTemplate;
 
 
-    MapRepository(){
+    public MapRepository(@Value("${map.key}") String key , @Value("${map.basePath}") String basePath , RestTemplate restTemplate){
         //logger.info(key+"--"+basePath);
-        logger.debug("map repos");
+        this.key = key;
+        this.basePath= basePath;
+        logger.debug("map repos"+key+" -- "+basePath+" "+restTemplate);
     }
 
     public String PlanPath(String x1, String y1, String x2, String y2){

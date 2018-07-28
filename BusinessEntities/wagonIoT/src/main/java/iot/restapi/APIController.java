@@ -22,7 +22,7 @@ import iot.util.PathUtil;
 import java.io.IOException;
 import java.util.HashMap;
 
-@RestController
+//@RestController
 public class APIController {
     private  static Logger logger = Logger.getLogger(APIController.class);
 

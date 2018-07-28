@@ -26,6 +26,7 @@ public class AppConfig {
     @Autowired
     private Environment environment;
 
+
     @Bean
     public AWSIotMqttClient awsIotMqttClient() throws AWSIotException {
         AWSIotMqttClient awsIotMqttClient = null;
@@ -80,9 +81,11 @@ public class AppConfig {
         logger.debug("--wagonSubscriber--");
         //subscribe to activiti topic
         String activitiTopic = environment.getProperty("wagon.topic.activiti");
-        WagonSubscriber vesselSubscriber = new WagonSubscriber(activitiTopic, topicQos);
-        awsIotMqttClient().subscribe(vesselSubscriber);
-        return  vesselSubscriber;
+        WagonSubscriber wagonSubscriber = new WagonSubscriber(activitiTopic, topicQos);
+        awsIotMqttClient().subscribe(wagonSubscriber);
+        logger.debug("--wagon Subscriber--");
+
+        return  wagonSubscriber;
     }
 
 }

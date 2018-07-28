@@ -26,8 +26,6 @@ public class WagonSubscriber extends AWSIotTopic {
 
     @Autowired
     private CommonRepository commonRepository;
-    @Autowired
-    private WagonDevice wagonDevice;
 
     @Autowired
     private MessageHandler messageHandler;

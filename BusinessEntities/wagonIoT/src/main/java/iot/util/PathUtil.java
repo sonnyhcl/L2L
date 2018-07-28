@@ -11,7 +11,6 @@ import iot.domain.Point;
 import java.util.ArrayList;
 import java.util.List;
 @SuppressWarnings("all")
-@Service
 public class PathUtil {
     private static  Logger logger = LoggerFactory.getLogger(PathUtil.class);
 

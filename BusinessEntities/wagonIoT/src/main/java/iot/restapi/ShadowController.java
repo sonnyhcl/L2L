@@ -14,7 +14,7 @@ import iot.repos.MapRepository;
 
 import java.io.IOException;
 
-@RestController
+//@RestController
 public class ShadowController {
     private  static Logger logger = Logger.getLogger(ShadowController.class);
     @Value("${wagon.wid}")

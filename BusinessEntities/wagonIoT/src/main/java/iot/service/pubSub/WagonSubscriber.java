@@ -5,13 +5,13 @@ import com.amazonaws.services.iot.client.AWSIotQos;
 import com.amazonaws.services.iot.client.AWSIotTopic;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import iot.repos.PathRepository;
+import iot.service.shadow.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import iot.domain.Path;
 import iot.repos.CommonRepository;
-import iot.repos.PathRepository;
-import iot.service.shadow.MessageHandler;
 import iot.service.shadow.WagonDevice;
 
 import java.io.IOException;

@@ -1,2 +1,2 @@
-Vessel Identifier,Thing Name,Keys File Path,Client Endpoint,Update Shadow,Subscribed Topic
+Vessel Identifier,Thing Name,Security Certificate Location,Client Endpoint,Update Shadow,Subscribed Topic
 413362260,V413362260,/home/bqzhu/Desktop/SmartTravel/devKeys/413362260,a1cf6tovfozpv3.iot.cn-north-1.amazonaws.com.cn,$aws/things/V413362260/shadow/,IoT/V413362260/

@@ -32,7 +32,6 @@ public class ShadowController {
 
     @RequestMapping("/devices/shadow")
     ResponseEntity<Path> updateWagonDevice() throws IOException{
-
         return null;
     }
 }

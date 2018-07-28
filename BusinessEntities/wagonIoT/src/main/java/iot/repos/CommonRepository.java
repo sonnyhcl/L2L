@@ -15,4 +15,8 @@ public class CommonRepository {
     @Value("${wagon.zoomInVal}")
     private int zoomInVal;
 
+    public  CommonRepository(){
+        logger.debug("--CommonRepository--");
+    }
+
 }

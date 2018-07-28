@@ -26,30 +26,14 @@ public class AppConfig {
     @Autowired
     private Environment environment;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    // 启动的时候要注意，由于我们在controller中注入了RestTemplate，所以启动的时候需要实例化该类的一个实例
-    @Autowired
-    private RestTemplateBuilder builder;
-
-    // 使用RestTemplateBuilder来实例化RestTemplate对象，spring默认已经注入了RestTemplateBuilder实例
-    @Bean
-    public RestTemplate restTemplate() {
-        builder.setReadTimeout(3000);
-        builder.setConnectTimeout(3000);
-        return builder.build();
-    }
-
-
     @Bean
     public AWSIotMqttClient awsIotMqttClient() throws AWSIotException {
         AWSIotMqttClient awsIotMqttClient = null;
         logger.debug("--awsIotMqttClient--");
-        String clientEndpoint = environment.getProperty("eventGateway.clientEndpoint");
-        String clientId = environment.getProperty("eventGateway.clientId");
-        String certificateFile = environment.getProperty("eventGateway.certificate");
-        String privateKeyFile = environment.getProperty("eventGateway.privateKey");
+        String clientEndpoint = environment.getProperty("awsiot.clientEndpoint");
+        String clientId = environment.getProperty("awsiot.clientId");
+        String certificateFile = environment.getProperty("awsiot.certificate");
+        String privateKeyFile = environment.getProperty("awsiot.privateKey");
         String algorithm = environment.getProperty("keyAlgorithm");
         String awsAccessKeyId = environment.getProperty("awsAccessKeyId");
         String awsSecretAccessKey = environment.getProperty("awsSecretAccessKey");
@@ -77,6 +61,7 @@ public class AppConfig {
         // Delete existing document if any
         device.delete();
         AWSIotConnectionStatus status = AWSIotConnectionStatus.DISCONNECTED;
+        logger.debug("--aws mqtt client--");
 
         return awsIotMqttClient;
     }
@@ -85,15 +70,12 @@ public class AppConfig {
     public WagonDevice wagonDevice(){
         logger.debug("--wagonDevice--");
 
-        String thingName = environment.getProperty("eventGateway.thingName");
-        objectMapper.setFilterProvider(new SimpleFilterProvider().addFilter("wantedProperties", SimpleBeanPropertyFilter
-                .filterOutAllExcept("id", "longitude", "latitude", "speed", "movedDistance")));
-        objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        String thingName = environment.getProperty("awsiot.thingName");
 
         return new WagonDevice(thingName);
     }
 
-    @Bean(autowire = Autowire.BY_NAME,value = "wagonSubscriber")
+    @Bean
     public WagonSubscriber wagonSubscriber() throws AWSIotException {
         logger.debug("--wagonSubscriber--");
         //subscribe to activiti topic

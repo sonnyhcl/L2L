@@ -7,18 +7,8 @@ Authored by Biqi Zhu, Chenglong Hu, Lin Ye, Hong-Linh Truong and  Liang Zhang***
 
 submitted to [ICSOC 2018](http://icsoc.org/).
 
-We provide:
-
-* Source examples
-* [Video] 
-* ....
-
-## Video
-Video url: [Video in Dropbox](https://www.dropbox.com/s/knnpq3dbjio8uz6/ICSOC2018.mp4?dl=0)
-
-## User Guide
-### Project Structure
-```bash
+## Project Structure
+```console
 L2L
 ├── BusinessEntities
 │   ├── vesselIoT
@@ -36,18 +26,22 @@ L2L
 ├── pom.xml
 └── README.md
 ```
-- README List :
-    - [Logistics Vessel Coordinator README ](Coordinators/vmc/README.md)
-    - [Manager Supplier Coordinator README ](Coordinators/msc/README.md)
-    - [Supplier Logistics Coordinator README ](Coordinators/slc/README.md)
-    - [Logistics Vessel Coordinator README ](Coordinators/lvc/README.md)
-    - [Vessel Enterprise README ](Enterprises/vessel-A/README.md)
-    - [Manager Enterprise README ](Enterprises/manager-A/README.md)
-    - [Supplier Enterprise README ](Enterprises/supplier-A/README.md)
-    - [Logistics Enterprise README ](Enterprises/logistics-A/README.md)
-    - [Vessel Business Entity README ](BusinessEntities/vesselIoT/README.md)
-    - [Wagon Business Entity README ](BusinessEntities/wagonIoT/README.md)
 
+## User Guide
+- README List :
+    - [Logistics Vessel Coordinator README](Coordinators/vmc/README.md)
+    - [Manager Supplier Coordinator README](Coordinators/msc/README.md)
+    - [Supplier Logistics Coordinator README](Coordinators/slc/README.md)
+    - [Logistics Vessel Coordinator README](Coordinators/lvc/README.md)
+    - [Vessel Enterprise README](Enterprises/vessel-A/README.md)
+    - [Manager Enterprise README](Enterprises/manager-A/README.md)
+    - [Supplier Enterprise README](Enterprises/supplier-A/README.md)
+    - [Logistics Enterprise README](Enterprises/logistics-A/README.md)
+    - [Vessel Business Entity README](BusinessEntities/vesselIoT/README.md)
+    - [Wagon Business Entity README](BusinessEntities/wagonIoT/README.md)
+
+## Video
+Video url: [Video in Dropbox](https://www.dropbox.com/s/knnpq3dbjio8uz6/ICSOC2018.mp4?dl=0)
 
 ## Dependencies
 -   [`L2L Frontend`](https://github.com/i-qiqi/L2L/tree/lambda)

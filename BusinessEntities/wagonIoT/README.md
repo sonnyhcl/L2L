@@ -1,6 +1,6 @@
 # Wagon Business Entity
 ## Introduction
-This system is introduced into L2L as `Vessel Business Entity`. It's a spring boot application and employs the AWS IoT technology to simulate the vessel.
+This system is introduced into L2L as `Wagon Business Entity`. It's a spring boot application and employs the AWS IoT technology to simulate the vessel.
 ### Prerequisites 
 - Development Tools
    - IDE: [Intellij IDEA](https://www.jetbrains.com/idea/download)
@@ -15,7 +15,8 @@ This system is introduced into L2L as `Vessel Business Entity`. It's a spring bo
  ![vessel_iot_keys](../../images/vesselIoT_keys.png) 
  - Note that the certificate files must be named `certificate.pem.crt` and `private.pem.key`separately
    ![vessel_iot_cert_name](../../images/vesselIoT_cert_name.png) 
+ - Many IoT clients can share the same certificate, so here we reuse the certificate of the vessel.
 - Add run configuration for spring boot Application 
- ![vessel_iot_keys](../../images/vesselIoT_run_conf.png) 
+ ![vessel_iot_keys](../../images/wagonIoT_run_conf.png) 
 
 

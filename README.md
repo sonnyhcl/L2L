@@ -35,7 +35,7 @@ efficiency of L2L framework. The main system features are outlined as following.
 <ul>
    <li>
      <strong>Event Gateway</strong> subscribes the IoT and asynchronous events from <strong>Business Entities</strong>
-      through <strong>IoT Hub</strong>
+      through <strong>IoT Hub</strong>.
   <ul>
         <li>The vessel sends its GPS coordinates, current speed, ports to be docked, and estimated arrival time to the
          <strong>IoT Hub</strong>. the vessel may send delay events to <strong> Event Gateway</strong>.
@@ -48,18 +48,18 @@ efficiency of L2L framework. The main system features are outlined as following.
 </ul>
 <ul>
       <li>
-        <strong>Event Gateway</strong> publishes commands to <strong>Business Entities</strong> through <strong>IoT Hub</strong>
+        <strong>Event Gateway</strong> publishes commands to <strong>Business Entities</strong> through <strong>IoT Hub</strong>.
       <ul>
         <li>
           The <strong>Event Gateway </strong>sends message about delivery back to vessel. 
         </li>
         <li>
-          The wagon subscribes the new rendezvous port notification from <strong>Event Gateway</strong>
+          The wagon subscribes the new rendezvous port notification from <strong>Event Gateway</strong>.
         </li>
       </ul>
  </ul>     
    
-## 2. How these events go through those components.
+### 2. How these events go through those components
 <ul>
   <li> Using <strong>Event Gateway</strong> as dispatcher, events can flow smoothly between <strong>Enterprise Information System</strong> and
    <strong>Businesses Entities</strong> without changing its original framework.
@@ -87,13 +87,14 @@ efficiency of L2L framework. The main system features are outlined as following.
    </ul>
 </ul>
 
-## How the coordinator initiates, manage collaborations between two enterprises 
+### 3. How the coordinator initiates, manage collaborations between two enterprises 
 <ul>
  <li>
      Similar configuration can be extracted outside as Enterprise Policies. We can use them in <strong>Event Gateway</strong>,
       <strong>Enterprise Coordintor</strong>, and <strong>Context Sharing</strong>. 
  <ul>
-       <li>When events incoming, we can check the message header to find which event type we receive and which policy type they use. Then we can dynamicly orchestrare the services specified in confiure policy files to deal with the dynamic changes. We can easily add new policy, and develop and publish the specified services.
+       <li>When events incoming, we can check the message header to find which event type we receive and which policy type they use. Then we can dynamicly orchestrare
+        the services specified in confiure policy files to deal with the dynamic changes. We can easily add new policy, and develop and publish the specified services.
        </li>
   </ul>
 </ul>
@@ -101,7 +102,9 @@ efficiency of L2L framework. The main system features are outlined as following.
      <li>Based on the specificed policy, <strong>Cross-Enterprise Coordinators</strong> can invoke the apropriated coordination functions as services
       to tackle dynamic changes.
  <ul>
-       <li>As mentioned earlier, the LVC can capture the delay events from the <strong>Vessel Business Entity</strong>, In some concrete situation, the event type is IoT_DELAY and the policy type is  fixed-destination. Then we call functions to extract the message and the invoke the the specified service to decide the rendezvous port.  
+       <li>As mentioned earlier, the LVC can capture the delay events from the <strong>Vessel Business Entity</strong>, In some concrete situation, the event
+        type is IoT_DELAY and the policy type is  fixed-destination. Then we call functions to extract the message and the invoke the the specified service to
+         decide the rendezvous port.  
        </li>
   </ul>
 </ul>

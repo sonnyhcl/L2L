@@ -41,7 +41,7 @@ L2L
     - [Wagon Business Entity README](BusinessEntities/wagonIoT/README.md)
 
 ## Video
-[![placeholder](placeholder.png)](https://www.dropbox.com/s/x4i6j2s3hyrs3om/ICSOC2018-v2.mp4?dl=0)
+[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/x4i6j2s3hyrs3om/ICSOC2018-v2.mp4?dl=0)
 
 ## Dependencies
 -   [`L2L Frontend`](https://github.com/i-qiqi/L2L/tree/lambda)

@@ -111,7 +111,7 @@ efficiency of L2L framework. The main system features are outlined as following.
 
 
 ## Video
-[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/x4i6j2s3hyrs3om/ICSOC2018-v2.mp4?dl=0)
+[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/sleajluq3a0xazm/ICSOC2018_demo_l2l_v6.mp4?dl=0)
 
 
 ## Project Structure

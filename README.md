@@ -114,7 +114,7 @@ efficiency of L2L framework. The main system features are outlined as following.
   </ul>
 </ul>
 
-## User guide
+## User Guide
 - **`Project Structure`**
 ```console
 L2L

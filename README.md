@@ -114,7 +114,10 @@ efficiency of L2L framework. The main system features are outlined as following.
 [![placeholder](images/placeholder.png)](https://www.dropbox.com/s/sleajluq3a0xazm/ICSOC2018_demo_l2l_v6.mp4?dl=0)
 
 
-## Project Structure
+
+
+## User guide
+- *`Project Structure`*
 ```console
 L2L
 ├── BusinessEntities
@@ -133,8 +136,6 @@ L2L
 ├── pom.xml
 └── README.md
 ```
-
-## User guide
 -   [`L2L Frontend`](https://github.com/i-qiqi/L2L/tree/lambda)
     > Attention: In order to perform as demo shows, The project must be coordinated with the `L2L Frontend` project.
 - if you want to know how to run the system , you can see the [`user guide `](userguide.md) for L2L Backend

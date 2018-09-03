@@ -6,6 +6,11 @@ This space includes part of the source of the L2L framework and provides support
 Authored by Biqi Zhu, Chenglong Hu, Lin Ye, Hong-Linh Truong and  Liang Zhang***
 
 submitted to [ICSOC 2018](http://icsoc.org/).
+## Video
+The demo video is as following:
+
+[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/sleajluq3a0xazm/ICSOC2018_demo_l2l_v6.mp4?dl=0)
+
 ## Application Scenario
 This demostration bases on the supplychain management for Ship Spare Parts (SSP) problem in China shipping company. 
 There are four particiants, namely <strong>Vessel</strong>, <strong>Manager</strong>, <strong>Supplier</strong> and <strong>Logistic</strong>. 
@@ -108,13 +113,6 @@ efficiency of L2L framework. The main system features are outlined as following.
        </li>
   </ul>
 </ul>
-
-
-## Video
-[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/sleajluq3a0xazm/ICSOC2018_demo_l2l_v6.mp4?dl=0)
-
-
-
 
 ## User guide
 - **`Project Structure`**

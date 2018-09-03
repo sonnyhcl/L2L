@@ -138,7 +138,8 @@ L2L
     > Attention: In order to perform as demo shows, The project must be coordinated with the `L2L Frontend` project.
 - if you want to know how to run the system , you can see the [`user guide `](userguide.md) for L2L Backend
 
-## Experiment Step
+## Experimental Step
+
 First and foremost, we assume every steps have already correctly done following the above user guide.
 So make sure that you have started all components shown in project structure.
 

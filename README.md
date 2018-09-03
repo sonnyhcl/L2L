@@ -183,5 +183,5 @@ http://localhost:9021/supplier-A/
 ```console
 http://localhost:9031/logistics-A/
 ```
-- while the wagon runs following the schedule path, you can simulate to send delay event. the async event
-will be captured by the lvc and the lvc will make decision according to the predetermined policy. For example :
+- while the wagon is running following the schedule path, you can simulate to send delay event. the async event
+will be captured by the lvc and the lvc will make decision according to the predetermined policy.

@@ -134,7 +134,7 @@ L2L
 └── README.md
 ```
 
-## Dependencies
+## User guide
 -   [`L2L Frontend`](https://github.com/i-qiqi/L2L/tree/lambda)
-    > Attention: In order to perform as [demo](#demo) shows, The project must be coordinated with the `L2L Frontend` project.
+    > Attention: In order to perform as demo shows, The project must be coordinated with the `L2L Frontend` project.
 - if you want to know how to run the system , you can see the [`user guide `](userguide.md) for L2L Backend

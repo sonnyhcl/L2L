@@ -35,7 +35,7 @@ In this system, we demonstrate the L2L framework in which <strong>IoT-enablers</
 <strong>Context Sharing</strong> and <strong>Policies</strong> are introduced to enable  serverless-based <strong>Cross-Enterprise 
 Coordinators</strong> in the cloud to deal with dynamic changes among services across enterprises.
 We experimented our prototype around a real SSP problem on shipping along the Yangtze river to validate the effectiveness and
-efficiency of L2L framework. The main system features are outlined as following.
+efficiency of L2L framework. The main system features are outlined as follows:
 ### 1. How to capture Iot events,and other asynchronous events
 <ul>
    <li>
@@ -115,7 +115,7 @@ efficiency of L2L framework. The main system features are outlined as following.
 </ul>
 
 ## User Guide
-Project Structure :
+The `project structure` is as follows:
 ```console
 L2L
 ├── BusinessEntities

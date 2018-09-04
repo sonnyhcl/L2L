@@ -7,7 +7,7 @@ Authored by Biqi Zhu, Chenglong Hu, Lin Ye, Hong-Linh Truong and  Liang Zhang***
 
 submitted to [ICSOC 2018](http://icsoc.org/).
 ## Video
-The demo video is as following:
+The demo video is as follows:
 
 [![placeholder](images/placeholder.png)](https://www.dropbox.com/s/sleajluq3a0xazm/ICSOC2018_demo_l2l_v6.mp4?dl=0)
 

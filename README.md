@@ -7,9 +7,9 @@ Authored by Biqi Zhu, Chenglong Hu, Lin Ye, Hong-Linh Truong and  Liang Zhang***
 
 submitted to [ICSOC 2018](http://icsoc.org/).
 ## Video
-The demo video is as follows:
+The demo video is here👇
 
-[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/sleajluq3a0xazm/ICSOC2018_demo_l2l_v6.mp4?dl=0)
+[![placeholder](images/placeholder.png)](https://www.dropbox.com/s/ibw6gygo6aqy1a0/ICSOC2018-v7.mp4?dl=0)
 
 ## Application Scenario
 This demostration bases on the supplychain management for Ship Spare Parts (SSP) problem in China shipping company. 

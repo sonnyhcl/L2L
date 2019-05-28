@@ -22,13 +22,16 @@ Vessel Enterprise
     - `org.vmcContextPath` : endpoint for Vessel Manager Coordinator.
     - `org.lvcContextPath` : endpoint for Logistics Vessel Coordinator.
     - `org.vdevContextPath` : endpoint for Vessel Business Entities.
-
 ## Run Configuration
 - Add run configuration for this Maven project.
    ![vessel_maven_run_conf](../../images/vessel_maven_run_conf.png) 
 - Login url :  [http://localhost:9001/vessel-A/](http://localhost:9001/vessel-A/), you can login in the system as the default user.
      - `username`: admin
      - `password`: test
+- Or run the app with terminal
+    ```
+    mvn tomcat7:run
+    ```
 ## Import vessel process models into the system.
 - You need to upload 'Vessel-A.zip' under the root directory `processes` and  publish your app, then  go to processes page to start the selected process.
     ![import_vessel_process](../../images/import_vessel_process.png)

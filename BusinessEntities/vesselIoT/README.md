@@ -17,5 +17,10 @@ This system is introduced into L2L as `Vessel Business Entity`. It's a spring bo
    ![vessel_iot_cert_name](../../images/vesselIoT_cert_name.png) 
 - Add run configuration for spring boot Application 
  ![vessel_iot_keys](../../images/vesselIoT_run_conf.png) 
+ 
+- Run with terminal
+   ```
+   mvn spring-boot:run
+   ```
 
 

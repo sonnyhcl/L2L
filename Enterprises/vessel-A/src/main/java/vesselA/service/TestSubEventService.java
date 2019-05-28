@@ -1,4 +1,4 @@
-package logisticsA.service;
+package vesselA.service;
 
 import org.activiti.engine.ManagementService;
 import org.activiti.engine.RuntimeService;

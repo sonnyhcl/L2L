@@ -12,18 +12,18 @@
         <div class="panel-body">
             <table class="table apply-panel-table">
                 <tr ng-show = "status == 'Anchoring' || 'Voyaging' ">
-                    <td><span class="input-group-addon input-lg">延误:</span></td>
+                    <td><span class="input-group-addon input-lg">Delay:</span></td>
                     <td><input type="number" class="form-control input-lg" ng-model="dx" placeholder="请输入关键字"
                                value=0></td>
                 </tr>
                 <tr>
-                    <td><span class="input-group-addon input-lg">延期:</span></td>
+                    <td><span class="input-group-addon input-lg">Postpone:</span></td>
                     <td><input type="number" class="form-control input-lg" ng-model="dy"placeholder="请输入关键字"
                                value=0></td>
                 </tr>
             </table>
             <hr style="margin-top: 2px; ">
-            <button type="button" class="btn btn-primary pull-right delay-btn-right" ng-click="setDxy()">发送
+            <button type="button" class="btn btn-primary pull-right delay-btn-right" ng-click="setDxy()">Ok
             </button>
         </div>
     </div>

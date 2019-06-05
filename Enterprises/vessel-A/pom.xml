@@ -177,7 +177,7 @@
 
     <!-- BUILD -->
     <build>
-        <finalName>logistics-A</finalName>
+        <finalName>vessel-A</finalName>
 
         <resources>
             <resource>

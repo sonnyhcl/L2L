@@ -2,7 +2,7 @@
  
 NAME=$1
 echo $NAME
-ID=`ps -ef | grep tomcat |grep -v grep| awk '{print $2}'`
+ID=`ps -ef | grep "Enterprises" |grep -v grep| awk '{print $2}'`
 echo $ID
 echo "---------------"
 for id in $ID

@@ -40,7 +40,7 @@ public class RestClient {
     }
 
     public Location getLoc(SupplierPart  supplierPart){
-        String url = "http://"+supplierPart.getHost()+":"+supplierPart.getPort()+"/"+supplierPart.getProjectId()+"/api/location?name={name}";
+        String url = "http://"+supplierPart.getHost()+":"+supplierPart.getPort()+"/api/location?name={name}";
         HttpEntity httpEntity = new HttpEntity(getHeaders());
         Map<String, Object> urlVariables = new HashMap<String, Object>();
         urlVariables.put("name",supplierPart.getLocation());

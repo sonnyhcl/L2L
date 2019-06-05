@@ -6,8 +6,10 @@ import lvc.domain.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationHome;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,7 +23,10 @@ public class StorageRepository {
     public StorageRepository(@Value("${storages.fileName}") String fileName) throws IOException {
         //TODO:Temporarily read storage rates from storageRates.xls which should be initiated by port register.
         logger.info("--"+fileName+"--");
-        String filePath = this.getClass().getResource("/").getPath()+fileName;
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarF = h.getSource();
+        System.out.println(jarF.getParentFile().toString());
+        String filePath = jarF.getParentFile().toString()+"/classes/"+fileName;
         storages = CsvUtil.readStorageRates(filePath);
     }
 

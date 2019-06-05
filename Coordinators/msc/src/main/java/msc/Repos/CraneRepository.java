@@ -7,8 +7,10 @@ import msc.util.CsvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationHome;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,11 @@ public class CraneRepository {
 
     public CraneRepository(@Value("${msc.cranes.file}") String fileName) throws IOException, BiffException {
         logger.info(fileName+"--"+sheetName);
-        String path = getClass().getResource("/").getPath()+"/data/"+fileName;
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarF = h.getSource();
+        System.out.println(jarF.getParentFile().toString());
+        String path = jarF.getParentFile().toString()+"/classes/data/"+fileName;
+        logger.info("filePath : "+path);
         cranes = CsvUtil.readCranes(path);
         logger.debug(cranes.toString());
     }

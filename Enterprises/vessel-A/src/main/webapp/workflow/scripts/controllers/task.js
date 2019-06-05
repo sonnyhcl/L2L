@@ -871,8 +871,9 @@ angular.module('activitiApp')
                 $http.get(shadowUrl)
                     .success(function (data) {
                         $scope.vesselShadow = data;
-                        // console.log("vessel shadow : " , data);
+                        console.log("vessel shadow : " , data);
                         var stepIndex = $scope.vesselShadow.stepIndex;
+                        console.log("step index : ", stepIndex);
                         if (stepIndex == 0) {
                             $scope.prePort = "始发港"
                             $scope.nextPort = $scope.vesselShadow.destinations[stepIndex].name;
@@ -880,8 +881,8 @@ angular.module('activitiApp')
                             $scope.prePort = $scope.vesselShadow.destinations[stepIndex].name;
                             $scope.nextPort = "无（已到达最后一个港口)"
                         } else {
-                            $scope.prePort = $scope.vesselShadow.destinations[stepIndex].name;
-                            $scope.nextPort = $scope.vesselShadow.destinations[stepIndex + 1].name;
+                            $scope.prePort = $scope.vesselShadow.destinations[stepIndex-1].name;
+                            $scope.nextPort = $scope.vesselShadow.destinations[stepIndex].name;
                         }
 
                         if ($scope.prePort != null) {

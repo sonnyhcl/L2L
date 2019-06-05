@@ -6,8 +6,10 @@ import lvc.util.CsvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationHome;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,7 +23,10 @@ public class LogisticsPartRepository {
     public LogisticsPartRepository(@Value("${logisticsParts.fileName}") String fileName) throws IOException {
         //register vessel organization
         logger.info("--"+fileName+"--");
-        String filePath = this.getClass().getResource("/").getPath()+"data/"+fileName;
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarF = h.getSource();
+        System.out.println(jarF.getParentFile().toString());
+        String filePath = jarF.getParentFile().toString()+"/classes/data/"+fileName;
         logisticsParts = CsvUtil.readLogisticsParts(filePath);
     }
     public  void  save(LogisticsPart logisticsPart){

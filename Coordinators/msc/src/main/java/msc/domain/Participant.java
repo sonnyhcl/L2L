@@ -16,6 +16,6 @@ public class Participant {
     @NonNull protected String projectId;
 
     public String getUrl(){
-        return "http://"+this.host+":"+this.port+"/"+projectId;
+        return "http://"+this.host+":"+this.port;
     }
 }

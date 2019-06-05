@@ -4,10 +4,12 @@ import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationHome;
 import org.springframework.stereotype.Service;
 import slc.domain.SupplierPart;
 import slc.util.CsvUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,11 @@ public class SupplierPartRepository {
     public SupplierPartRepository(@Value("${supplierParts.fileName}") String fileName) throws IOException {
         //register vessel organization
         logger.info("--"+fileName+"--");
-        String filePath = this.getClass().getResource("/").getPath()+"data/"+fileName;
+        ApplicationHome h = new ApplicationHome(getClass());
+        File jarF = h.getSource();
+        System.out.println(jarF.getParentFile().toString());
+        String filePath = jarF.getParentFile().toString()+"/classes/data/"+fileName;
+        logger.info("filePath : "+filePath);
         supplierParts = CsvUtil.readSupplierParts(filePath);
     }
 

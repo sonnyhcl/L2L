@@ -44,4 +44,5 @@ src/main/resources/logs/
 document/
 .mvn/*
 logs
+target.zip
 *.xls

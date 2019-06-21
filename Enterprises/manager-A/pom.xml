@@ -12,9 +12,9 @@
     <packaging>war</packaging>
     <!--<version>1.0.0</version>-->
     <properties>
-        <server.url>http://127.0.0.1:9011/manager-A</server.url>
+        <server.url>http://127.0.0.1:9011</server.url>
         <server.port>9011</server.port>
-        <server.path>/manager-A</server.path>
+        <server.path>/</server.path>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <spring.version>4.3.14.RELEASE</spring.version>
         <boot.version>1.5.9.RELEASE</boot.version>

@@ -10,8 +10,8 @@
     <packaging>war</packaging>
     <properties>
         <server.port>9031</server.port> <!-- 设置端口 -->
-        <server.path>/logistics-A</server.path><!-- 设置默认访问应用的路径 -->
-        <server.url>http://127.0.0.1:9031/logistics-A</server.url>
+        <server.path>/</server.path><!-- 设置默认访问应用的路径 -->
+        <server.url>http://127.0.0.1:9031</server.url>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <spring.version>4.3.14.RELEASE</spring.version>
         <boot.version>1.5.9.RELEASE</boot.version>

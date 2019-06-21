@@ -10,8 +10,8 @@ var ACTIVITI = ACTIVITI || {};
 
 ACTIVITI.CONFIG = {
 	'onPremise' : true,
-	'contextRoot' : '/logistics-A',
-	'webContextRoot' : '/logistics-A'
+	'contextRoot' : '',
+	'webContextRoot' : ''
 };
 /*custom config*/
 var lastEventId = 0;

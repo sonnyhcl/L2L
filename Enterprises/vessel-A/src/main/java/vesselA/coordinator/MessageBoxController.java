@@ -191,7 +191,7 @@ public class MessageBoxController  extends AbstractController{
                 d.setEstiDepartureTime(newEstiDepartureTime);
             }
             //TODO : send destinations to vessel device.
-            logger.info("send destinations to vessel device.");
+            logger.info("send destinations to vessel device.",destinations.toString());
             restClient.postDestinations(destinations , vid);
 
             //TODO: notify logistic of "Planning"

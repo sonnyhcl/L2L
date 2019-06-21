@@ -48,6 +48,7 @@ public class ArrangingService implements JavaDelegate ,Serializable{
         String orgId = pvars.get("orgId").toString();
         String orderId = pvars.get("orderId").toString();
         String lOrgId = pvars.get("lOrgId").toString();
+
         String lCategory = pvars.get("lCategory").toString();
 
         Order order = orderRepository.findById(orderId);

@@ -22,5 +22,11 @@ This system is introduced into L2L as `Vessel Business Entity`. It's a spring bo
    ```
    mvn spring-boot:run
    ```
+   
+- Test: defaultDelayHour = 5, zoomInval = 500
+    - Docking duration error [36-1.0 , 36+1.0]
+    - 提前/延误测试：
+    - Voyaging / Anchoring
+    - Docking
 
 

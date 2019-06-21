@@ -802,7 +802,7 @@ angular.module('activitiApp')
                             $scope.pname = data.pname;
                             $scope.status = data.status;
                             $scope.curTime = data.curTime;
-                            // console.log("ADTaskController-->vessel device status  : " , $scope.status);
+                            console.log("ADTaskController-->vessel device status  : " , $scope.status);
                             if ($scope.status == "Anchoring") {
                                 $scope.arrivalElapseTime = data.arrivalElapseTime + ' h';
                                 $scope.anchoringTime = data.anchoringTime;
@@ -859,7 +859,7 @@ angular.module('activitiApp')
             $scope.latitude = null;
             $scope.velocity = null;
             $scope.timeStamp = null;
-            $scope.status = null;
+            $scope.status = "Voyaging";
             $scope.interval = null;
 
             $scope.voyageTaskTimer = $interval(function () {
@@ -893,7 +893,7 @@ angular.module('activitiApp')
                         $scope.velocity = $scope.vesselShadow.velocity + " Km/h";
                         $scope.timeStamp = $scope.vesselShadow.timeStamp;
                         $scope.status = $scope.vesselShadow.status;
-                        // console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
+                        console.log("VoyaTaskController-->vessel device status  : " , $scope.status);
                         var tUrl = ACTIVITI.CONFIG.contextRoot + '/api/' + $scope.model.task.processInstanceId + "/process/status";
                         $http.get(tUrl)
                             .success(function (pvars) {

@@ -19,7 +19,7 @@
         <!--adding properties-->
         <activiti.version>6.0.0</activiti.version>
         <!-- Web container version -->
-        <tomcat.version>7.0.85</tomcat.version>
+        <tomcat.version>7.0.104</tomcat.version>
     </properties>
 
     <dependencies>

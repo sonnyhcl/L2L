@@ -20,7 +20,7 @@
         <boot.version>1.5.9.RELEASE</boot.version>
         <spring.security.version>4.2.5.RELEASE</spring.security.version>
         <activiti.version>6.0.0</activiti.version>
-        <tomcat.version>7.0.85</tomcat.version>
+        <tomcat.version>7.0.104</tomcat.version>
     </properties>
 
     <dependencies>
